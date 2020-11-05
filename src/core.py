@@ -2,6 +2,7 @@
 
 
 from datetime import date
+from calendar import monthrange
 from fastapi import FastAPI
 from temp_mem import Storage
 
@@ -38,6 +39,12 @@ async def add_event(user_uid: int, event_date: date, value: int, comment: str):
     storage.checkpoint[key] = (value, comment)
 
 
-async def get_month(user_uid: int, month: date):
+async def get_month(user_uid: int, date_in_month: date):
     """Get list of all events in month."""
+    month_range = monthrange(date_in_month.year, date_in_month.month)
     pass
+    # TODO add logic
+    # TODO keep local data in redis
+    # TODO make use of kubernetes
+    # TODO implement ML model
+    # TODO make frontend

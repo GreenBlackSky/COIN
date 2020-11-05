@@ -1,4 +1,6 @@
 """Temporary data storage."""
+# TODO setup postgresql db
+# TODO use three separate lists
 
 
 class Storage:
