@@ -3,17 +3,28 @@
 
 from datetime import date
 from calendar import monthrange
-from fastapi import FastAPI
-from temp_mem import Storage
+from temp_mem import Storage, Category
 
 
-app = FastAPI()
-
-
-async def add_user(user_uid: int):
+async def add_user(today, initial):
     """Add new user."""
     storage = Storage.get_instance()
-    storage.users.add(user_uid)
+    storage.add_user(today, initial)
+
+
+async def add_event(
+    user_uid: int,
+    event_date: date,
+    value: int,
+    category: int,
+    comment: str
+):
+    """Add new event."""
+    storage = Storage.get_instance()
+    storage.add_event(
+        user_uid, event_date,
+        value, category, comment
+    )
 
 
 async def set_checkpoint(
@@ -24,25 +35,21 @@ async def set_checkpoint(
 ):
     """Set new checkpoint."""
     storage = Storage.get_instance()
-    key = (user_uid, chekpoint_date)
-    if key in storage.checkpoints:
-        return
-    storage.checkpoint[key] = (value, comment)
+    current_balance = storage.get_balance(user_uid)
+    diff = current_balance - value
+    storage.add_event(user_uid, chekpoint_date, diff, Category.Correction, comment)
 
 
-async def add_event(user_uid: int, event_date: date, value: int, comment: str):
-    """Add new event."""
+async def get_balance(user_uid):
+    """Get user balance."""
     storage = Storage.get_instance()
-    key = (user_uid, event_date)
-    if key in storage.events:
-        return
-    storage.checkpoint[key] = (value, comment)
+    return {"balance": storage.get_balance(user_uid)}
 
 
 async def get_month(user_uid: int, date_in_month: date):
     """Get list of all events in month."""
-    month_range = monthrange(date_in_month.year, date_in_month.month)
-    pass
+    storage = Storage.get_instance()
+
     # TODO add logic
     # TODO keep local data in redis
     # TODO make use of kubernetes
