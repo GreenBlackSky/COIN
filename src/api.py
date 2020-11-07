@@ -1,22 +1,26 @@
 """Core module contains logic of app."""
-
+# TODO async
+# TODO FastApi
+# TODO make use of kubernetes
+# TODO implement ML model
+# TODO make frontend
 
 from datetime import date
 from calendar import monthrange
-from temp_mem import Storage, Category
+from core import Storage, Category
 
 
-async def add_user(today, initial):
+def add_user(today, initial):
     """Add new user."""
     storage = Storage.get_instance()
-    storage.add_user(today, initial)
+    return storage.add_user(today, initial)
 
 
-async def add_event(
-    user_uid: int,
+def add_event(
+    user_uid: str,
     event_date: date,
     value: int,
-    category: int,
+    category: Category,
     comment: str
 ):
     """Add new event."""
@@ -27,31 +31,26 @@ async def add_event(
     )
 
 
-async def set_checkpoint(
-        user_uid: int,
-        chekpoint_date: date,
+def correct(
+        user_uid: str,
+        correction_date: date,
         value: int,
         comment: str
 ):
-    """Set new checkpoint."""
+    """Correct data."""
     storage = Storage.get_instance()
-    current_balance = storage.get_balance(user_uid)
-    diff = current_balance - value
-    storage.add_event(user_uid, chekpoint_date, diff, Category.Correction, comment)
+    current_balance = storage.get_balance(user_uid, correction_date)
+    diff = value - current_balance
+    storage.add_event(user_uid, correction_date, diff, Category.Correction, comment)
 
 
-async def get_balance(user_uid):
+def get_balance(user_uid: str, day: date):
     """Get user balance."""
     storage = Storage.get_instance()
-    return {"balance": storage.get_balance(user_uid)}
+    return {"balance": storage.get_balance(user_uid, day)}
 
 
-async def get_month(user_uid: int, date_in_month: date):
+def get_month_data(user_uid: str, month: date):
     """Get list of all events in month."""
     storage = Storage.get_instance()
-
-    # TODO add logic
-    # TODO keep local data in redis
-    # TODO make use of kubernetes
-    # TODO implement ML model
-    # TODO make frontend
+    return {"month_data": storage.get_month_data(user_uid, month)}
