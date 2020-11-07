@@ -1,6 +1,6 @@
 """Temporary data storage."""
-# TODO setup postgresql db
 # TODO use three separate lists
+# TODO setup postgresql db
 # TODO use redis
 
 from datetime import date

@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% import 'macros.html' as macros %}
+
+{% block content %}
+<div class="formwrapper">
+    <h2 class="title">Sign up</h2>
+    <form method="POST" action="{{ url_for('auth_bp.signup') }}">
+        {{ macros.render_field(form.name) }}
+        {{ macros.render_field(form.password) }}
+        {{ macros.render_field(form.confirm) }}
+        {{ form.submit }}
+        {{ form.hidden_tag() }}
+    </form>
+    <div class="login-signup">
+      <span>Already have an account? <a href="{{ url_for('auth_bp.login') }}">Log in.</a></span>
+    </div>
+</div>
+{% endblock %}

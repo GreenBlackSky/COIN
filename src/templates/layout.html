@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+
+    <head>
+        <title>{{title}}</title>
+        <meta charset="utf-8">
+        <meta name="description" content={{description}}>
+    </head>
+
+    <body>
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+            </div>
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+    </body>
+
+</html>
