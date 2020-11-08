@@ -1,5 +1,4 @@
 """Core module contains logic of app."""
-# TODO return values and responces
 # TODO templates and js
 # TODO make use of kubernetes
 # TODO implement ML model
@@ -19,7 +18,7 @@ bp = Blueprint('api_bp', __name__)
 def add_user(today, initial):
     """Add new user."""
     storage = Storage.get_instance()
-    return storage.add_user(today, initial)
+    return {"user_uid": storage.add_user(today, initial)}
 
 
 @bp.route("/add_event", methods=['POST'])
@@ -33,10 +32,10 @@ def add_event(
 ):
     """Add new event."""
     storage = Storage.get_instance()
-    storage.add_event(
+    return {'event_uid': storage.add_event(
         user_uid, event_date,
         value, category, comment
-    )
+    )}
 
 
 @bp.route("/correct", methods=['POST'])
@@ -51,7 +50,13 @@ def correct(
     storage = Storage.get_instance()
     current_balance = storage.get_balance(user_uid, correction_date)
     diff = value - current_balance
-    storage.add_event(user_uid, correction_date, diff, Category.Correction, comment)
+    return {'event_uid': storage.add_event(
+        user_uid,
+        correction_date,
+        diff,
+        Category.Correction,
+        comment
+    )}
 
 
 @bp.route("/get_balance", methods=['POST'])

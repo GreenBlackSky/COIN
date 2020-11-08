@@ -25,6 +25,7 @@ class Event:
     """Event data."""
 
     value: int
+    event_date: date
     category: Category
     comment: str
 
@@ -37,24 +38,25 @@ class MonthData:
         self.initial = initial
         self.start_date = today.replace(day=1)
         _, self.month_len = monthrange(today.year, today.month)
-        self.events: Dict[date, Event] = {
-            self.start_date: Event(initial, Category.Initial, "")
+        self.events: Dict[str, Event] = {
+            self.start_date: Event(initial, today, Category.Initial, "")
         }
 
     def add_event(self, event_date: date, value: int, category: Category, comment: str):
         """Add new event in month."""
         if event_date.replace(day=1) != self.start_date:
-            return
-        self.events[event_date] = Event(value, category, comment)
+            return None
+        event_uid = uuid4().hex
+        self.events[event_uid] = Event(value, event_date, category, comment)
+        return event_uid
 
     def get_data(self):
         """Get month data."""
         ret = [0] * self.month_len
-        ret[0] = self.initial
+        for event in self.events.values():
+            ret[event.event_date.day - 1] += event.value
         for day in range(1, self.month_len):
-            day_date = self.start_date.replace(day=day + 1)
-            diff = self.events[day_date].value if day_date in self.events else 0
-            ret[day] = ret[day - 1] + diff
+            ret[day] += ret[day - 1]
         return ret
 
     def calculate(self) -> int:
@@ -86,7 +88,7 @@ class UserData:
             if last_month_data is None:
                 return
             self.months[key] = MonthData(key, last_month_data.calculate())
-        self.months[key].add_event(event_date, value, category, comment)
+        return self.months[key].add_event(event_date, value, category, comment)
 
     def get_balance(self, day: date):
         """Get current balance."""
@@ -128,7 +130,7 @@ class Storage:
 
     def add_event(self, user_uid: str, event_date: date, value: int, category: Category, comment: str):
         """Add new event."""
-        self.users[user_uid].add_event(event_date, value, category, comment)
+        return self.users[user_uid].add_event(event_date, value, category, comment)
 
     def get_balance(self, user_uid: str, day: date):
         """Get last known balance."""

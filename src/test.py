@@ -5,7 +5,7 @@ from datetime import datetime
 if __name__ == "__main__":
     today = datetime.date(datetime(year=1000, month=1, day=1))
 
-    user_uid = api.add_user(today, 10)
+    user_uid = api.add_user(today, 10)['user_uid']
 
     balance = api.get_balance(user_uid, today.replace(day=2))
     assert balance['balance'] == 10
