@@ -24,7 +24,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
 
-            Storage.get_instance().add_user(user.get_id, datetime.date.today, 0)
+            Storage.get_instance().add_user(user.get_id, datetime.date.today(), 0)
 
             login_user(user)
             return redirect(url_for('main_bp.dashboard'))

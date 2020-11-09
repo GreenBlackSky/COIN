@@ -4,6 +4,20 @@
 {% block content %}
   {% if current_user.is_authenticated %}
     <p>Hi {{ current_user.name }}!</p>
+      <div class="formwrapper">
+        <h2 class="title">Budget</h2>
+        <div class="mb-3">
+            <div class="form-group">
+                <label>Balance</label>
+                <input type="text" class="form-control" id="balance">
+            </div>
+
+            <button class="btn btn-primary" id="submit" onclick="add_event();">Add event</button>
+        </div>
+
+        <div class="mb-3" id="result"></div>
+        <script type="text/javascript" src="{{ url_for('static', filename='dst/js/script.min.js') }}"></script>
+      </div>
     <a href="{{ url_for('main_bp.logout') }}">Log out</a>
   {% endif %}
 {% endblock %}
