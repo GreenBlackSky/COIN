@@ -4,7 +4,7 @@ from flask_login import login_user, current_user
 from .forms import SignupForm, LoginForm
 from .models import db, User
 from . import login_manager
-
+from .core import Storage
 
 bp = Blueprint('auth_bp', __name__, template_folder='templates')
 
@@ -23,6 +23,9 @@ def signup():
             user.set_password(form.password.data)
             db.session.add(user)
             db.session.commit()
+
+            Storage.get_instance().add_user(user.get_id, datetime.date.today, 0)
+
             login_user(user)
             return redirect(url_for('main_bp.dashboard'))
         flash('A user already exists with that email address.')

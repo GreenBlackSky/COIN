@@ -122,11 +122,9 @@ class Storage:
         """Initialize storage."""
         self.users: Dict[str, UserData] = {}
 
-    def add_user(self, today: date, initial: int):
+    def add_user(self, user_uid, today: date, initial: int):
         """Add new user and get their uid."""
-        user_id = uuid4().hex
-        self.users[user_id] = UserData(today, initial)
-        return user_id
+        self.users[user_uid] = UserData(today, initial)
 
     def add_event(self, user_uid: str, event_date: date, value: int, category: Category, comment: str):
         """Add new event."""
