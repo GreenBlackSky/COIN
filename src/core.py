@@ -109,23 +109,6 @@ class UserData:
 class Storage:
     """Singleton data storage. Don't actualy use."""
 
-    instance = None
-
-    @staticmethod
-    def get_instance():
-        """Access method."""
-        if Storage.instance is None:
-            Storage.instance = Storage()
-        return Storage.instance
-
-    def __init__(self):
-        """Initialize storage."""
-        self.users: Dict[str, UserData] = {}
-
-    def add_user(self, user_uid, today: date, initial: int):
-        """Add new user and get their uid."""
-        self.users[user_uid] = UserData(today, initial)
-
     def add_event(self, user_uid: str, event_date: date, value: int, category: Category, comment: str):
         """Add new event."""
         return self.users[user_uid].add_event(event_date, value, category, comment)

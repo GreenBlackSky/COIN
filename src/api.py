@@ -5,7 +5,7 @@
 
 from datetime import date
 from calendar import monthrange
-from core import Storage, Category
+from .core import Storage, Category
 from flask import Blueprint
 from flask_login import login_required
 
