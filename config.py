@@ -3,7 +3,7 @@ class Config:
         'type': 'postgresql+psycopg2',
         'user': 'john',
         'password': 'qwerty',
-        'host': 'localhost',
+        'host': 'postgres',
         'port': '5432',
         'database': 'test'
     }
