@@ -1,11 +1,11 @@
 class Config:
     _connection_data = {
         'type': 'postgresql+psycopg2',
-        'user': 'john',
+        'user': 'user',
         'password': 'qwerty',
         'host': 'postgres',
         'port': '5432',
-        'database': 'test'
+        'database': 'pgdb'
     }
 
     SECRET_KEY = 'dev'
@@ -17,5 +17,3 @@ class Config:
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    TEMPLATES_FOLDER = 'templates'
-    STATIC_FOLDER = 'static'

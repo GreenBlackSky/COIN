@@ -9,55 +9,67 @@ from flask_login import login_required
 bp = Blueprint('api_bp', __name__)
 
 
-@bp.route("/add_event", methods=['POST'])
+@bp.route("/get_user_data", methods=('POST',))
 @login_required
-def add_event(
-    user_uid: str,
-    event_date: date,
-    value: int,
-    category: Category,
-    comment: str
-):
-    """Add new event."""
-    storage = Storage.get_instance()
-    return {'event_uid': storage.add_event(
-        user_uid, event_date,
-        value, category, comment
-    )}
+def get_user_data():
+    pass
 
 
-@bp.route("/correct", methods=['POST'])
+@bp.route("/get_events", methods=('POST',))
 @login_required
-def correct(
-        user_uid: str,
-        correction_date: date,
-        value: int,
-        comment: str
-):
-    """Correct data."""
-    storage = Storage.get_instance()
-    current_balance = storage.get_balance(user_uid, correction_date)
-    diff = value - current_balance
-    return {'event_uid': storage.add_event(
-        user_uid,
-        correction_date,
-        diff,
-        Category.Correction,
-        comment
-    )}
+def get_events():
+    pass
 
 
-@bp.route("/get_balance", methods=['POST'])
+@bp.route("/get_month", methods=('POST',))
 @login_required
-def get_balance(user_uid: str, day: date):
-    """Get user balance."""
-    storage = Storage.get_instance()
-    return {"balance": storage.get_balance(user_uid, day)}
+def get_month():
+    pass
 
 
-@bp.route("/get_month", methods=['POST'])
+@bp.route("/get_year", methods=('POST',))
 @login_required
-def get_month_data(user_uid: str, month: date):
-    """Get list of all events in month."""
-    storage = Storage.get_instance()
-    return {"month_data": storage.get_month_data(user_uid, month)}
+def get_year():
+    pass
+
+
+@bp.route("/get_all_years", methods=('POST',))
+@login_required
+def get_all_years():
+    pass
+
+
+@bp.route("/add_event", methods=('POST',))
+@login_required
+def add_event():
+    pass
+
+
+@bp.route("/edit_event", methods=('POST',))
+@login_required
+def edit_event():
+    pass
+
+
+@bp.route("/get_templates", methods=('POST',))
+@login_required
+def get_templates():
+    pass
+
+
+@bp.route("/add_template", methods=('POST',))
+@login_required
+def add_template():
+    pass
+
+
+@bp.route("/edit_template", methods=('POST',))
+@login_required
+def edit_template():
+    pass
+
+
+@bp.route("/get_statistics", methods=('POST',))
+@login_required
+def get_statistics():
+    pass
