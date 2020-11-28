@@ -8,8 +8,8 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 login_manager = LoginManager()
 
-
 def create_app():
+    # TODO logging
     """Create new flask app."""
     app = Flask(__name__, instance_relative_config=False)
 

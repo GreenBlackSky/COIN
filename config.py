@@ -1,7 +1,7 @@
 class Config:
     _connection_data = {
         'type': 'postgresql+psycopg2',
-        'user': 'user',
+        'user': 'coin_app',
         'password': 'qwerty',
         'host': 'postgres',
         'port': '5432',

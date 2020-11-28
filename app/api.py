@@ -9,7 +9,7 @@ from .models import db, User, Category, Event, Template
 
 bp = Blueprint('api_bp', __name__)
 
-
+# TODO connect to db
 @bp.route("/get_user_data", methods=('POST',))
 @login_required
 def get_user_data():

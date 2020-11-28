@@ -6,6 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from .models import db, User
 from . import login_manager
 
+
 bp = Blueprint('auth_bp', __name__, template_folder='templates')
 
 
@@ -65,6 +66,7 @@ def logout():
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Get current user (tech)."""
     if user_id is not None:
         return User.query.get(user_id)
     return
