@@ -1,3 +1,5 @@
+"""COIN app initialization module."""
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -8,6 +10,7 @@ login_manager = LoginManager()
 
 
 def create_app():
+    """Create new flask app."""
     app = Flask(__name__, instance_relative_config=False)
 
     app.config.from_object('config.Config')
@@ -26,3 +29,6 @@ def create_app():
         db.create_all()
 
     return app
+
+
+app = create_app()

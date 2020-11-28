@@ -1,3 +1,5 @@
+"""Data base models."""
+
 from . import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,9 +10,9 @@ class User(UserMixin, db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=False)
-    password = db.Column(db.String(200), primary_key=False, unique=False, nullable=False)
-    created_on = db.Column(db.DateTime(), index=False, unique=False, nullable=True)
-    last_login = db.Column(db.DateTime(), index=False, unique=False, nullable=True)
+    password = db.Column(db.String(200), nullable=False, unique=False)
+    created_on = db.Column(db.DateTime())
+    last_login = db.Column(db.DateTime())
 
     balance_accepted_on = db.Column(db.DateTime())
     balance = db.Column(db.Integer())
