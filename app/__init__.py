@@ -1,11 +1,16 @@
 """COIN app initialization module."""
 
+# TODO dev mode
+# TODO remove creds
+# TODO tests
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import logging
 
 
+# TODO pass logs outside
 logging.basicConfig(
     filename='coin.log',
     format='%(asctime)s %(levelname)s: %(message)s',

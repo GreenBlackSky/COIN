@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: gunicorn -b 0.0.0.0:5000 app:app
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+  db:
+    image: postgres:12-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=coin_app
+      - POSTGRES_PASSWORD=qwerty
+      - POSTGRES_DB=pgdb
+
+volumes:
+  postgres_data:
