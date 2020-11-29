@@ -1,20 +1,31 @@
 """Core module contains logic of app."""
+# TODO connect to db
 
 from datetime import date
 from calendar import monthrange
+import logging
+
 from flask import Blueprint
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .models import db, User, Category, Event, Template
 
 
 bp = Blueprint('api_bp', __name__)
 
 
-# TODO connect to db
 @bp.route("/get_user_data", methods=('POST',))
 @login_required
 def get_user_data():
-    return {"method": "get_user_data"}
+    """Get user data."""
+    name = current_user.username
+    user = User.query.filter_by(name=name).first()
+    logging.debug(f"get_user_data {name}")
+    return {
+        'balance': user.balance,
+        'created_on': user.created_on,
+        'last_login': user.last_login,
+        'balance_accepted_on': user.balance_accepted_on,
+    }
 
 
 @bp.route("/get_events", methods=('POST',))

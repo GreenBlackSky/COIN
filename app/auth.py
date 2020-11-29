@@ -90,4 +90,4 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     """Handle unauthorized access."""
-    logging.error("Unauthorized access atempt.")
+    logging.error("Unauthorized access attempt.")
