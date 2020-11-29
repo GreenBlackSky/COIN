@@ -3,13 +3,22 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+import logging
 
+
+logging.basicConfig(
+    filename='coin.log',
+    format='%(asctime)s %(levelname)s: %(message)s',
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    level=logging.INFO
+)
+logging.info('Started')
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 
+
 def create_app():
-    # TODO logging
     """Create new flask app."""
     app = Flask(__name__, instance_relative_config=False)
 

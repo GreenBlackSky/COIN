@@ -1,6 +1,8 @@
 """Authentification stuff."""
 
 from datetime import datetime
+import logging
+
 from flask import Blueprint, request
 from flask_login import login_user, current_user, logout_user, login_required
 from .models import db, User
@@ -10,16 +12,18 @@ from . import login_manager
 bp = Blueprint('auth_bp', __name__, template_folder='templates')
 
 
-@bp.route("/signup", methods=('POST',))
+@bp.route('/signup', methods=('POST',))
 def signup():
     """Register new user."""
     name = request.args.get('name')
-    password = request.args.get
+    password = request.args.get('password')
     if name is None or password is None:
+        logging.warning(f"Incomplete sign up request - {request.args}")
         return
 
     existing_user = User.query.filter_by(name=name).first()
     if existing_user is not None:
+        logging.warning(f"Register user that already exist - {name}")
         return
 
     user = User(
@@ -32,28 +36,37 @@ def signup():
     db.session.commit()
 
     login_user(user)
-    return {"signed up": name}
+    logging.info(f"User {name} signed up and logged in")
+    return {'signed up': name}
 
 
 @bp.route("/login", methods=('POST',))
 def login():
     """Log in user."""
+    name = request.args.get('name')
+    password = request.args.get('password')
+
     if current_user.is_authenticated:
+        logging.warning(f"User {current_user.username} is already logged in.")
         return
 
-    name = request.args.get('name')
-    password = request.args.get
     if name is None or password is None:
+        logging.warning(f'Incomplete log in request - {request.args}')
         return
 
     user = User.query.filter_by(name=name).first()
-    if user is None or not user.check_password(password=password):
+    if user is None:
+        logging.warning(f"Log in attempt but no such user exist {name}")
+        return
+    if not user.check_password(password=password):
+        logging.info(f"Incorrect password by {name}")
         return
 
     login_user(user)
     user.last_login = datetime.now()
     db.session.add(user)
     db.session.commit()
+    logging.info(f"User {name} logged in")
     return {"logged in": name}
 
 
@@ -61,7 +74,9 @@ def login():
 @login_required
 def logout():
     """Log out user."""
+    name = current_user.username
     logout_user()
+    logging.info(f"User {name} logged out")
 
 
 @login_manager.user_loader
@@ -75,4 +90,4 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     """Handle unauthorized access."""
-    return {"unathorized user": ""}
+    logging.error("Unauthorized access atempt.")

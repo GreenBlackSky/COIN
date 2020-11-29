@@ -6,6 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(UserMixin, db.Model):
+    """Users table."""
+
     __tablename__ = 'flask_login_users'
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -18,13 +20,17 @@ class User(UserMixin, db.Model):
     balance = db.Column(db.Integer())
 
     def set_password(self, password):
+        """Set user password."""
         self.password = generate_password_hash(password, method='sha256')
 
     def check_password(self, password):
+        """Check user password."""
         return check_password_hash(self.password, password)
 
 
 class Category(db.Model):
+    """Events category table."""
+
     __tablename__ = 'operation_category'
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -34,6 +40,8 @@ class Category(db.Model):
 
 
 class Event(db.Model):
+    """Events table."""
+
     __tablename__ = 'events'
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -47,6 +55,8 @@ class Event(db.Model):
 
 
 class Template(db.Model):
+    """Events templates table."""
+
     __tablename__ = "templates"
 
     id = db.Column(db.Integer(), primary_key=True)
