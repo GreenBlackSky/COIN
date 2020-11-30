@@ -43,15 +43,16 @@ def signup():
 @bp.route("/login", methods=('POST',))
 def login():
     """Log in user."""
+    # TODO apply events templates
     name = request.args.get('name')
     password = request.args.get('password')
 
     if current_user.is_authenticated:
-        logging.warning(f"User {current_user.username} is already logged in.")
+        logging.warning(f"User {current_user.id} is already logged in.")
         return
 
     if name is None or password is None:
-        logging.warning(f'Incomplete log in request - {request.args}')
+        logging.warning(f"Incomplete args in request - {request.args}")
         return
 
     user = User.query.filter_by(name=name).first()
@@ -74,7 +75,7 @@ def login():
 @login_required
 def logout():
     """Log out user."""
-    name = current_user.username
+    name = current_user.name
     logout_user()
     logging.info(f"User {name} logged out")
 

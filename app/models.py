@@ -27,6 +27,15 @@ class User(UserMixin, db.Model):
         """Check user password."""
         return check_password_hash(self.password, password)
 
+    def serialize(self):
+        """Serialize user into dict."""
+        return {
+            'balance': self.balance,
+            'created_on': self.created_on,
+            'last_login': self.last_login,
+            'balance_accepted_on': self.balance_accepted_on,
+        }
+
 
 class Category(db.Model):
     """Events category table."""
@@ -52,6 +61,17 @@ class Event(db.Model):
 
     category = db.relationship("Category", backref="id")
     user_id = db.relationship("User", backref="id")
+
+    def serialize(self):
+        """Serialize event into dict."""
+        return {
+            "id": self.id,
+            'date': self.date,
+            'value': self.value,
+            'comment': self.comment,
+            'accepted': self.accepted,
+            'category': self.category
+        }
 
 
 class Template(db.Model):

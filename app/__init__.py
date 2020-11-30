@@ -15,7 +15,7 @@ logging.basicConfig(
     filename='coin.log',
     format='%(asctime)s %(levelname)s: %(message)s',
     datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.INFO
+    level=logging.DEBUG
 )
 logging.info('Started')
 
