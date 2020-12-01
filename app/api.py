@@ -1,29 +1,18 @@
 """Core module contains logic of app."""
 # TODO connect to db
+# TODO caching into redis
 
 from datetime import datetime, timedelta
-from calendar import monthrange
 import logging
-
+from typing import List
+from collections import defaultdict
 from flask import Blueprint, request
 from flask_login import login_required, current_user
+from dateutil.relativedelta import relativedelta
 from .models import db, User, Category, Event, Template
 
 
 bp = Blueprint('api_bp', __name__)
-
-
-def _get_events(start, end):
-    """Get events in given time period."""
-    events = Event.query.filter(
-        Event.user_id == current_user.id,
-        Event.date >= start,
-        Event.date <= end
-    ).all()
-
-    events = [event.serialize for event in events]
-    logging.debug(f"{current_user.id} get_events {start}-{end}: {events}")
-    return events
 
 
 def _process_time_marker(time_marker, zero_fields, user_id):
@@ -71,11 +60,12 @@ def accept_event():
 
     event.accepted = True
     db.session.commit()
+    logging.debug(f"{current_user.id} accept_event event {event_id} accepted")
 
 
 @bp.route("/get_day", methods=('POST',))
 @login_required
-def get_day():
+def get_day_events():
     """Get events in one day."""
     day = _process_time_marker(
         request.args.get('day'),
@@ -84,19 +74,75 @@ def get_day():
     )
     if day is None:
         return
-    return _get_events(day, day + timedelta(days=1))
+
+    start = day
+    end = day + timedelta(days=1)
+
+    events = Event.query.filter(
+        Event.user_id == current_user.id,
+        Event.date >= start,
+        Event.date <= end
+    ).all()
+
+    events = [event.serialize for event in events]
+    logging.debug(f"{current_user.id} get_day_events {day} {events}")
+    return events
 
 
 @bp.route("/get_month", methods=('POST',))
 @login_required
 def get_month():
-    return {"method": "get_month"}
+    """Get statistics for month."""
+    month = _process_time_marker(
+        request.args.get('month'),
+        ('day', 'hour', 'minute', 'second', 'microsecond'),
+        current_user.id
+    )
+    if month is None:
+        return
+
+    start = month
+    end = month + relativedelta(months=+1)
+
+    events: List[Event] = Event.query.filter(
+        Event.user_id == current_user.id,
+        Event.date >= start,
+        Event.date <= end
+    ).all()
+
+    days = defaultdict(lambda: 0)
+    for event in events:
+        days[event.date.day] += event.value
+    logging.debug(f"{current_user.id} get_month {month} {days}")
+    return dict(days)
 
 
 @bp.route("/get_year", methods=('POST',))
 @login_required
 def get_year():
-    return {"method": "get_year"}
+    """Get statistics for year."""
+    year = _process_time_marker(
+        request.args.get('month'),
+        ('month', 'day', 'hour', 'minute', 'second', 'microsecond'),
+        current_user.id
+    )
+    if year is None:
+        return
+
+    start = year
+    end = year + relativedelta(years=+1)
+
+    events: List[Event] = Event.query.filter(
+        Event.user_id == current_user.id,
+        Event.date >= start,
+        Event.date <= end
+    ).all()
+
+    months = defaultdict(lambda: 0)
+    for event in events:
+        months[event.date.month] += event.value
+    logging.debug(f"{current_user.id} get_year {year} {months}")
+    return dict(months)
 
 
 @bp.route("/get_all_years", methods=('POST',))
