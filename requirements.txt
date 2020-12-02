@@ -1,6 +1,8 @@
 flask
-flask-sqlalchemy
 flask-login
+flask-sqlalchemy
+flask-session
 psycopg2-binary
+redis
 gunicorn
 python-dateutil

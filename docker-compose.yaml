@@ -18,6 +18,29 @@ services:
       - POSTGRES_USER=coin_app
       - POSTGRES_PASSWORD=qwerty
       - POSTGRES_DB=pgdb
+  redis:
+    image: "redis:alpine"
+    command: redis-server --requirepass qwerty
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - ./redis-data:/var/lib/redis
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+    networks:
+      node_net:
+        ipv4_address: 172.28.1.4
+
+networks:
+  node_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
 
 volumes:
   postgres_data:

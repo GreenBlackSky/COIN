@@ -1,6 +1,4 @@
 """Core module contains logic of app."""
-# TODO connect to db
-# TODO caching into redis
 
 from datetime import datetime, timedelta
 import logging
