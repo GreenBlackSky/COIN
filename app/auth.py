@@ -44,6 +44,7 @@ def signup():
 def login():
     """Log in user."""
     # TODO apply events templates
+    # TODO load cache
     name = request.args.get('name')
     password = request.args.get('password')
 

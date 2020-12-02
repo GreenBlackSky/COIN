@@ -9,7 +9,7 @@ from collections import defaultdict
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 from dateutil.relativedelta import relativedelta
-from .models import db, User, Category, Event, Template
+from .models import db, User, Month, Category, Event, Template
 
 
 bp = Blueprint('api_bp', __name__)
@@ -39,6 +39,20 @@ def get_user_data():
     user = User.query.filter_by(name=name).first()
     logging.debug(f"{current_user.id} get_user_data {name}")
     return user.serialize()
+
+
+@bp.route("/get_unaccepted", methods=('POST',))
+@login_required
+def get_unaccepted():
+    """Get all events that are already happend, but were not accepted."""
+    day = datetime.now()
+    events = Event.query.filter(
+        Event.user_id == current_user.id,
+        Event.date <= day,
+        Event.accepted.is_(False)
+    ).all()
+    logging.debug(f"{current_user.id} get_unaccepted {events}")
+    return events
 
 
 @bp.route("/accept_event", methods=('POST',))
@@ -108,47 +122,37 @@ def get_month():
         Event.user_id == current_user.id,
         Event.date >= start,
         Event.date <= end
+    ).order_by(
+        Event.date
     ).all()
 
-    days = defaultdict(lambda: 0)
+    day_diffs = defaultdict(lambda: 0)
     for event in events:
-        days[event.date.day] += event.value
-    logging.debug(f"{current_user.id} get_month {month} {days}")
-    return dict(days)
+        day_diffs[event.date.day] += event.value
+
+    initial_value: int = Month.query.filter(
+        Month.date == month,
+        Month.user_id == current_user.id
+    ).first().initial_value
+
+    return {
+        'initial_value': initial_value,
+        'day_diffs': day_diffs
+    }
 
 
 @bp.route("/get_year", methods=('POST',))
 @login_required
 def get_year():
     """Get statistics for year."""
-    year = _process_time_marker(
-        request.args.get('month'),
-        ('month', 'day', 'hour', 'minute', 'second', 'microsecond'),
-        current_user.id
-    )
-    if year is None:
-        return
-
-    start = year
-    end = year + relativedelta(years=+1)
-
-    events: List[Event] = Event.query.filter(
-        Event.user_id == current_user.id,
-        Event.date >= start,
-        Event.date <= end
-    ).all()
-
-    months = defaultdict(lambda: 0)
-    for event in events:
-        months[event.date.month] += event.value
-    logging.debug(f"{current_user.id} get_year {year} {months}")
-    return dict(months)
+    pass
 
 
 @bp.route("/get_all_years", methods=('POST',))
 @login_required
 def get_all_years():
-    return {"method": "get_all_years"}
+    """Get info on all user history."""
+    pass
 
 
 @bp.route("/add_event", methods=('POST',))

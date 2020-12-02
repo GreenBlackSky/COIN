@@ -5,6 +5,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+# TODO refactor
 class User(UserMixin, db.Model):
     """Users table."""
 
@@ -15,9 +16,8 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200), nullable=False, unique=False)
     created_on = db.Column(db.DateTime())
     last_login = db.Column(db.DateTime())
-
+    accepted_balance = db.Column(db.Integer())
     balance_accepted_on = db.Column(db.DateTime())
-    balance = db.Column(db.Integer())
 
     def set_password(self, password):
         """Set user password."""
@@ -30,11 +30,23 @@ class User(UserMixin, db.Model):
     def serialize(self):
         """Serialize user into dict."""
         return {
-            'balance': self.balance,
             'created_on': self.created_on,
             'last_login': self.last_login,
+            'accepted_balance': self.accepted_balance,
             'balance_accepted_on': self.balance_accepted_on,
         }
+
+
+class Month(db.Model):
+    """Month data."""
+
+    __tablename__ = 'months'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    date = db.Column(db.DateTime())
+    initial_value = db.Column(db.Integer())
+
+    user_id = db.relationship("User", backref="id")
 
 
 class Category(db.Model):
@@ -43,7 +55,7 @@ class Category(db.Model):
     __tablename__ = 'operation_category'
 
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), primary_key=True)
 
     user_id = db.relationship("User", backref="id")
 

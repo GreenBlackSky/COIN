@@ -6,4 +6,4 @@ Flutter for front end, Flask and Gunicorn for backend, postgresql for db. All wr
 
 `docker run -p 5001:5000 coin-image` - run docker image
 
-`kubectl apply -f deployment.yaml` - deploy COIN with kubernetes
+`docker-compose build; docker-compose up` - dev deployment
