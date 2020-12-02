@@ -2,6 +2,7 @@
 
 from flask import Flask
 from flask_login import LoginManager
+from flask_session import Session
 import logging
 
 
@@ -23,6 +24,7 @@ def create_app():
 
     app.config.from_object('config.Config')
     login_manager.init_app(app)
+    Session(app)
 
     with app.app_context():
         from . import api

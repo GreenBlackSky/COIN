@@ -1,4 +1,6 @@
 nameko
 flask
 flask-login
+flask-session
 gunicorn
+redis
