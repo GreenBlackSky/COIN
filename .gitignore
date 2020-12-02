@@ -4,3 +4,4 @@ __pycache__
 coin_venv
 .webassets-cache
 dst
+redis-data

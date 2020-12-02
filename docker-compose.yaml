@@ -1,8 +1,47 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
+  web_entrypoint:
+    build: ./web_entrypoint/
+    command: gunicorn -b 0.0.0.0:5000 app:app
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 5000:5000
+
+  login_app:
+    build: ./login_app/
+    command: gunicorn -b 0.0.0.0:5001 app:app
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 5001:5001
+    depends_on:
+      - db
+  
+  api_app:
+    build: ./api_app/
+    command: gunicorn -b 0.0.0.0:5002 app:app
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 5002:5002
+    depends_on:
+      - db_app
+      - cache_app
+
+  cache_app:
+    build: ./cache_app/
+    command: 
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 5000:5000
+    depends_on:
+      - redis
+
+  db_app:
+    build: ./db_app/
     command: gunicorn -b 0.0.0.0:5000 app:app
     volumes:
       - ./:/usr/src/app/
@@ -10,6 +49,7 @@ services:
       - 5000:5000
     depends_on:
       - db
+  
   db:
     image: postgres:12-alpine
     volumes:
@@ -18,6 +58,7 @@ services:
       - POSTGRES_USER=coin_app
       - POSTGRES_PASSWORD=qwerty
       - POSTGRES_DB=pgdb
+
   redis:
     image: "redis:alpine"
     command: redis-server --requirepass qwerty

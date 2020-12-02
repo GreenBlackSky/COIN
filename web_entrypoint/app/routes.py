@@ -1,4 +1,4 @@
-"""Routes for GET requests."""
+"""Routes for getting web-client."""
 
 from flask import Blueprint
 from flask import current_app as app

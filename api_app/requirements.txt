@@ -1,0 +1,4 @@
+nameko
+flask
+flask-login
+gunicorn

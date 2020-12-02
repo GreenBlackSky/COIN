@@ -1,20 +1,14 @@
-"""COIN app initialization module."""
-
-# TODO dev mode
-# TODO remove creds
-# TODO tests
+"""LogIn app initialization module."""
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from flask_session import Session
 import logging
 
 
-# TODO pass logs outside
 logging.basicConfig(
     filename='coin.log',
-    format='%(asctime)s %(levelname)s: %(message)s',
+    format='%(asctime)s LogIn app %(levelname)s: %(message)s',
     datefmt='%m/%d/%Y %I:%M:%S %p',
     level=logging.DEBUG
 )
@@ -31,18 +25,10 @@ def create_app():
     app.config.from_object('config.Config')
     db.init_app(app)
     login_manager.init_app(app)
-    Session(app)
 
     with app.app_context():
-        from . import routes
         from . import auth
-        from . import api
-
-        app.register_blueprint(routes.bp)
         app.register_blueprint(auth.bp)
-        app.register_blueprint(api.bp)
-
-        db.create_all()
 
     return app
 
