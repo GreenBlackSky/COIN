@@ -1,3 +1,2 @@
 nameko
-gunicorn
-redis
+nameko_redis
