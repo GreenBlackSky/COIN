@@ -6,36 +6,39 @@ import logging
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 
-from nameko.rpc import RpcProxy
-from nameko.web.handlers import http
+from nameko.standalone.rpc import ServiceRpcProxy
 
 
 bp = Blueprint('api_bp', __name__)
 
 
-class APIService:
-    """API nameko service."""
+def _dispatch_request(request, *keys):
+    data = json.loads(request.get_data(as_text=True))
+    for key in keys:
+        yield data.get(key)
 
-    cache_rpc = RpcProxy("cache_service")
 
-    @staticmethod
-    def _dispatch_request(request, *keys):
-        data = json.loads(request.get_data(as_text=True))
-        for key in keys:
-            yield data.get(key)
+def rpc_proxy():
+    """Get instance of rpc proxy."""
+    config = {'AMQP_URI': 'amqp://guest:guest@localhost/'}
+    return ServiceRpcProxy('tasks', config)
 
-    @http('POST', '/set_test_value')
-    def set_test_value(self, request):
-        """Test integrety of system by creating new key value pair."""
-        key, val = self._dispatch_request(request, 'key', 'val')
-        self.cache_rpc.set_test_value(key, val)
 
-    @http('POST', '/get_test_value')
-    def get_test_value(self, request):
-        """Test integrety of system by getting value by key."""
-        key = self._dispatch_request(request, 'key')
-        val = self.cache_rpc.get_test_value(key)
-        return json.dumps({'val': val})
+@bp.route("/set_test_value", methods=('POST',))
+def set_test_value(request):
+    """Test integrety of system by creating new key value pair."""
+    key, val = _dispatch_request(request, 'key', 'val')
+    with rpc_proxy() as cache_app:
+        cache_app.set_test_value(key, val)
+
+
+@bp.route("/get_test_value", methods=('POST',))
+def get_test_value(request):
+    """Test integrety of system by getting value by key."""
+    key = _dispatch_request(request, 'key')
+    with rpc_proxy() as cache_app:
+        val = cache_app.get_test_value(key)
+    return json.dumps({'val': val})
 
 
 @bp.route("/get_user_data", methods=('POST',))
