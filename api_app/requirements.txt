@@ -1,4 +1,5 @@
 nameko
+flask_nameko
 flask
 flask-login
 gunicorn

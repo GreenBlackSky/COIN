@@ -8,3 +8,5 @@ class Config:
     FLASK_ENV = 'development'
     FLASK_APP = 'auth'
     FLASK_DEBUG = 1
+
+    NAMEKO_AMQP_URI = 'amqp://localhost'

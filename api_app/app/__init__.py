@@ -1,8 +1,10 @@
-"""COIN app initialization module."""
+"""API app initialization module."""
+
+import logging
 
 from flask import Flask
 from flask_login import LoginManager
-import logging
+from flask_nameko import FlaskPooledClusterRpcProxy
 
 
 logging.basicConfig(
@@ -15,6 +17,7 @@ logging.info('Started')
 
 
 login_manager = LoginManager()
+rpc = FlaskPooledClusterRpcProxy()
 
 
 def create_app():
@@ -23,6 +26,7 @@ def create_app():
 
     app.config.from_object('config.Config')
     login_manager.init_app(app)
+    rpc.init_app(app)
 
     with app.app_context():
         from . import api
