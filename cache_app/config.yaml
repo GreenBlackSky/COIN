@@ -1,0 +1,9 @@
+AMQP_URI: 'amqp://localhost:5006'
+rpc_exchange: 'nameko-rpc'
+
+REDIS:
+  DEFAULT:
+    url: 'redis://localhost:5007/0'
+    options:
+      retry_on_timeout: True
+      decode_responses: True

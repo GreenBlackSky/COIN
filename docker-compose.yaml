@@ -26,9 +26,10 @@ services:
       - ./:/usr/src/app/
     ports:
       - 5003:5000
-    # depends_on:
-    #   - db_app
-    #   - redis
+    depends_on:
+      - rabbit
+      - cache_app
+      # - db_app
 
   cache_app:
     build: ./cache_app/
@@ -36,8 +37,9 @@ services:
       - ./:/usr/src/app/
     ports:
       - 5004:5000
-    # depends_on:
-    #   - redis
+    depends_on:
+      - rabbit
+      # - redis
 
   # db_app:
   #   build: ./db_app/
@@ -46,13 +48,13 @@ services:
   #   ports:
   #     - 5005:5000
   #   depends_on:
+  #     - rabbit
   #     - db
-  #     - redis
   
   rabbit:
     image: rabbitmq:3.7-management
     ports:
-        - "5006:5000"
+        - "5006:15672"
     restart: always
 
   # db:
@@ -64,19 +66,26 @@ services:
   #     - POSTGRES_PASSWORD=qwerty
   #     - POSTGRES_DB=pgdb
 
-  # redis:
-  #   image: "redis:alpine"
-  #   command: redis-server --requirepass qwerty
-  #   ports:
-  #     - "5007:5000"
+#   redis:
+#     image: "redis:alpine"
+#     command: redis-server --requirepass qwerty
+#     ports:
+#       - "5007:6379"
 
-  #   volumes:
-  #     - ./redis-data:/var/lib/redis
-  #     - ./redis.conf:/usr/local/etc/redis/redis.conf
+#     volumes:
+#       - ./redis-data:/var/lib/redis
+#       - ./redis.conf:/usr/local/etc/redis/redis.conf
 
-  #   environment:
-  #     - REDIS_REPLICATION_MODE=master
+#     environment:
+#       - REDIS_REPLICATION_MODE=master
 
-  #   networks:
-  #     node_net:
-  #       ipv4_address: 172.28.1.4
+#     networks:
+#       node_net:
+#         ipv4_address: 172.28.1.4
+
+# networks:
+#   node_net:
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: 172.28.0.0/16
