@@ -1,9 +1,9 @@
-AMQP_URI: 'amqp://localhost:5006'
+AMQP_URI: 'amqp://user:password@rabbit:5672'
 rpc_exchange: 'nameko-rpc'
 
-REDIS:
-  DEFAULT:
-    url: 'redis://localhost:5007/0'
-    options:
-      retry_on_timeout: True
-      decode_responses: True
+# REDIS:
+#   DEFAULT:
+#     url: 'redis://localhost:5007/0'
+#     options:
+#       retry_on_timeout: True
+#       decode_responses: True
