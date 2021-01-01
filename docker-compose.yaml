@@ -11,7 +11,7 @@ services:
 
   # login_app:
   #   build: ./login_app/
-  #   command: gunicorn -b 0.0.0.0:5001 app:app
+  #   command: gunicorn -b 0.0.0.0:5000 app:app
   #   volumes:
   #     - ./:/usr/src/app/
   #   ports:
@@ -21,7 +21,7 @@ services:
   
   api_app:
     build: ./api_app/
-    command: gunicorn -b 0.0.0.0:5002 app:app
+    # command: 
     volumes:
       - ./:/usr/src/app/
     ports:
@@ -30,6 +30,9 @@ services:
       - rabbit
       - cache_app
       # - db_app
+    environment:
+      RABBIT_HOST: "rabbit"
+      RABBIT_PORT: "5672"
 
   cache_app:
     build: ./cache_app/
@@ -40,6 +43,9 @@ services:
     depends_on:
       - rabbit
       # - redis
+    environment:
+      RABBIT_HOST: "rabbit"
+      RABBIT_PORT: "5672"
 
   # db_app:
   #   build: ./db_app/
@@ -54,7 +60,8 @@ services:
   rabbit:
     image: rabbitmq:3.7-management
     ports:
-        - "5006:15672"
+        - "15672:15672"
+        - "5672:5672"
     restart: always
 
   # db:
@@ -78,14 +85,3 @@ services:
 
 #     environment:
 #       - REDIS_REPLICATION_MODE=master
-
-#     networks:
-#       node_net:
-#         ipv4_address: 172.28.1.4
-
-# networks:
-#   node_net:
-#     ipam:
-#       driver: default
-#       config:
-#         - subnet: 172.28.0.0/16
