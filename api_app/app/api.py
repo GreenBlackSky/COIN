@@ -14,11 +14,13 @@ bp = Blueprint('api_bp', __name__)
 
 @bp.route("/easy_test", methods=['POST'])
 def easy_test():
+    logging.debug('easy_test')
     return {'val': 'easy'}
 
 
 @bp.route("/simple_test", methods=['POST'])
 def simple_test():
+    logging.debug('simple_test')
     val = rpc.cache_service.simple_test()
     return {'val': val}
 
@@ -29,16 +31,14 @@ def _dispatch_request(request, *keys):
         yield data.get(key)
 
 
-@bp.route("/set_test_value", methods=['POST'])
-def set_test_value():
-    """Test integrity of system by creating new key value pair."""
+@bp.route("/set_redis_test_value", methods=['POST'])
+def set_redis_test_value():
     key, val = _dispatch_request(request, 'key', 'val')
     rpc.cache_service.set_test_value(key, val)
 
 
-@bp.route("/get_test_value", methods=['POST'])
-def get_test_value():
-    """Test integrity of system by getting value by key."""
+@bp.route("/get_redis_test_value", methods=['POST'])
+def get_redis_test_value():
     key = _dispatch_request(request, 'key')
     val = rpc.cache_service.get_test_value(key)
     return {'val': val}

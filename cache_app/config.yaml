@@ -1,6 +1,17 @@
 AMQP_URI: 'amqp://user:password@rabbit:5672'
 rpc_exchange: 'nameko-rpc'
 
+LOGGING:
+    version: 1
+    handlers:
+        console:
+            class: logging.StreamHandler
+    root:
+        level: DEBUG
+        format: '%(asctime)s %(levelname)s: %(message)s'
+        datefmt: '%m/%d/%Y %I:%M:%S %p'
+        handlers: [console]
+
 # REDIS:
 #   DEFAULT:
 #     url: 'redis://localhost:5007/0'

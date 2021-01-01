@@ -8,10 +8,10 @@ from flask_nameko import FlaskPooledClusterRpcProxy
 
 
 logging.basicConfig(
-    filename='coin.log',
     format='%(asctime)s %(levelname)s: %(message)s',
     datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.DEBUG
+    level=logging.DEBUG,
+    handlers=[logging.StreamHandler()]
 )
 logging.info('Started')
 
