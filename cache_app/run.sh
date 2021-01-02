@@ -1,6 +1,6 @@
 #!/bin/bash
 
-until nc -z ${RABBIT_HOST} ${RABBIT_PORT}; do
+until nc -z ${RABBITMQ_HOST} ${RABBITMQ_PORT}; do
     echo "$(date) - waiting for rabbitmq..."
     sleep 2
 done

@@ -1,5 +1,6 @@
 """API app initialization module."""
 
+import os
 import logging
 
 from flask import Flask
@@ -24,7 +25,18 @@ def create_app():
     """Create new flask app."""
     app = Flask(__name__, instance_relative_config=False)
 
-    app.config.from_object('config.Config')
+    app.config.from_mapping(
+        SECRET_KEY=os.environ['SECRET_KEY'],
+        FLASK_ENV=os.environ['FLASK_ENV'],
+        FLASK_APP=os.environ['FLASK_APP'],
+        FLASK_DEBUG=os.environ['FLASK_DEBUG'],
+        NAMEKO_AMQP_URI="amqp://{}:{}@{}:{}".format(
+            os.environ['RABBITMQ_USER'],
+            os.environ['RABBITMQ_PASSWORD'],
+            os.environ['RABBITMQ_HOST'],
+            os.environ['RABBITMQ_PORT'],
+        ),
+    )
     login_manager.init_app(app)
     rpc.init_app(app)
 

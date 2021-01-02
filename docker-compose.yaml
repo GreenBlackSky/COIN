@@ -27,9 +27,8 @@ services:
       - 5003:5000
     depends_on:
       - rabbit
-    environment:
-      RABBIT_HOST: "rabbit"
-      RABBIT_PORT: "5672"
+    env_file:
+      - config.env
 
   cache_app:
     build: ./cache_app/
@@ -40,9 +39,8 @@ services:
     depends_on:
       - rabbit
       # - redis
-    environment:
-      RABBIT_HOST: "rabbit"
-      RABBIT_PORT: "5672"
+    env_file:
+      - config.env
 
   # db_app:
   #   build: ./db_app/
@@ -58,9 +56,8 @@ services:
     image: rabbitmq:3.7-management
     hostname: "rabbit"
     restart: always
-    environment:
-      RABBITMQ_DEFAULT_USER: "user"
-      RABBITMQ_DEFAULT_PASS: "password"
+    env_file:
+      - config.env
     
 
   # db:

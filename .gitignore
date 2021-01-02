@@ -5,3 +5,4 @@ coin_venv
 .webassets-cache
 dst
 redis-data
+config.env

@@ -3,7 +3,6 @@ FROM python:3.7-stretch
 # COPY . /app
 RUN mkdir /app
 RUN chmod +rwx /app
-COPY config.py /app/config.py
 COPY requirements.txt /app/requirements.txt
 COPY run.sh /app/run.sh
 WORKDIR /app
