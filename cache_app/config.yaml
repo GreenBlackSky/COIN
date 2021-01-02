@@ -3,13 +3,16 @@ rpc_exchange: 'nameko-rpc'
 
 LOGGING:
     version: 1
+    formatters:
+        standart:
+            format: '%(asctime)s %(levelname)s: %(message)s'
+            datefmt: '%m/%d/%Y %I:%M:%S %p'
     handlers:
         console:
             class: logging.StreamHandler
+            formatter: standart
     root:
         level: DEBUG
-        format: '%(asctime)s %(levelname)s: %(message)s'
-        datefmt: '%m/%d/%Y %I:%M:%S %p'
         handlers: [console]
 
 # REDIS:

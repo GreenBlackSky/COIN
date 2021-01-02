@@ -5,7 +5,6 @@ Flutter for front end, Flask and Gunicorn for backend, postgresql for db. All wr
 `docker-compose build; docker-compose up` - dev deployment
 
 TODOs
-* logging
 * rebuild free development
 * marshmallow
 * core logic
