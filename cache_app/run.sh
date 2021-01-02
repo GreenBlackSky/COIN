@@ -5,4 +5,4 @@ until nc -z ${RABBIT_HOST} ${RABBIT_PORT}; do
     sleep 2
 done
 
-nameko run --config /app/config.yaml app.cache_service --backdoor 3000
+nameko run --config /app/config.yaml src.cache_service --backdoor 3000

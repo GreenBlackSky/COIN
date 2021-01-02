@@ -6,11 +6,12 @@ Flutter for front end, Flask and Gunicorn for backend, postgresql for db. All wr
 
 TODOs
 * rebuild free development
+* pass configs through environment 
 * marshmallow
-* core logic
 * redis
 * postgres
+* core logic
 * base container
 * flutter
-* prod - deployment
+* production deployment
 * split into submodules

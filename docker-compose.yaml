@@ -22,7 +22,7 @@ services:
   api_app:
     build: ./api_app/
     volumes:
-      - ./:/usr/src/app/
+      - ./api_app/app:/app/app
     ports:
       - 5003:5000
     depends_on:
@@ -34,7 +34,7 @@ services:
   cache_app:
     build: ./cache_app/
     volumes:
-      - ./:/usr/src/app/
+      - ./cache_app/src:/app/src
     ports:
       - 5004:8000
     depends_on:

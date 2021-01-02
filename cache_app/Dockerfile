@@ -1,6 +1,11 @@
 FROM python:3.7-stretch
 
-COPY . /app
+# COPY . /app
+RUN mkdir /app
+RUN chmod +rwx /app
+COPY config.yaml /app/config.yaml
+COPY requirements.txt /app/requirements.txt
+COPY run.sh /app/run.sh
 WORKDIR /app
 
 RUN apt-get update && apt-get -y dist-upgrade
