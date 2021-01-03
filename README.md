@@ -24,7 +24,6 @@ All config values must be stored in `config.env` in project root. It must have f
 * FLASK_DEBUG
 
 TODOs
-* marshmallow
 * redis
 * postgres
 * core logic

@@ -3,14 +3,14 @@
 import logging
 
 from nameko.rpc import rpc
-# from nameko_redis import Redis
+from nameko_redis import Redis
 
 
 class CacheService:
     """Redis-based cache for app data."""
 
     name = "cache_service"
-    # redis = Redis('development')
+    redis = Redis('redis')
 
     @rpc
     def simple_test(self):
@@ -18,11 +18,14 @@ class CacheService:
         return 'simple'
 
     @rpc
-    def set_test_value(self, key, value):
-        pass
-        # self.redis.set(key, value)
+    def test_set_value(self, key, value):
+        logging.debug(f"test_set_value setting {key} : {value}")
+        self.redis.set(key, value)
+        logging.debug(f"test_set_value set {key} : {value}")
 
     @rpc
-    def get_test_value(self, key):
-        pass
-        # return self.redis.get(key)
+    def test_get_value(self, key):
+        logging.debug(f"test_get_value getting {key}")
+        value = self.redis.get(key)
+        logging.debug(f"test_get_value got {key} : {value}")
+        return value

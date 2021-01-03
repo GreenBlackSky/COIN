@@ -16,9 +16,5 @@ LOGGING:
         level: DEBUG
         handlers: [console]
 
-# REDIS:
-#   DEFAULT:
-#     url: 'redis://localhost:5007/0'
-#     options:
-#       retry_on_timeout: True
-#       decode_responses: True
+REDIS_URIS:
+    redis: redis://${REDIS_USER}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${REDIS_INDEX}

@@ -7,7 +7,6 @@ from flask import Blueprint, request
 from flask_login import login_required, current_user
 
 from . import rpc
-from .schemas import TestSchema
 
 
 bp = Blueprint('api_bp', __name__)
@@ -17,8 +16,6 @@ bp = Blueprint('api_bp', __name__)
 def easy_test():
     logging.debug('easy_test')
     ret = {'val': 'easy'}
-    schema = TestSchema()
-    schema.validate(ret)
     return ret
 
 
@@ -26,28 +23,29 @@ def easy_test():
 def simple_test():
     logging.debug('simple_test')
     val = rpc.cache_service.simple_test()
-    schema = TestSchema()
     ret = {'val': val}
-    schema.validate(ret)
     return ret
 
 
 def _dispatch_request(request, *keys):
-    data = request.get_json()
-    for key in keys:
-        yield data.get(key)
+    logging.debug(f"_dispatch_request {request.args}")
+    return [request.args.get(key) for key in keys]
 
 
-@bp.route("/set_redis_test_value", methods=['POST'])
-def set_redis_test_value():
+@bp.route("/test_set_redis_value", methods=['POST'])
+def test_set_redis_value():
     key, val = _dispatch_request(request, 'key', 'val')
-    rpc.cache_service.set_test_value(key, val)
+    logging.debug(f'test_set_redis_value setting {key} : {val}')
+    rpc.cache_service.test_set_value(key, val)
+    logging.debug(f'test_set_redis_value set {key} : {val}')
 
 
-@bp.route("/get_redis_test_value", methods=['POST'])
-def get_redis_test_value():
+@bp.route("/test_get_redis_value", methods=['POST'])
+def test_get_redis_value():
     key = _dispatch_request(request, 'key')
-    val = rpc.cache_service.get_test_value(key)
+    logging.debug(f'test_get_redis_value getting {key}')
+    val = rpc.cache_service.test_get_value(key)
+    logging.debug(f'test_get_redis_value got {key} : {val}')
     return {'val': val}
 
 
