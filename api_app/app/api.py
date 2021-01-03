@@ -7,6 +7,7 @@ from flask import Blueprint, request
 from flask_login import login_required, current_user
 
 from . import rpc
+from .schemas import TestSchema
 
 
 bp = Blueprint('api_bp', __name__)
@@ -15,14 +16,20 @@ bp = Blueprint('api_bp', __name__)
 @bp.route("/easy_test", methods=['POST'])
 def easy_test():
     logging.debug('easy_test')
-    return {'val': 'easy'}
+    ret = {'val': 'easy'}
+    schema = TestSchema()
+    schema.validate(ret)
+    return ret
 
 
 @bp.route("/simple_test", methods=['POST'])
 def simple_test():
     logging.debug('simple_test')
     val = rpc.cache_service.simple_test()
-    return {'val': val}
+    schema = TestSchema()
+    ret = {'val': val}
+    schema.validate(ret)
+    return ret
 
 
 def _dispatch_request(request, *keys):
