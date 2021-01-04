@@ -1,8 +1,8 @@
 from nameko.rpc import rpc
 
 
-class GreetingService:
-    name = "greeting_service"
+class DBService:
+    name = "db_service"
 
     @rpc
     def hello(self, name):

@@ -4,5 +4,6 @@ __pycache__
 coin_venv
 .webassets-cache
 dst
-redis-data
+redis_data
+postgres_data
 config.env

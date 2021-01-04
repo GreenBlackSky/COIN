@@ -34,23 +34,21 @@ services:
     build: ./cache_app/
     volumes:
       - ./cache_app/src:/app/src
-    ports:
-      - 5004:8000
     depends_on:
       - rabbit
-      # - redis
+      - redis
     env_file:
       - config.env
 
-  # db_app:
-  #   build: ./db_app/
-  #   volumes:
-  #     - ./:/usr/src/app/
-  #   ports:
-  #     - 5005:5000
-  #   depends_on:
-  #     - rabbit
-  #     - db
+  db_app:
+    build: ./db_app/
+    volumes:
+      - ./db_app/src:/app/src
+    depends_on:
+      - rabbit
+      - postgres
+    env_file:
+      - config.env
   
   rabbit:
     image: rabbitmq:3.7-management
@@ -63,20 +61,14 @@ services:
     image: "redis:alpine"
     command: redis-server
     volumes:
-      - ./redis-data:/var/lib/redis
-      # - ./redis.conf:/usr/local/etc/redis/redis.conf
-
+      - ./redis/redis_data:/var/lib/redis
+    restart: always
     env_file:
       - config.env
 
-    restart: always
-
-  # db:
-  #   image: postgres:12-alpine
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data/
-  #   environment:
-  #     - POSTGRES_USER=coin_app
-  #     - POSTGRES_PASSWORD=qwerty
-  #     - POSTGRES_DB=pgdb
-
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - ./postgres/postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - config.env

@@ -29,6 +29,8 @@ def simple_test():
 
 def _dispatch_request(request, *keys):
     logging.debug(f"_dispatch_request {request.args}")
+    if len(keys) == 1:
+        return request.args.get(keys[0])
     return [request.args.get(key) for key in keys]
 
 
@@ -38,6 +40,7 @@ def test_set_redis_value():
     logging.debug(f'test_set_redis_value setting {key} : {val}')
     rpc.cache_service.test_set_value(key, val)
     logging.debug(f'test_set_redis_value set {key} : {val}')
+    return {"ok": "ok"}
 
 
 @bp.route("/test_get_redis_value", methods=['POST'])

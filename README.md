@@ -14,20 +14,32 @@ All wrapped up in docker containers.
 * production deployment - kubernetes
 
 All config values must be stored in `config.env` in project root. It must have folowing values:
-* RABBITMQ_USER
-* RABBITMQ_PASSWORD
-* RABBITMQ_HOST
-* RABBITMQ_PORT
-* SECRET_KEY
-* FLASK_ENV
-* FLASK_APP
-* FLASK_DEBUG
+RABBITMQ_USER
+RABBITMQ_PASSWORD
+RABBITMQ_HOST
+RABBITMQ_PORT
+SECRET_KEY
+FLASK_ENV
+FLASK_APP
+FLASK_DEBUG
+REDIS_PASSWORD
+REDIS_HOST
+REDIS_PORT
+REDIS_INDEX
+REDIS_REPLICATION_MODE
+POSTGRES_USER
+POSTGRES_PASSWORD
+POSTGRES_DB
+POSTGRES_HOST
+POSTGRES_PORT
+POSTGRES_NAME
 
 TODOs
-* redis
 * postgres
 * core logic
 * base container
 * flutter
+* remove nameko_flask and nameko_redis
+* redis password
 * production deployment
 * split into submodules
