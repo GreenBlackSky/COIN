@@ -5,6 +5,6 @@ until nc -z ${RABBITMQ_HOST} ${RABBITMQ_PORT}; do
     sleep 2
 done
 
-# alembic upgrade head
+# migrate db
 
 nameko run --config config.yaml src.db_service --backdoor 3000

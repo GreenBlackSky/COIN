@@ -41,8 +41,10 @@ def create_app():
     rpc.init_app(app)
 
     with app.app_context():
-        from . import api
-        app.register_blueprint(api.bp)
+        from . import api_bp
+        from . import test_bp
+        app.register_blueprint(api_bp.bp)
+        app.register_blueprint(test_bp.bp)
 
     return app
 

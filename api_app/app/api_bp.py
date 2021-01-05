@@ -1,7 +1,8 @@
 """Core module contains logic of app."""
 
-import json
+# import json
 import logging
+from functools import wraps
 
 from flask import Blueprint, request
 from flask_login import login_required, current_user
@@ -9,47 +10,17 @@ from flask_login import login_required, current_user
 from . import rpc
 
 
+def log_method(method):
+    @wraps(method)
+    def _wrapper(*args, **kargs):
+        logging.debug(f"start {method.__name__} with {str(args)}, {str(kargs)}")
+        ret = method(*args, **kargs)
+        logging.debug(f"finish {method.__name__} with {str(args)}, {str(kargs)}, {str(ret)}")
+        return ret
+    return _wrapper
+
+
 bp = Blueprint('api_bp', __name__)
-
-
-@bp.route("/easy_test", methods=['POST'])
-def easy_test():
-    logging.debug('easy_test')
-    ret = {'val': 'easy'}
-    return ret
-
-
-@bp.route("/simple_test", methods=['POST'])
-def simple_test():
-    logging.debug('simple_test')
-    val = rpc.cache_service.simple_test()
-    ret = {'val': val}
-    return ret
-
-
-def _dispatch_request(request, *keys):
-    logging.debug(f"_dispatch_request {request.args}")
-    if len(keys) == 1:
-        return request.args.get(keys[0])
-    return [request.args.get(key) for key in keys]
-
-
-@bp.route("/test_set_redis_value", methods=['POST'])
-def test_set_redis_value():
-    key, val = _dispatch_request(request, 'key', 'val')
-    logging.debug(f'test_set_redis_value setting {key} : {val}')
-    rpc.cache_service.test_set_value(key, val)
-    logging.debug(f'test_set_redis_value set {key} : {val}')
-    return {"ok": "ok"}
-
-
-@bp.route("/test_get_redis_value", methods=['POST'])
-def test_get_redis_value():
-    key = _dispatch_request(request, 'key')
-    logging.debug(f'test_get_redis_value getting {key}')
-    val = rpc.cache_service.test_get_value(key)
-    logging.debug(f'test_get_redis_value got {key} : {val}')
-    return {'val': val}
 
 
 # @bp.route("/get_user_data", methods=['POST'])

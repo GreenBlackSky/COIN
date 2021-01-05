@@ -1,9 +1,20 @@
 """Redis-based cache for app data."""
 
 import logging
+from functools import wraps
 
 from nameko.rpc import rpc
 from nameko_redis import Redis
+
+
+def log_method(method):
+    @wraps(method)
+    def _wrapper(*args, **kargs):
+        logging.debug(f"start {method.__name__} with {str(args)}, {str(kargs)}")
+        ret = method(*args, **kargs)
+        logging.debug(f"finish {method.__name__} with {str(args)}, {str(kargs)}, {str(ret)}")
+        return ret
+    return _wrapper
 
 
 class CacheService:
@@ -13,19 +24,17 @@ class CacheService:
     redis = Redis('redis')
 
     @rpc
-    def simple_test(self):
-        logging.debug('simple_test')
-        return 'simple'
+    @log_method
+    def connection_test(self):
+        return 'ok'
 
     @rpc
+    @log_method
     def test_set_value(self, key, value):
-        logging.debug(f"test_set_value setting {key} : {value}")
         self.redis.set(key, value)
-        logging.debug(f"test_set_value set {key} : {value}")
 
     @rpc
+    @log_method
     def test_get_value(self, key):
-        logging.debug(f"test_get_value getting {key}")
         value = self.redis.get(key)
-        logging.debug(f"test_get_value got {key} : {value}")
         return value
