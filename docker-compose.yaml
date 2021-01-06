@@ -8,16 +8,6 @@ services:
   #     - ./:/usr/src/app/
   #   ports:
   #     - 5001:5000
-
-  # login_app:
-  #   build: ./login_app/
-  #   command: gunicorn -b 0.0.0.0:5000 app:app
-  #   volumes:
-  #     - ./:/usr/src/app/
-  #   ports:
-  #     - 5002:5000
-  #   depends_on:
-  #     - db
   
   api_app:
     build: ./api_app/
@@ -62,6 +52,8 @@ services:
     command: redis-server
     volumes:
       - ./redis/redis_data:/var/lib/redis
+    ports:
+      - 5004:6379
     restart: always
     env_file:
       - config.env
@@ -70,5 +62,7 @@ services:
     image: postgres:12-alpine
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5005:5432
     env_file:
       - config.env
