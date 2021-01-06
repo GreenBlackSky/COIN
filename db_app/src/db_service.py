@@ -37,4 +37,4 @@ class DBService:
     @log_method
     def test_get_value(self, data_id):
         data = self.db.query(TestData).get(data_id)
-        return data.value
+        return data.value if data else None

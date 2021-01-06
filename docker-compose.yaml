@@ -42,7 +42,6 @@ services:
   
   rabbit:
     image: rabbitmq:3.7-management
-    hostname: "rabbit"
     restart: always
     env_file:
       - config.env
@@ -52,17 +51,13 @@ services:
     command: redis-server
     volumes:
       - ./redis/redis_data:/var/lib/redis
-    ports:
-      - 5004:6379
     restart: always
     env_file:
       - config.env
 
   postgres:
-    image: postgres:12-alpine
+    build: ./postgres/
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql/data/
-    ports:
-      - 5005:5432
     env_file:
       - config.env

@@ -21,17 +21,17 @@ All config values must be stored in `config.env` in project root. It must have f
 
 `REDIS_PASSWORD REDIS_HOST REDIS_PORT REDIS_INDEX REDIS_REPLICATION_MODE`
 
-`POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB POSTGRES_HOST POSTGRES_PORT POSTGRES_NAME`
+`POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB POSTGRES_HOST POSTGRES_PORT`
 
 
 TODO
-* postgres
 * login
 * base container
 * flutter
 * remove nameko_flask and nameko_redis
 * redis password
 * pg admin
+* create tables in db by models
 * redis admin
 * rabbit admin
 * production deployment

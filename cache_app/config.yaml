@@ -2,6 +2,9 @@ AMQP_URI: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBIT
 
 rpc_exchange: 'nameko-rpc'
 
+REDIS_URIS:
+    redis: redis://${REDIS_HOST}:${REDIS_PORT}/${REDIS_INDEX}
+
 LOGGING:
     version: 1
     formatters:
@@ -15,6 +18,3 @@ LOGGING:
     root:
         level: DEBUG
         handlers: [console]
-
-REDIS_URIS:
-    redis: redis://${REDIS_HOST}:${REDIS_PORT}/${REDIS_INDEX}

@@ -2,7 +2,7 @@
 
 import datetime
 
-from sqlalchemy import DECIMAL, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -15,7 +15,6 @@ class TestData(DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     value = Column(String)
-
 
 
 # class User(UserMixin, db.Model):

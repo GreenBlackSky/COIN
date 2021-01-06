@@ -1,4 +1,18 @@
 AMQP_URI: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}
 
 DB_URIS:
-  "db_service:db": postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME}
+  "db_service:Base": postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+
+LOGGING:
+    version: 1
+    formatters:
+        standart:
+            format: '%(asctime)s %(levelname)s: %(message)s'
+            datefmt: '%m/%d/%Y %I:%M:%S %p'
+    handlers:
+        console:
+            class: logging.StreamHandler
+            formatter: standart
+    root:
+        level: DEBUG
+        handlers: [console]
