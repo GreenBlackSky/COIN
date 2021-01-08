@@ -1,3 +1,5 @@
+"""Postgres based data base handler service."""
+
 import logging
 from functools import wraps
 
@@ -9,9 +11,10 @@ from .models import DeclarativeBase, TestData
 def log_method(method):
     @wraps(method)
     def _wrapper(*args, **kargs):
-        logging.debug(f"start {method.__name__} with {str(args)}, {str(kargs)}")
+        print_args = [arg for arg in args if arg is not method.__self__]
+        logging.debug(f"start {method.__name__} with {str(print_args)}, {str(kargs)}")
         ret = method(*args, **kargs)
-        logging.debug(f"finish {method.__name__} with {str(args)}, {str(kargs)}, {str(ret)}")
+        logging.debug(f"finish {method.__name__} with {str(print_args)}, {str(kargs)}, {str(ret)}")
         return ret
     return _wrapper
 
@@ -38,3 +41,13 @@ class DBService:
     def test_get_value(self, data_id):
         data = self.db.query(TestData).get(data_id)
         return data.value if data else None
+
+    @rpc
+    @log_method
+    def create_user():
+        pass
+
+    @rpc
+    @log_method
+    def get_user():
+        pass

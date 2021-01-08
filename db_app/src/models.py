@@ -6,6 +6,8 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
+from flask_login import UserMixin
+
 
 DeclarativeBase = declarative_base()
 
@@ -17,35 +19,25 @@ class TestData(DeclarativeBase):
     value = Column(String)
 
 
-# class User(UserMixin, db.Model):
-#     """Users table."""
+class User(UserMixin, DeclarativeBase):
+    __tablename__ = 'users'
 
-#     __tablename__ = 'flask_login_users'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(100), nullable=False, unique=False)
+    password_hash = Column(String(200), nullable=False, unique=False)
+    # created_on = db.Column(db.DateTime())
+    # last_login = db.Column(db.DateTime())
+    # accepted_balance = db.Column(db.Integer())
+    # balance_accepted_on = db.Column(db.DateTime())
 
-#     id = db.Column(db.Integer(), primary_key=True)
-#     name = db.Column(db.String(100), nullable=False, unique=False)
-#     password = db.Column(db.String(200), nullable=False, unique=False)
-#     created_on = db.Column(db.DateTime())
-#     last_login = db.Column(db.DateTime())
-#     accepted_balance = db.Column(db.Integer())
-#     balance_accepted_on = db.Column(db.DateTime())
-
-#     def set_password(self, password):
-#         """Set user password."""
-#         self.password = generate_password_hash(password, method='sha256')
-
-#     def check_password(self, password):
-#         """Check user password."""
-#         return check_password_hash(self.password, password)
-
-#     def serialize(self):
-#         """Serialize user into dict."""
-#         return {
-#             'created_on': self.created_on,
-#             'last_login': self.last_login,
-#             'accepted_balance': self.accepted_balance,
-#             'balance_accepted_on': self.balance_accepted_on,
-#         }
+    # def serialize(self):
+    #     """Serialize user into dict."""
+    #     return {
+    #         'created_on': self.created_on,
+    #         'last_login': self.last_login,
+    #         'accepted_balance': self.accepted_balance,
+    #         'balance_accepted_on': self.balance_accepted_on,
+    #     }
 
 
 # class Month(db.Model):

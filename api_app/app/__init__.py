@@ -43,8 +43,10 @@ def create_app():
     with app.app_context():
         from . import api_bp
         from . import test_bp
+        from . import login_bp
         app.register_blueprint(api_bp.bp)
         app.register_blueprint(test_bp.bp)
+        app.register_blueprint(login_bp.bp)
 
     return app
 

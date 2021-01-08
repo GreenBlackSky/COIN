@@ -26,12 +26,13 @@ All config values must be stored in `config.env` in project root. It must have f
 
 TODO
 * login
+* create tables in db by models
+* better tests
 * base container
 * flutter
 * remove nameko_flask and nameko_redis
 * redis password
 * pg admin
-* create tables in db by models
 * redis admin
 * rabbit admin
 * production deployment

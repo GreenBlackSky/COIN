@@ -10,16 +10,6 @@ from flask_login import login_required, current_user
 from . import rpc
 
 
-def log_method(method):
-    @wraps(method)
-    def _wrapper(*args, **kargs):
-        logging.debug(f"start {method.__name__} with {str(args)}, {str(kargs)}")
-        ret = method(*args, **kargs)
-        logging.debug(f"finish {method.__name__} with {str(args)}, {str(kargs)}, {str(ret)}")
-        return ret
-    return _wrapper
-
-
 bp = Blueprint('api_bp', __name__)
 
 
