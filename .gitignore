@@ -7,3 +7,4 @@ dst
 redis_data
 postgres_data
 config.env
+rabbitmq

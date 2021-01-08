@@ -15,7 +15,7 @@ All wrapped up in docker containers.
 
 All config values must be stored in `config.env` in project root. It must have folowing values:
 
-`RABBITMQ_USER RABBITMQ_PASSWORD RABBITMQ_HOST RABBITMQ_PORT`
+`RABBITMQ_DEFAULT_USER RABBITMQ_DEFAULT_PASS RABBITMQ_HOST RABBITMQ_PORT`
 
 `SECRET_KEY FLASK_ENV FLASK_APP FLASK_DEBUG`
 

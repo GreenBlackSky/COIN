@@ -31,8 +31,8 @@ def create_app():
         FLASK_APP=os.environ['FLASK_APP'],
         FLASK_DEBUG=os.environ['FLASK_DEBUG'],
         NAMEKO_AMQP_URI="amqp://{}:{}@{}:{}".format(
-            os.environ['RABBITMQ_USER'],
-            os.environ['RABBITMQ_PASSWORD'],
+            os.environ['RABBITMQ_DEFAULT_USER'],
+            os.environ['RABBITMQ_DEFAULT_PASS'],
             os.environ['RABBITMQ_HOST'],
             os.environ['RABBITMQ_PORT'],
         ),
