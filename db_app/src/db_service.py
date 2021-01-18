@@ -44,10 +44,15 @@ class DBService:
 
     @rpc
     @log_method
-    def create_user():
+    def create_user(self, name, password_hash):
         pass
 
     @rpc
     @log_method
-    def get_user():
+    def get_user(self, user_id):
+        pass
+
+    @rpc
+    @log_method
+    def get_by_name_user(self, name, password_hash):
         pass

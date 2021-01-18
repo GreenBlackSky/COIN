@@ -42,5 +42,11 @@ class CacheService:
 
     @rpc
     @log_method
-    def get_user(user_id):
+    def get_user_by_name(self, name):
+        pass
+
+
+    @rpc
+    @log_method
+    def get_user(self, user_id):
         pass
