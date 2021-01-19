@@ -13,6 +13,8 @@ DeclarativeBase = declarative_base()
 
 
 class TestData(DeclarativeBase):
+    """Test data model."""
+
     __tablename__ = "test_data"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -20,6 +22,8 @@ class TestData(DeclarativeBase):
 
 
 class User(UserMixin, DeclarativeBase):
+    """User model."""
+
     __tablename__ = 'users'
 
     id = Column(Integer(), primary_key=True)

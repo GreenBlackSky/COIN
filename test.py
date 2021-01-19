@@ -56,19 +56,13 @@ def test_login():
         params={'name': "user", 'password': "qwerty"}
     )
     print(responce.text)
+
     responce = requests.post(url=HOST+"test_login")
     print(responce.text)
 
     responce = requests.post(url=HOST+"logout")
     print(responce.text)
-    responce = requests.post(url=HOST+"test_login")
-    print(responce.text)
 
-    responce = requests.post(
-        url=HOST+"login",
-        params={'name': "user", 'password': "ytrewq"}
-    )
-    print(responce.text)
     responce = requests.post(url=HOST+"test_login")
     print(responce.text)
 
@@ -77,6 +71,19 @@ def test_login():
         params={'name': "user", 'password': "qwerty"}
     )
     print(responce.text)
+
+    responce = requests.post(url=HOST+"test_login")
+    print(responce.text)
+
+    responce = requests.post(url=HOST+"logout")
+    print(responce.text)
+
+    responce = requests.post(
+        url=HOST+"login",
+        params={'name': "user", 'password': "ytrewq"}
+    )
+    print(responce.text)
+
     responce = requests.post(url=HOST+"test_login")
     print(responce.text)
 
@@ -85,6 +92,7 @@ def test_login():
         params={'name': "user", 'password': "ytrewq"}
     )
     print(responce.text)
+
     responce = requests.post(url=HOST+"test_login")
     print(responce.text)
 

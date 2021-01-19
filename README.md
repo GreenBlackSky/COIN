@@ -26,6 +26,8 @@ All config values must be stored in `config.env` in project root. It must have f
 
 TODO
 * login
+* wrap communication with json
+* marshmallow schema
 * create tables in db by models
 * better tests
 * base container

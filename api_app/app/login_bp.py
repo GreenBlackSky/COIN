@@ -20,11 +20,11 @@ def register():
     if name is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password).hexdigest()  # TODO use actual hashing
-    responce = rpc.db_service.create_user(name, password_hash)
-    if responce['status'] == "OK":
-        login_user(responce['user'])
-        return {'status': 'OK'}
-    return responce
+    user = rpc.db_service.create_user(name, password_hash)
+    if user is None:
+        return {'status': 'service problem'}
+    login_user(user)
+    return {'status': 'OK'}
 
 
 @bp.route("/login", methods=['POST'])
@@ -35,13 +35,13 @@ def login():
     if name is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password).hexdigest()
-    responce = rpc.cache_service.get_user_by_name(name)
-    if responce['status'] == 'OK':
-        if responce['user'].password_hash != password_hash:
-            return {'status': 'WRONG PASSWORD'}
-        login_user(responce['user'])
-        return {'status': 'OK'}
-    return responce
+    user = rpc.cache_service.get_user_by_name(name)
+    if user is None:
+        return {'status': 'service problem'}
+    if user.password_hash != password_hash:
+        return {'status': 'WRONG PASSWORD'}
+    login_user(user)
+    return {'status': 'OK'}
 
 
 @login_required
@@ -49,7 +49,7 @@ def login():
 def logout():
     """Log out user."""
     logout_user()
-    return {"logged": "out"}
+    return {"status": "OK"}
 
 
 @login_manager.user_loader
