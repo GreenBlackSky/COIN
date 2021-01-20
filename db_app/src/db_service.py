@@ -5,7 +5,9 @@ from functools import wraps
 
 from nameko.rpc import rpc
 from nameko_sqlalchemy import DatabaseSession
-from .models import DeclarativeBase, TestData, User
+
+from .models import DeclarativeBase, TestData, User as UserModel
+from .schemas import UserSchema
 
 
 def log_method(method):
@@ -54,22 +56,28 @@ class DBService:
     @log_method
     def create_user(self, name, password_hash):
         """Create new user object and get it back."""
-        user = self.db.query(User).filter_by(name=name).first()
+        user = self.db.query(UserModel).filter_by(name=name).first()
         if user:
             return None
-        user = User(name=name, password_hash=password_hash)
+        user = UserModel(name=name, password_hash=password_hash)
         self.db.add(user)
         self.db.commit()
-        return user
+        return UserSchema().dump(user)
 
     @rpc
     @log_method
     def get_user_by_name(self, name):
         """Get user by name."""
-        return self.db.query(User).filter_by(name=name).first()
+        user = self.db.query(UserModel).filter_by(name=name).first()
+        if user is None:
+            return None
+        return UserSchema().dump(user)
 
     @rpc
     @log_method
     def get_user(self, user_id):
         """Get user by id."""
-        return self.db.query(User).get(user_id)
+        user = self.db.query(UserModel).get(user_id)
+        if user is None:
+            return None
+        return UserSchema().dump(user)

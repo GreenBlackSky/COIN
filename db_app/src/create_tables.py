@@ -1,1 +1,1 @@
-from .models import DeclarativeBase
+from models import DeclarativeBase

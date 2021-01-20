@@ -2,3 +2,5 @@ nameko
 sqlalchemy
 psycopg2-binary
 nameko-sqlalchemy
+marshmallow
+flask-login

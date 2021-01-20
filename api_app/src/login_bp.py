@@ -5,7 +5,9 @@ from hashlib import md5
 from flask import Blueprint, request
 from flask_login import login_user, login_required, current_user, logout_user
 
-from . import rpc, LoginManager
+from . import rpc, login_manager
+from .schemas import UserSchema
+
 
 bp = Blueprint('login_bp', __name__)
 
@@ -23,6 +25,7 @@ def register():
     user = rpc.db_service.create_user(name, password_hash)
     if user is None:
         return {'status': 'service problem'}
+    user = UserSchema().load(user)
     login_user(user)
     return {'status': 'OK'}
 
@@ -38,6 +41,7 @@ def login():
     user = rpc.cache_service.get_user_by_name(name)
     if user is None:
         return {'status': 'service problem'}
+    user = UserSchema().load(user)
     if user.password_hash != password_hash:
         return {'status': 'WRONG PASSWORD'}
     login_user(user)
@@ -55,8 +59,10 @@ def logout():
 @login_manager.user_loader
 def load_user(user_id):
     """Load user handler."""
-    user = rpc.cache_service.get_user(user_id)  # use marshmallow
-    return user
+    user = rpc.cache_service.get_user(user_id)
+    if user is None:
+        return None
+    return UserSchema().load(user)
 
 
 @login_manager.unauthorized_handler
