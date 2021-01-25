@@ -12,12 +12,10 @@ from . import rpc
 def log_method(method):
     """Decorate method for logging its input and output."""
     @wraps(method)
-    def _wrapper():
-        logging.debug(f"start {method.__name__} with {str(request.args)}")
-        ret = method()
-        logging.debug(
-            f"finish {method.__name__} with {str(request.args)}, {str(ret)}"
-        )
+    def _wrapper(*args, **kargs):
+        logging.debug(f"start {method.__name__}")
+        ret = method(*args, **kargs)
+        logging.debug(f"finish {method.__name__}")
         return ret
     return _wrapper
 

@@ -36,35 +36,35 @@ def test_postgres():
         url=HOST+"test_set_postgres_value",
         params={'val': "?"}
     )
-    print(responce.text)
+    print("test_set_postgres_value", responce.text)
 
     key = list(eval(responce.text).keys())[0]
     responce = requests.post(
         url=HOST+"test_get_postgres_value",
         params={'key': key}
     )
-    print(responce.text)
+    print("test_get_postgres_value", responce.text)
 
 
 def test_login():
     """Test login stuff."""
     responce = requests.post(url=HOST+"test_login")
-    print(responce.text)
+    print("test_login", responce.text)
 
     responce = requests.post(
         url=HOST+"register",
         params={'name': "user", 'password': "qwerty"}
     )
-    print(responce.text)
+    print("register", responce.text)
 
     responce = requests.post(url=HOST+"test_login")
-    print(responce.text)
+    print("test_login", responce.text)
 
     responce = requests.post(url=HOST+"logout")
-    print(responce.text)
+    print("logout", responce.text)
 
     responce = requests.post(url=HOST+"test_login")
-    print(responce.text)
+    print("test_login", responce.text)
 
     responce = requests.post(
         url=HOST+"login",

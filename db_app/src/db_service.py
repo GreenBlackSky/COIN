@@ -14,12 +14,9 @@ def log_method(method):
     """Decorate method to log its input and output."""
     @wraps(method)
     def _wrapper(*args, **kargs):
-        print_args = [arg for arg in args if arg is not method.__self__]
-        logging.debug(f"start {method.__name__} with {str(print_args)}")
+        logging.debug(f"start {method.__name__}")
         ret = method(*args, **kargs)
-        logging.debug(
-            f"finish {method.__name__} with {str(print_args)}, {str(ret)}"
-        )
+        logging.debug(f"finish {method.__name__}")
         return ret
     return _wrapper
 
