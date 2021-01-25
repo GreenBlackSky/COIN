@@ -10,5 +10,4 @@ until nc -z ${POSTGRES_HOST} ${POSTGRES_PORT}; do
     sleep 2
 done
 
-# python src/create_tables.py && \
 nameko run --config config.yaml src.db_service --backdoor 3000

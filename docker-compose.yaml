@@ -12,7 +12,7 @@ services:
   api_app:
     build: ./api_app/
     volumes:
-      - ./api_app/src:/app/app
+      - ./api_app/app:/app/app
     ports:
       - 5003:5000
     depends_on:
