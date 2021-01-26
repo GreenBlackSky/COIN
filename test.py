@@ -1,104 +1,123 @@
 """Some test methods."""
 
+import unittest
 import requests
 
 
-HOST = "http://localhost:5003/"
+class Integration(unittest.TestCase):
+    """Class for coin tests."""
 
+    HOST = "http://localhost:5003/"
 
-def test_connection():
-    """Check if every service is up and accessible."""
-    tests = [
-        "access_test",
-        "connection_test",
-    ]
+    def test_access(self):
+        """Check if every service is up and accessible."""
+        responce = requests.post(url=self.HOST+"access_test")
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(responce.json(), {'access': 'ok'}, "Wrong answear")
 
-    for URL in tests:
-        responce = requests.post(url=HOST+URL)
-        print(URL, responce.text)
+    def test_connection(self):
+        """Check if every service is up and accessible."""
+        responce = requests.post(url=self.HOST+"connection_test")
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(
+            responce.json(),
+            {'redis_val': 'ok', 'postgres_val': 'ok'},
+            "Wrong answear"
+        )
 
+    def test_set_redis_value(self):
+        """Try setting value in redis."""
+        responce = requests.post(
+            url=self.HOST+"test_set_redis_value",
+            params={'key': 99, 'val': "!"}
+        )
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(
+            responce.json(),
+            {'99': '!'},
+            "Wrong answear"
+        )
 
-def test_redis():
-    """Check if redis is up and running."""
-    tests = {
-        "test_set_redis_value": {'key': 99, 'val': "!"},
-        "test_get_redis_value": {'key': 99},
-    }
+    def test_get_redis_value(self):
+        """Try getting value from redis."""
+        responce = requests.post(
+            url=self.HOST+"test_get_redis_value",
+            params={'key': 99}
+        )
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(
+            responce.json(),
+            {'99': '!'},
+            "Wrong answear"
+        )
 
-    for URL, params in tests.items():
-        responce = requests.post(url=HOST+URL, params=params)
-        print(URL, responce.text)
+    def test_postgres(self):
+        """Try setting value in postgres and getting it back."""
+        responce = requests.post(
+            url=self.HOST+"test_set_postgres_value",
+            params={'val': "?"}
+        )
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        key, val = list(responce.json().items())[0]
+        self.assertEqual(val, '?', "Wrong value")
 
+        responce = requests.post(
+            url=self.HOST+"test_get_postgres_value",
+            params={'key': key}
+        )
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(
+            responce.json(),
+            {key: '?'},
+            "Wrong answear"
+        )
 
-def test_postgres():
-    """Check if postgres up and running."""
-    responce = requests.post(
-        url=HOST+"test_set_postgres_value",
-        params={'val': "?"}
-    )
-    print("test_set_postgres_value", responce.text)
+    def test_unautharized(self):
+        responce = requests.post(url=self.HOST+"test_login")
+        print("test_login", responce.text)
 
-    key = list(eval(responce.text).keys())[0]
-    responce = requests.post(
-        url=HOST+"test_get_postgres_value",
-        params={'key': key}
-    )
-    print("test_get_postgres_value", responce.text)
+    def test_register(self):
+        responce = requests.post(
+            url=self.HOST+"register",
+            params={'name': "user", 'password': "qwerty"}
+        )
+        print("register", responce.text)
 
+        responce = requests.post(url=self.HOST+"test_login")
+        print("test_login", responce.text)
 
-def test_login():
-    """Test login stuff."""
-    responce = requests.post(url=HOST+"test_login")
-    print("test_login", responce.text)
+        responce = requests.post(url=self.HOST+"logout")
+        print("logout", responce.text)
 
-    responce = requests.post(
-        url=HOST+"register",
-        params={'name': "user", 'password': "qwerty"}
-    )
-    print("register", responce.text)
+    def test_login(self):
+        responce = requests.post(
+            url=self.HOST+"login",
+            params={'name': "user", 'password': "qwerty"}
+        )
+        print(responce.text)
 
-    responce = requests.post(url=HOST+"test_login")
-    print("test_login", responce.text)
+        responce = requests.post(url=self.HOST+"test_login")
+        print(responce.text)
 
-    responce = requests.post(url=HOST+"logout")
-    print("logout", responce.text)
+        responce = requests.post(url=self.HOST+"logout")
+        print(responce.text)
 
-    responce = requests.post(url=HOST+"test_login")
-    print("test_login", responce.text)
+    def test_wrong_password(self):
+        responce = requests.post(
+            url=self.HOST+"login",
+            params={'name': "user", 'password': "ytrewq"}
+        )
+        print(responce.text)
 
-    responce = requests.post(
-        url=HOST+"login",
-        params={'name': "user", 'password': "qwerty"}
-    )
-    print(responce.text)
+        responce = requests.post(url=self.HOST+"test_login")
+        print(responce.text)
 
-    responce = requests.post(url=HOST+"test_login")
-    print(responce.text)
+    def test_duplicate_register(self):
+        responce = requests.post(
+            url=self.HOST+"register",
+            params={'name': "user", 'password': "ytrewq"}
+        )
+        print(responce.text)
 
-    responce = requests.post(url=HOST+"logout")
-    print(responce.text)
-
-    responce = requests.post(
-        url=HOST+"login",
-        params={'name': "user", 'password': "ytrewq"}
-    )
-    print(responce.text)
-
-    responce = requests.post(url=HOST+"test_login")
-    print(responce.text)
-
-    responce = requests.post(
-        url=HOST+"register",
-        params={'name': "user", 'password': "ytrewq"}
-    )
-    print(responce.text)
-
-    responce = requests.post(url=HOST+"test_login")
-    print(responce.text)
-
-
-if __name__ == "__main__":
-    test_connection()
-    test_redis()
-    test_postgres()
-    test_login()
+        responce = requests.post(url=self.HOST+"test_login")
+        print(responce.text)
