@@ -11,9 +11,8 @@ from . import rpc, login_manager
 from .schemas import UserSchema
 
 
-bp = Blueprint('login_bp', __name__)
-
 # TODO refactor
+bp = Blueprint('login_bp', __name__)
 
 
 def log_method(method):
@@ -86,4 +85,4 @@ def load_user(user_id):
 @log_method
 def unauthorized():
     """Unauthorized access handler."""
-    return {"user_id": None}
+    return {"status": "Unauthorized access"}

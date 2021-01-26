@@ -26,12 +26,12 @@ All config values must be stored in `config.env` in project root. It must have f
 
 TODO
 * login
-* better tests
 * common model for db and marshmallow for every service
 * log call results and args
 * base container
 * flutter
 * remove nameko_flask and nameko_redis
+* flask_test and nameko_test
 * redis password
 * pg admin
 * redis admin

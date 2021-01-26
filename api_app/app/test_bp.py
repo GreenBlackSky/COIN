@@ -76,9 +76,12 @@ def test_get_potgres_value():
     return {key: val}
 
 
-@login_required
 @bp.route("/test_login", methods=['POST'])
+@login_required
 @log_method
 def test_login():
     """Test method for logged in user."""
-    return {'user_id': current_user.id}
+    return {
+        'status': "OK",
+        'user_id': current_user.id
+    }
