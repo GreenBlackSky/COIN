@@ -9,6 +9,14 @@ class Integration(unittest.TestCase):
 
     HOST = "http://localhost:5003/"
 
+    def setUp(self):
+        """Set test values."""
+        self._user_name = "user1"
+        self._user_password = "pass1"
+        self._wrong_user_password = "ass1"
+        self._duplicate_user_name = "user2"
+        self._duplicate_user_password = "pass2"
+
     def test_access(self):
         """Check if every service is up and accessible."""
         responce = requests.post(url=self.HOST+"access_test")
@@ -73,26 +81,39 @@ class Integration(unittest.TestCase):
         )
 
     def test_unautharized(self):
+        """Try unautharized access to app."""
         responce = requests.post(url=self.HOST+"test_login")
-        print("test_login", responce.text)
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(
+            responce.json(),
+            {"status": "Unauthorized access"},
+            "Wrong answear"
+        )
 
     def test_register(self):
         responce = requests.post(
             url=self.HOST+"register",
-            params={'name': "user", 'password': "qwerty"}
+            params={'name': self._user_name, 'password': self._user_password}
         )
-        print("register", responce.text)
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(responce.json(), {'status': 'OK'}, "Wrong answear")
 
         responce = requests.post(url=self.HOST+"test_login")
-        print("test_login", responce.text)
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictContainsSubset(
+            {'status': "OK"},
+            responce.json(),
+            "Wrong answear"
+        )
 
         responce = requests.post(url=self.HOST+"logout")
-        print("logout", responce.text)
+        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        self.assertDictEqual(responce.json(), {'status': 'OK'}, "Wrong answear")
 
     def test_login(self):
         responce = requests.post(
             url=self.HOST+"login",
-            params={'name': "user", 'password': "qwerty"}
+            params={'name': self._user_name, 'password': self._user_password}
         )
         print(responce.text)
 
@@ -119,5 +140,7 @@ class Integration(unittest.TestCase):
         )
         print(responce.text)
 
-        responce = requests.post(url=self.HOST+"test_login")
-        print(responce.text)
+        responce = requests.post(
+            url=self.HOST+"register",
+            params={'name': "user", 'password': "ytrewq"}
+        )
