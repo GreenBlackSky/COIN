@@ -91,6 +91,7 @@ class Integration(unittest.TestCase):
         )
 
     def test_register(self):
+        """Test regestring new user."""
         responce = requests.post(
             url=self.HOST+"register",
             params={'name': self._user_name, 'password': self._user_password}
@@ -111,6 +112,7 @@ class Integration(unittest.TestCase):
         self.assertDictEqual(responce.json(), {'status': 'OK'}, "Wrong answear")
 
     def test_login(self):
+        """Test logging in."""
         responce = requests.post(
             url=self.HOST+"login",
             params={'name': self._user_name, 'password': self._user_password}
@@ -124,6 +126,7 @@ class Integration(unittest.TestCase):
         print(responce.text)
 
     def test_wrong_password(self):
+        """Try logging in with wrong password."""
         responce = requests.post(
             url=self.HOST+"login",
             params={'name': "user", 'password': "ytrewq"}
@@ -134,6 +137,7 @@ class Integration(unittest.TestCase):
         print(responce.text)
 
     def test_duplicate_register(self):
+        """Try register user two times in a row."""
         responce = requests.post(
             url=self.HOST+"register",
             params={'name': "user", 'password': "ytrewq"}

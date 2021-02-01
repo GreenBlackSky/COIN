@@ -52,7 +52,7 @@ class CacheService:
         return User
 
     def _get_and_cache_user_from_db(self, user_id=None, user_name=None):
-        assert (user_name is None) == (user_id is None), "Either user_name or user_id must be specified"
+        assert (user_name is None) == (user_id is None), f"Either user_name or user_id must be specified; name {user_name}; id {user_id}"
         if user_id is not None:
             user = rpc.db_service.get_user(user_id)
         else:
