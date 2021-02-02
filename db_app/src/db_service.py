@@ -83,6 +83,6 @@ class DBService:
     @log_method
     def clear_users(self):
         """Clear all users."""
-        count = UserModel.query.delete()
-        self.db.session.commit()
+        count = self.db.query(UserModel).delete()
+        self.db.commit()
         return count

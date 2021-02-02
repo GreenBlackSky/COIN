@@ -92,6 +92,8 @@ class Integration(unittest.TestCase):
 
     def test_register(self):
         """Test regestring new user."""
+        requests.post(url=self.HOST+"clear_users")
+
         session = requests.Session()
         responce = session.post(
             url=self.HOST+"register",

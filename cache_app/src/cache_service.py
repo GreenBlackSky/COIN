@@ -45,27 +45,20 @@ class CacheService:
         value = self.redis.get(key)
         return value
 
-    def _get_user_from_cache(self, user_id):
-        user = self.redis.hget('user', user_id)
-        if user is None:
-            return None
-        return UserSchema().loads(user)
-
-    def _get_user_from_db(self, user_id):
-        user = rpc.db_service.get_user(user_id)
-        if user is None:
-            return None
-        return UserSchema().load(user)
-
     @rpc
     @log_method
     def get_user(self, user_id):
         """Get user from db service and cache it."""
-        user = self._get_user_from_cache(user_id)
+        user = self.redis.hget('user', user_id)
         if user is None:
-            user = self._get_user_from_db(user_id)
-        if user is None:
-            return None
+            user = rpc.db_service.get_user(user_id)
+            if user is None:
+                return None
+            else:
+                user = UserSchema().load(user)
+        else:
+            user = UserSchema().loads(user)
+
         self.redis.hset('user', user.id, UserSchema().dumps(user))
         return UserSchema().dump(user)
 
