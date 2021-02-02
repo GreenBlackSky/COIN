@@ -30,6 +30,8 @@ def log_method(method):
 @log_method
 def register():
     """Register new user."""
+    if current_user.is_authenticated:
+        return {'status': 'already authorized'}
     name = request.args.get('name')
     password = request.args.get('password')
     if name is None or password is None:

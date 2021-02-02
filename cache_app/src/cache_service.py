@@ -3,7 +3,7 @@
 import logging
 from functools import wraps
 
-from nameko.rpc import rpc
+from nameko.rpc import rpc, RpcProxy
 from nameko_redis import Redis
 
 from .schemas import UserSchema, User
@@ -25,6 +25,7 @@ class CacheService:
 
     name = "cache_service"
     redis = Redis('redis')
+    db_service = RpcProxy('db_service')
 
     @rpc
     @log_method
@@ -51,15 +52,14 @@ class CacheService:
         """Get user from db service and cache it."""
         user = self.redis.hget('user', user_id)
         if user is None:
-            user = rpc.db_service.get_user(user_id)
+            user = self.db_service.get_user(user_id)
             if user is None:
                 return None
             else:
                 user = UserSchema().load(user)
+                self.redis.hset('user', user.id, UserSchema().dumps(user))
         else:
             user = UserSchema().loads(user)
-
-        self.redis.hset('user', user.id, UserSchema().dumps(user))
         return UserSchema().dump(user)
 
     @rpc

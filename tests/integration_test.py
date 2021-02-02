@@ -9,19 +9,15 @@ class Integration(unittest.TestCase):
 
     HOST = "http://localhost:5003/"
 
-    def setUp(self):
-        """Set test values."""
-        self._user_name = "user1"
-        self._user_password = "pass1"
-        self._wrong_user_password = "ass1"
-        self._duplicate_user_name = "user2"
-        self._duplicate_user_password = "pass2"
-
     def test_access(self):
         """Check if every service is up and accessible."""
         responce = requests.post(url=self.HOST+"access_test")
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictEqual(responce.json(), {'access': 'ok'}, "Wrong answear")
+        self.assertDictEqual(
+            responce.json(),
+            {'access': 'ok'},
+            "Wrong answear"
+        )
 
     def test_connection(self):
         """Check if every service is up and accessible."""
@@ -78,76 +74,4 @@ class Integration(unittest.TestCase):
             responce.json(),
             {key: '?'},
             "Wrong answear"
-        )
-
-    def test_unautharized(self):
-        """Try unautharized access to app."""
-        responce = requests.post(url=self.HOST+"test_login")
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictEqual(
-            responce.json(),
-            {"status": "Unauthorized access"},
-            "Wrong answear"
-        )
-
-    def test_register(self):
-        """Test regestring new user."""
-        requests.post(url=self.HOST+"clear_users")
-
-        session = requests.Session()
-        responce = session.post(
-            url=self.HOST+"register",
-            params={'name': self._user_name, 'password': self._user_password}
-        )
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictEqual(responce.json(), {'status': 'OK'}, "Wrong answear")
-
-        responce = session.post(url=self.HOST+"test_login")
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictContainsSubset(
-            {'status': "OK"},
-            responce.json(),
-            "Wrong answear"
-        )
-
-        responce = session.post(url=self.HOST+"logout")
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictEqual(responce.json(), {'status': 'OK'}, "Wrong answear")
-
-    def test_login(self):
-        """Test logging in."""
-        responce = requests.post(
-            url=self.HOST+"login",
-            params={'name': self._user_name, 'password': self._user_password}
-        )
-        print(responce.text)
-
-        responce = requests.post(url=self.HOST+"test_login")
-        print(responce.text)
-
-        responce = requests.post(url=self.HOST+"logout")
-        print(responce.text)
-
-    def test_wrong_password(self):
-        """Try logging in with wrong password."""
-        responce = requests.post(
-            url=self.HOST+"login",
-            params={'name': "user", 'password': "ytrewq"}
-        )
-        print(responce.text)
-
-        responce = requests.post(url=self.HOST+"test_login")
-        print(responce.text)
-
-    def test_duplicate_register(self):
-        """Try register user two times in a row."""
-        responce = requests.post(
-            url=self.HOST+"register",
-            params={'name': "user", 'password': "ytrewq"}
-        )
-        print(responce.text)
-
-        responce = requests.post(
-            url=self.HOST+"register",
-            params={'name': "user", 'password': "ytrewq"}
         )
