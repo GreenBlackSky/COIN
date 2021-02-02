@@ -85,3 +85,11 @@ def test_login():
         'status': "OK",
         'user_id': current_user.id
     }
+
+
+@bp.route("/clear_users", methods=['POST'])
+@log_method
+def clear():
+    """Clear all users from db and clear cache."""
+    count = rpc.db_service.clear_users()
+    return {"users removed": count}

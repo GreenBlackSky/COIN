@@ -37,7 +37,7 @@ def register():
     password_hash = md5(password.encode()).hexdigest()  # TODO use actual hashing
     user = rpc.db_service.create_user(name, password_hash)
     if user is None:
-        return {'status': 'service problem'}
+        return {'status': 'user already exists'}
     user = UserSchema().load(user)
     login_user(user)
     return {'status': 'OK'}
@@ -52,12 +52,12 @@ def login():
     if name is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password.encode()).hexdigest()
-    user = rpc.cache_service.get_user_by_name(name)
+    user = rpc.db_service.get_user_by_name(name)
     if user is None:
-        return {'status': 'service problem'}
+        return {'status': 'no such user'}
     user = UserSchema().load(user)
     if user.password_hash != password_hash:
-        return {'status': 'WRONG PASSWORD'}
+        return {'status': 'wrong password'}
     login_user(user)
     return {'status': 'OK'}
 
@@ -85,4 +85,4 @@ def load_user(user_id):
 @log_method
 def unauthorized():
     """Unauthorized access handler."""
-    return {"status": "Unauthorized access"}
+    return {"status": "unauthorized access"}

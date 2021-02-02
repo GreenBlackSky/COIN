@@ -78,3 +78,11 @@ class DBService:
         if user is None:
             return None
         return UserSchema().dump(user)
+
+    @rpc
+    @log_method
+    def clear_users(self):
+        """Clear all users."""
+        count = UserModel.query.delete()
+        self.db.session.commit()
+        return count

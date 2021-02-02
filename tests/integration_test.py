@@ -92,14 +92,15 @@ class Integration(unittest.TestCase):
 
     def test_register(self):
         """Test regestring new user."""
-        responce = requests.post(
+        session = requests.Session()
+        responce = session.post(
             url=self.HOST+"register",
             params={'name': self._user_name, 'password': self._user_password}
         )
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictEqual(responce.json(), {'status': 'OK'}, "Wrong answear")
 
-        responce = requests.post(url=self.HOST+"test_login")
+        responce = session.post(url=self.HOST+"test_login")
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictContainsSubset(
             {'status': "OK"},
@@ -107,7 +108,7 @@ class Integration(unittest.TestCase):
             "Wrong answear"
         )
 
-        responce = requests.post(url=self.HOST+"logout")
+        responce = session.post(url=self.HOST+"logout")
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictEqual(responce.json(), {'status': 'OK'}, "Wrong answear")
 

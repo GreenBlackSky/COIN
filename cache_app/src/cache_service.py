@@ -47,32 +47,15 @@ class CacheService:
 
     def _get_user_from_cache(self, user_id):
         user = self.redis.hget('user', user_id)
-        if user is not None:
-            user = UserSchema().loads(user)
-        return User
-
-    def _get_and_cache_user_from_db(self, user_id=None, user_name=None):
-        assert (user_name is None) == (user_id is None), f"Either user_name or user_id must be specified; name {user_name}; id {user_id}"
-        if user_id is not None:
-            user = rpc.db_service.get_user(user_id)
-        else:
-            user = rpc.db_service.get_user_by_name(name)
         if user is None:
             return None
-        user = UserSchema().load(user)
-        self.redis.hset('user_id', user.name)
-        self.redis.hset('user', UserSchema().dumps(user))
-        return UserSchema().dump(user)
+        return UserSchema().loads(user)
 
-    @rpc
-    @log_method
-    def get_user_by_name(self, name):
-        """Get user from db service by name and cache it in redis."""
-        user_id = self.redis.hget('user_id', name)
-        if user_id is not None:
-            return self._get_user_from_cache(user_id)
-        else:
-            return self._get_and_cache_user_from_db(user_name=name)
+    def _get_user_from_db(self, user_id):
+        user = rpc.db_service.get_user(user_id)
+        if user is None:
+            return None
+        return UserSchema().load(user)
 
     @rpc
     @log_method
@@ -80,5 +63,14 @@ class CacheService:
         """Get user from db service and cache it."""
         user = self._get_user_from_cache(user_id)
         if user is None:
-            user = self._get_and_cache_user_from_db(user_id=user_id)
-        return user
+            user = self._get_user_from_db(user_id)
+        if user is None:
+            return None
+        self.redis.hset('user', user.id, UserSchema().dumps(user))
+        return UserSchema().dump(user)
+
+    @rpc
+    @log_method
+    def clear(self):
+        """Clear cache."""
+        self.redis.flushdb()
