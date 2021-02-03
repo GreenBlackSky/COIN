@@ -28,13 +28,16 @@ TODO
 * common model for db and marshmallow for every service
 * base container
 * log call results and args
+* flask unit tests
+* nameko unit tests
+* flutter app
 * run tests with github actions
-* flutter
 * remove nameko_flask and nameko_redis
-* flask_test and nameko_test
 * redis password
 * pg admin
 * redis admin
 * rabbit admin
-* production deployment
 * split into submodules
+* dev mode
+* debug method decorator
+* production deployment

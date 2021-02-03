@@ -11,7 +11,6 @@ from . import rpc, login_manager
 from .schemas import UserSchema
 
 
-# TODO refactor
 bp = Blueprint('login_bp', __name__)
 
 

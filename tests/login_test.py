@@ -78,15 +78,6 @@ class Login(unittest.TestCase):
         self._register(session, self._user_name, self._user_password)
         self._try(session)
 
-    def test_login(self):
-        """Test logging in."""
-        requests.post(url=self.HOST+"clear_users")
-        session = requests.Session()
-        self._register(session, self._user_name, self._user_password)
-        self._logout(session)
-        self._login(session)
-        self._try(session)
-
     def test_logout(self):
         """Test logging out."""
         requests.post(url=self.HOST+"clear_users")
@@ -94,6 +85,16 @@ class Login(unittest.TestCase):
         self._register(session, self._user_name, self._user_password)
         self._logout(session)
         self._try(session, authorized=False)
+
+    def test_login(self):
+        """Test logging in."""
+        requests.post(url=self.HOST+"clear_users")
+        session = requests.Session()
+        self._register(session, self._user_name, self._user_password)
+        self._logout(session)
+        self._try(session, authorized=False)
+        self._login(session)
+        self._try(session)
 
     def test_wrong_password(self):
         """Try logging in with wrong password."""
