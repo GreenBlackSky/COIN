@@ -1,23 +1,12 @@
 """Flask blueprint with test methods."""
 
-import logging
-from functools import wraps
-
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 
+from common.debug_tools import log_method
+from common.schemas import UserSchema
+
 from . import rpc
-
-
-def log_method(method):
-    """Decorate method for logging its input and output."""
-    @wraps(method)
-    def _wrapper(*args, **kargs):
-        logging.debug(f"start {method.__name__}")
-        ret = method(*args, **kargs)
-        logging.debug(f"finish {method.__name__}")
-        return ret
-    return _wrapper
 
 
 bp = Blueprint('test_bp', __name__)

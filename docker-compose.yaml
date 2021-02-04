@@ -13,6 +13,7 @@ services:
     build: ./api_app/
     volumes:
       - ./api_app/app:/app/app
+      - ./common:/app/common
     ports:
       - 5003:5000
     depends_on:
@@ -24,6 +25,7 @@ services:
     build: ./cache_app/
     volumes:
       - ./cache_app/src:/app/src
+      - ./common:/app/common
     depends_on:
       - rabbit
       - redis
@@ -34,6 +36,7 @@ services:
     build: ./db_app/
     volumes:
       - ./db_app/src:/app/src
+      - ./common:/app/common
     depends_on:
       - rabbit
       - postgres

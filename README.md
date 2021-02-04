@@ -31,6 +31,7 @@ TODO
 * flask unit tests
 * nameko unit tests
 * flutter app
+* web entrypoint
 * run tests with github actions
 * remove nameko_flask and nameko_redis
 * redis password

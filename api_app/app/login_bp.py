@@ -1,28 +1,17 @@
 """Flask blueprint, that handles user operations."""
 
-import logging
 from hashlib import md5
-from functools import wraps
 
 from flask import Blueprint, request
 from flask_login import login_user, login_required, current_user, logout_user
 
+from common.debug_tools import log_method
+from common.schemas import UserSchema
+
 from . import rpc, login_manager
-from .schemas import UserSchema
 
 
 bp = Blueprint('login_bp', __name__)
-
-
-def log_method(method):
-    """Decorate method for logging its input and output."""
-    @wraps(method)
-    def _wrapper(*args, **kargs):
-        logging.debug(f"start {method.__name__}")
-        ret = method(*args, **kargs)
-        logging.debug(f"finish {method.__name__}")
-        return ret
-    return _wrapper
 
 
 @bp.route("/register", methods=['POST'])

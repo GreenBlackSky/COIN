@@ -1,23 +1,10 @@
 """Redis-based cache for app data."""
 
-import logging
-from functools import wraps
-
 from nameko.rpc import rpc, RpcProxy
 from nameko_redis import Redis
 
-from .schemas import UserSchema, User
-
-
-def log_method(method):
-    """Decorate method to log its input and output."""
-    @wraps(method)
-    def _wrapper(*args, **kargs):
-        logging.debug(f"start {method.__name__}")
-        ret = method(*args, **kargs)
-        logging.debug(f"finish {method.__name__}")
-        return ret
-    return _wrapper
+from common.debug_tools import log_method
+from common.schemas import UserSchema
 
 
 class CacheService:

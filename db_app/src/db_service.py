@@ -1,24 +1,12 @@
 """Postgres based data base handler service."""
 
-import logging
-from functools import wraps
-
 from nameko.rpc import rpc
 from nameko_sqlalchemy import DatabaseSession
 
+from common.debug_tools import log_method
+from common.schemas import UserSchema
+
 from .models import DeclarativeBase, TestData, User as UserModel
-from .schemas import UserSchema
-
-
-def log_method(method):
-    """Decorate method to log its input and output."""
-    @wraps(method)
-    def _wrapper(*args, **kargs):
-        logging.debug(f"start {method.__name__}")
-        ret = method(*args, **kargs)
-        logging.debug(f"finish {method.__name__}")
-        return ret
-    return _wrapper
 
 
 class DBService:
