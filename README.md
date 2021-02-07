@@ -27,8 +27,8 @@ All config values must be stored in `config.env` in project root. It must have f
 TODO
 * flask unit tests
 * nameko unit tests
-* flutter app
 * web entrypoint
+* optimize dockerfiles
 * run tests with github actions
 * remove nameko_flask and nameko_redis
 * redis password
