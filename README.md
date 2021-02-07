@@ -25,11 +25,13 @@ All config values must be stored in `config.env` in project root. It must have f
 
 
 TODO
+* web entrypoint
 * flask unit tests
 * nameko unit tests
-* web entrypoint
-* optimize dockerfiles
-* run tests with github actions
+* flutter tests
+* auto-build web app
+* fix versions of libs
+* run build tests with github actions
 * remove nameko_flask and nameko_redis
 * redis password
 * pg admin
@@ -40,4 +42,4 @@ TODO
 * debug method decorator
 * kubernetes
 * nginx for hosting web app
-* base container
+* dynamic web dispatching

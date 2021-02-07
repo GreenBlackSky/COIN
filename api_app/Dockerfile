@@ -1,15 +1,15 @@
-FROM python:3.7-stretch
+FROM python:3.9-slim-buster
 
-# COPY . /app
-RUN mkdir /app
-RUN chmod +rwx /app
+RUN mkdir /app && chmod +rwx /app
 COPY requirements.txt /app/requirements.txt
 COPY run.sh /app/run.sh
+
 WORKDIR /app
 
-RUN apt-get update && apt-get -y dist-upgrade
-RUN apt-get -y install bash netcat
-RUN pip install -r requirements.txt
+RUN chmod +x /app/run.sh && \
+    apt-get update && \
+    apt-get -y dist-upgrade && \
+    apt-get -y install bash netcat && \
+    pip install -r requirements.txt
 
-RUN chmod +x /app/run.sh
 CMD ./run.sh
