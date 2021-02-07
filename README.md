@@ -38,5 +38,6 @@ TODO
 * split into submodules
 * dev mode
 * debug method decorator
-* production deployment
+* kubernetes
+* nginx for hosting web app
 * base container

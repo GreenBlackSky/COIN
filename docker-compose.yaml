@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  # web_entrypoint:
-  #   build: ./web_entrypoint/
-  #   ports:
-  #     - 5001:5001 
-  #   volumes:
-  #     - /web_entrypoint/src:/app
+  web_entrypoint:
+    build: ./web_entrypoint/
+    ports:
+      - 5001:5000
+    volumes:
+      - ./web_entrypoint/src/build/web:/app
 
   api_app:
     build: ./api_app/
@@ -14,7 +14,7 @@ services:
       - ./api_app/app:/app/app
       - ./common:/app/common
     ports:
-      - 5003:5000
+      - 5002:5000
     depends_on:
       - rabbit
     env_file:
@@ -48,7 +48,6 @@ services:
     - ./rabbitmq/etc/:/etc/rabbitmq/
     - ./rabbitmq/data/:/var/lib/rabbitmq/
     - ./rabbitmq/logs/:/var/log/rabbitmq/
-    restart: always
     env_file:
       - config.env
 
@@ -57,7 +56,6 @@ services:
     command: redis-server
     volumes:
       - ./redis/redis_data:/var/lib/redis
-    restart: always
     env_file:
       - config.env
 
