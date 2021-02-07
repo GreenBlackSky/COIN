@@ -5,7 +5,7 @@ from hashlib import md5
 from flask import Blueprint, request
 from flask_login import login_user, login_required, current_user, logout_user
 
-from common.debug_tools import log_method
+from common.debug_tools import log_request
 from common.schemas import UserSchema
 
 from . import rpc, login_manager
@@ -15,7 +15,7 @@ bp = Blueprint('login_bp', __name__)
 
 
 @bp.route("/register", methods=['POST'])
-@log_method
+@log_request
 def register():
     """Register new user."""
     if current_user.is_authenticated:
@@ -34,7 +34,7 @@ def register():
 
 
 @bp.route("/login", methods=['POST'])
-@log_method
+@log_request
 def login():
     """Log in user."""
     name = request.args.get('name')
@@ -54,7 +54,7 @@ def login():
 
 @login_required
 @bp.route("/logout", methods=['POST'])
-@log_method
+@log_request
 def logout():
     """Log out user."""
     logout_user()
@@ -62,7 +62,7 @@ def logout():
 
 
 @login_manager.user_loader
-@log_method
+@log_request
 def load_user(user_id):
     """Load user handler."""
     user = rpc.cache_service.get_user(user_id)
@@ -72,7 +72,7 @@ def load_user(user_id):
 
 
 @login_manager.unauthorized_handler
-@log_method
+@log_request
 def unauthorized():
     """Unauthorized access handler."""
     return {"status": "unauthorized access"}

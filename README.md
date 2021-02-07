@@ -25,9 +25,6 @@ All config values must be stored in `config.env` in project root. It must have f
 
 
 TODO
-* common model for db and marshmallow for every service
-* base container
-* log call results and args
 * flask unit tests
 * nameko unit tests
 * flutter app
@@ -42,3 +39,4 @@ TODO
 * dev mode
 * debug method decorator
 * production deployment
+* base container

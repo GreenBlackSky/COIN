@@ -1,9 +1,11 @@
 """Flask blueprint with test methods."""
 
+import logging
+
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 
-from common.debug_tools import log_method
+from common.debug_tools import log_method, log_request
 from common.schemas import UserSchema
 
 from . import rpc
@@ -29,7 +31,7 @@ def connection_test():
 
 
 @bp.route("/test_set_redis_value", methods=['POST'])
-@log_method
+@log_request
 def test_set_redis_value():
     """Test method for setting value in redis."""
     key = request.args.get('key')
@@ -39,7 +41,7 @@ def test_set_redis_value():
 
 
 @bp.route("/test_get_redis_value", methods=['POST'])
-@log_method
+@log_request
 def test_get_redis_value():
     """Test method for getting value from redis."""
     key = request.args.get('key')
@@ -48,7 +50,7 @@ def test_get_redis_value():
 
 
 @bp.route("/test_set_postgres_value", methods=['POST'])
-@log_method
+@log_request
 def test_set_postgres_value():
     """Test method for setting value in postgres."""
     val = request.args.get('val')
@@ -57,7 +59,7 @@ def test_set_postgres_value():
 
 
 @bp.route("/test_get_postgres_value", methods=['POST'])
-@log_method
+@log_request
 def test_get_potgres_value():
     """Test method for getting value in postgres."""
     key = request.args.get('key')
@@ -67,7 +69,7 @@ def test_get_potgres_value():
 
 @bp.route("/test_login", methods=['POST'])
 @login_required
-@log_method
+@log_request
 def test_login():
     """Test method for logged in user."""
     return {
@@ -77,7 +79,7 @@ def test_login():
 
 
 @bp.route("/clear_users", methods=['POST'])
-@log_method
+@log_request
 def clear():
     """Clear all users from db and clear cache."""
     rpc.cache_service.clear()
