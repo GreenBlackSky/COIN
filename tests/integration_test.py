@@ -7,7 +7,7 @@ import requests
 class Integration(unittest.TestCase):
     """Class for coin tests."""
 
-    HOST = "http://localhost:5003/"
+    HOST = "http://localhost:5002/"
 
     def test_access(self):
         """Check if every service is up and accessible."""

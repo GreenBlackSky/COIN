@@ -7,7 +7,7 @@ import requests
 class Login(unittest.TestCase):
     """Class for coin tests."""
 
-    HOST = "http://localhost:5003/"
+    HOST = "http://localhost:5002/"
 
     def setUp(self):
         """Set test values."""

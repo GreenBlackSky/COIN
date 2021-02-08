@@ -6,6 +6,7 @@ import logging
 from flask import Flask
 from flask_login import LoginManager
 from flask_nameko import FlaskPooledClusterRpcProxy
+from flask_cors import CORS
 
 
 logging.basicConfig(
@@ -37,8 +38,10 @@ def create_app():
             os.environ['RABBITMQ_PORT'],
         ),
     )
+
     login_manager.init_app(app)
     rpc.init_app(app)
+    CORS(app)
 
     with app.app_context():
         from . import api_bp

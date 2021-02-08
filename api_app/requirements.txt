@@ -1,6 +1,7 @@
 nameko
-flask_nameko
 flask
+flask_nameko
 flask-login
+flask-cors
 gunicorn
 marshmallow

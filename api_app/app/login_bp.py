@@ -17,7 +17,11 @@ bp = Blueprint('login_bp', __name__)
 @bp.route("/register", methods=['POST'])
 @log_request
 def register():
-    """Register new user."""
+    """
+    Register new user.
+
+    Global variable `request` must contain `name` and `password` fields.
+    """
     if current_user.is_authenticated:
         return {'status': 'already authorized'}
     name = request.args.get('name')
@@ -36,7 +40,11 @@ def register():
 @bp.route("/login", methods=['POST'])
 @log_request
 def login():
-    """Log in user."""
+    """
+    Log in user.
+
+    Global variable `request` must contain `name` and `password` fields.
+    """
     name = request.args.get('name')
     password = request.args.get('password')
     if name is None or password is None:

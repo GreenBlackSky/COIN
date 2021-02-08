@@ -8,6 +8,7 @@ def log_method(method):
     """Decorate method for logging its input and output."""
     @wraps(method)
     def _wrapper(*args, **kargs):
+        # BUG self is not self
         name = method.__name__
         self = getattr(method, '__self__', None)
         if args:
