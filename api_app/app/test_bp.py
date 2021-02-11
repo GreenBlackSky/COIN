@@ -34,8 +34,11 @@ def connection_test():
 @log_request
 def test_set_redis_value():
     """Test method for setting value in redis."""
-    key = request.args.get('key')
-    val = request.args.get('val')
+    data = request.get_json()
+    if data is None:
+        return {'no json data'}
+    key = data.get('key')
+    val = data.get('val')
     rpc.cache_service.test_set_value(key, val)
     return {key: val}
 
@@ -44,7 +47,10 @@ def test_set_redis_value():
 @log_request
 def test_get_redis_value():
     """Test method for getting value from redis."""
-    key = request.args.get('key')
+    data = request.get_json()
+    if data is None:
+        return {'no json data'}
+    key = data.get('key')
     val = rpc.cache_service.test_get_value(key)
     return {key: val}
 
@@ -53,7 +59,10 @@ def test_get_redis_value():
 @log_request
 def test_set_postgres_value():
     """Test method for setting value in postgres."""
-    val = request.args.get('val')
+    data = request.get_json()
+    if data is None:
+        return {'no json data'}
+    val = data.get('val')
     key = rpc.db_service.test_set_value(val)
     return {key: val}
 
@@ -62,7 +71,10 @@ def test_set_postgres_value():
 @log_request
 def test_get_potgres_value():
     """Test method for getting value in postgres."""
-    key = request.args.get('key')
+    data = request.get_json()
+    if data is None:
+        return {'no json data'}
+    key = data.get('key')
     val = rpc.db_service.test_get_value(key)
     return {key: val}
 

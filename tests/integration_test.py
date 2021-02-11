@@ -33,7 +33,7 @@ class Integration(unittest.TestCase):
         """Try setting value in redis."""
         responce = requests.post(
             url=self.HOST+"test_set_redis_value",
-            params={'key': 99, 'val': "!"}
+            json={'key': 99, 'val': "!"}
         )
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictEqual(
@@ -46,7 +46,7 @@ class Integration(unittest.TestCase):
         """Try getting value from redis."""
         responce = requests.post(
             url=self.HOST+"test_get_redis_value",
-            params={'key': 99}
+            json={'key': 99}
         )
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictEqual(
@@ -59,7 +59,7 @@ class Integration(unittest.TestCase):
         """Try setting value in postgres and getting it back."""
         responce = requests.post(
             url=self.HOST+"test_set_postgres_value",
-            params={'val': "?"}
+            json={'val': "?"}
         )
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         key, val = list(responce.json().items())[0]
@@ -67,7 +67,7 @@ class Integration(unittest.TestCase):
 
         responce = requests.post(
             url=self.HOST+"test_get_postgres_value",
-            params={'key': key}
+            json={'key': key}
         )
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictEqual(

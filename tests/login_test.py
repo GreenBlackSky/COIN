@@ -23,7 +23,7 @@ class Login(unittest.TestCase):
 
         responce = session.post(
             url=self.HOST+"register",
-            params={'name': name, 'password': password}
+            json={'name': name, 'password': password}
         )
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictEqual(
@@ -52,7 +52,7 @@ class Login(unittest.TestCase):
             result = {'status': 'OK'}
         responce = session.post(
             url=self.HOST+"login",
-            params={'name': name, 'password': password}
+            json={'name': name, 'password': password}
         )
         self.assertEqual(responce.status_code, 200, "Wrong responce code")
         self.assertDictEqual(responce.json(), result, "Wrong answear")

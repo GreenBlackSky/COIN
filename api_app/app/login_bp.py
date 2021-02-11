@@ -24,8 +24,11 @@ def register():
     """
     if current_user.is_authenticated:
         return {'status': 'already authorized'}
-    name = request.args.get('name')
-    password = request.args.get('password')
+    request_data = request.get_json()
+    if request_data is None:
+        return {'no json data'}
+    name = request_data.get('name')
+    password = request_data.get('password')
     if name is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password.encode()).hexdigest()  # TODO use actual hashing
@@ -45,8 +48,11 @@ def login():
 
     Global variable `request` must contain `name` and `password` fields.
     """
-    name = request.args.get('name')
-    password = request.args.get('password')
+    request_data = request.get_json()
+    if request_data is None:
+        return {'no json data'}
+    name = request_data.get('name')
+    password = request_data.get('password')
     if name is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password.encode()).hexdigest()

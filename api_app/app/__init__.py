@@ -31,6 +31,7 @@ def create_app():
         FLASK_ENV=os.environ['FLASK_ENV'],
         FLASK_APP=os.environ['FLASK_APP'],
         FLASK_DEBUG=os.environ['FLASK_DEBUG'],
+        CORS_HEADERS='Content-Type',
         NAMEKO_AMQP_URI="amqp://{}:{}@{}:{}".format(
             os.environ['RABBITMQ_DEFAULT_USER'],
             os.environ['RABBITMQ_DEFAULT_PASS'],
@@ -41,7 +42,8 @@ def create_app():
 
     login_manager.init_app(app)
     rpc.init_app(app)
-    CORS(app)
+    # TODO control with devmode
+    CORS(app, resources={r"*": {"origins": "*"}})
 
     with app.app_context():
         from . import api_bp
