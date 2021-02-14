@@ -51,6 +51,11 @@ class CacheService:
 
     @rpc
     @log_method
+    def forget_user(self, user_id):
+        self.redis.hdel('user', user_id)
+
+    @rpc
+    @log_method
     def clear(self):
         """Clear cache."""
         self.redis.flushdb()

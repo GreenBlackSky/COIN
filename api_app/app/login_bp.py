@@ -71,6 +71,7 @@ def login():
 @log_request
 def logout():
     """Log out user."""
+    rpc.cache_service.forget_user(current_user.id)
     logout_user()
     return {"status": "OK"}
 
