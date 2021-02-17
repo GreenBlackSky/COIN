@@ -6,8 +6,6 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from flask_login import UserMixin
-
 
 DeclarativeBase = declarative_base()
 
@@ -21,7 +19,7 @@ class TestData(DeclarativeBase):
     value = Column(String)
 
 
-class User(UserMixin, DeclarativeBase):
+class User(DeclarativeBase):
     """User model."""
 
     __tablename__ = 'users'

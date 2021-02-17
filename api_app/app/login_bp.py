@@ -2,16 +2,33 @@
 
 from hashlib import md5
 
-from flask import Blueprint, request
-from flask_login import login_user, login_required, current_user, logout_user
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import create_access_token
 
-from common.debug_tools import log_request
+from common.debug_tools import log_request, log_method
 from common.schemas import UserSchema
 
-from . import rpc, login_manager
+from . import rpc, jwt
+from flask_jwt_extended import current_user, jwt_required
 
 
 bp = Blueprint('login_bp', __name__)
+
+
+@jwt.user_identity_loader
+@log_method
+def _user_identity_lookup(user):
+    return user.id
+
+
+@jwt.user_lookup_loader
+@log_method
+def _user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    user = rpc.cache_service.get_user(identity)
+    if user is None:
+        return None
+    return UserSchema().load(user)
 
 
 @bp.route("/register", methods=['POST'])
@@ -22,11 +39,9 @@ def register():
 
     Global variable `request` must contain `name` and `password` fields.
     """
-    if current_user.is_authenticated:
-        return {'status': 'already authorized'}
     request_data = request.get_json()
     if request_data is None:
-        return {'no json data'}
+        return {'status': 'no json data'}
     name = request_data.get('name')
     password = request_data.get('password')
     if name is None or password is None:
@@ -36,12 +51,14 @@ def register():
     if user is None:
         return {'status': 'user already exists'}
     user = UserSchema().load(user)
-    login_user(user)
-    return {'status': 'OK'}
+    access_token = create_access_token(identity=user)
+    return jsonify({
+        'status': 'OK',
+        'access_token': access_token
+    })
 
 
-@bp.route("/login", methods=['POST'])
-@log_request
+@bp.route("/login", methods=["POST"])
 def login():
     """
     Log in user.
@@ -50,7 +67,7 @@ def login():
     """
     request_data = request.get_json()
     if request_data is None:
-        return {'no json data'}
+        return {'status': 'no json data'}
     name = request_data.get('name')
     password = request_data.get('password')
     if name is None or password is None:
@@ -62,32 +79,18 @@ def login():
     user = UserSchema().load(user)
     if user.password_hash != password_hash:
         return {'status': 'wrong password'}
-    login_user(user)
-    return {'status': 'OK'}
+    access_token = create_access_token(identity=user)
+    return {
+        'status': 'OK',
+        'access_token': access_token
+    }
 
 
-@login_required
+@jwt_required()
 @bp.route("/logout", methods=['POST'])
 @log_request
 def logout():
     """Log out user."""
+    # TODO balcklist token
     rpc.cache_service.forget_user(current_user.id)
-    logout_user()
     return {"status": "OK"}
-
-
-@login_manager.user_loader
-@log_request
-def load_user(user_id):
-    """Load user handler."""
-    user = rpc.cache_service.get_user(user_id)
-    if user is None:
-        return None
-    return UserSchema().load(user)
-
-
-@login_manager.unauthorized_handler
-@log_request
-def unauthorized():
-    """Unauthorized access handler."""
-    return {"status": "unauthorized access"}

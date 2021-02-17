@@ -18,10 +18,17 @@ def log_method(method):
                 print_args = args
         else:
             print_args = []
-        input_data = f"{print_args}, {kargs}"
-        logging.debug(f"{name} >>> {input_data}")
+        if print_args and kargs:
+            input_data = f"{print_args}, {kargs}"
+        elif print_args:
+            input_data = print_args
+        elif kargs:
+            input_data = kargs
+        else:
+            input_data = ''
+        logging.debug(f">>> {name} {input_data}")
         ret = method(*args, **kargs)
-        logging.debug(f"{name} <<< {input_data}; {ret}")
+        logging.debug(f"<<< {name} {ret}")
         return ret
     return _wrapper
 
@@ -32,11 +39,13 @@ def log_request(method):
     def _wrapper(*args, **kargs):
         assert 'request' in method.__globals__, "no 'request' in globals of logged request"
         name = method.__name__
-        print_args = {
-            k: v for k, v in method.__globals__['request'].args.items()
-        }
-        logging.debug(f"{name} >>> {print_args} request")
+        request = method.__globals__['request']
+        data = request.get_json()
+        print_args = {}
+        if data:
+            print_args.update(data)
+        logging.debug(f">>> {name} {print_args} request")
         ret = method(*args, **kargs)
-        logging.debug(f"{name} <<< {print_args}; {ret}")
+        logging.debug(f"<<< {name} {ret}")
         return ret
     return _wrapper

@@ -3,7 +3,7 @@
 import logging
 
 from flask import Blueprint, request
-from flask_login import login_required, current_user
+from flask_jwt_extended import jwt_required, current_user
 
 from common.debug_tools import log_method, log_request
 from common.schemas import UserSchema
@@ -80,7 +80,7 @@ def test_get_potgres_value():
 
 
 @bp.route("/test_login", methods=['POST'])
-@login_required
+@jwt_required()
 @log_request
 def test_login():
     """Test method for logged in user."""

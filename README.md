@@ -25,6 +25,7 @@ All config values must be stored in `config.env` in project root. It must have f
 
 
 TODO
+* expiration tokens
 * flask unit tests
 * nameko unit tests
 * flutter tests

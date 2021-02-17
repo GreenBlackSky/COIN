@@ -5,7 +5,6 @@ import logging
 from functools import wraps
 
 from flask import Blueprint, request
-from flask_login import login_required, current_user
 
 from . import rpc
 

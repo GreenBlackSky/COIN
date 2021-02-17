@@ -4,7 +4,7 @@ import os
 import logging
 
 from flask import Flask
-from flask_login import LoginManager
+from flask_jwt_extended import JWTManager
 from flask_nameko import FlaskPooledClusterRpcProxy
 from flask_cors import CORS
 
@@ -18,7 +18,7 @@ logging.basicConfig(
 logging.info('Started')
 
 
-login_manager = LoginManager()
+jwt = JWTManager()
 rpc = FlaskPooledClusterRpcProxy()
 
 
@@ -27,6 +27,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=False)
 
     app.config.from_mapping(
+        JWT_SECRET_KEY=os.environ["JWT_SECRET_KEY"],
         SECRET_KEY=os.environ['SECRET_KEY'],
         FLASK_ENV=os.environ['FLASK_ENV'],
         FLASK_APP=os.environ['FLASK_APP'],
@@ -40,7 +41,7 @@ def create_app():
         ),
     )
 
-    login_manager.init_app(app)
+    jwt.init_app(app)
     rpc.init_app(app)
     # TODO control with devmode
     CORS(app, resources={r"*": {"origins": "*"}})

@@ -21,15 +21,18 @@ class Login(unittest.TestCase):
         if result is None:
             result = {'status': 'OK'}
 
-        responce = session.post(
+        response = session.post(
             url=self.HOST+"register",
             json={'name': name, 'password': password}
         )
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictEqual(
-            responce.json(),
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictContainsSubset(
             result,
+            response.json(),
             "Wrong answear"
+        )
+        session.headers.update(
+            {'Authorization': response.json()['access_token']}
         )
 
     def _try(self, session=None, authorized=True):
@@ -39,9 +42,9 @@ class Login(unittest.TestCase):
             result = {'status': "OK"}
         else:
             result = {"status": "unauthorized access"}
-        responce = session.post(url=self.HOST+"test_login")
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictContainsSubset(result, responce.json(), "Wrong answear")
+        response = session.post(url=self.HOST+"test_login")
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictContainsSubset(result, response.json(), "Wrong answear")
 
     def _login(self, session, name=None, password=None, result=None):
         if name is None:
@@ -50,21 +53,25 @@ class Login(unittest.TestCase):
             password = self._user_password
         if result is None:
             result = {'status': 'OK'}
-        responce = session.post(
+        response = session.post(
             url=self.HOST+"login",
             json={'name': name, 'password': password}
         )
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
-        self.assertDictEqual(responce.json(), result, "Wrong answear")
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictEqual(response.json(), result, "Wrong answear")
+        session.headers.update(
+            {'Authorization': response.json()['access_token']}
+        )
 
     def _logout(self, session):
-        responce = session.post(url=self.HOST+"logout")
-        self.assertEqual(responce.status_code, 200, "Wrong responce code")
+        response = session.post(url=self.HOST+"logout")
+        self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictEqual(
-            responce.json(),
+            response.json(),
             {'status': 'OK'},
             "Wrong answear"
         )
+        del session.headers.remove['Authorization']
 
     def test_unautharized(self):
         """Try unautharized access to app."""
