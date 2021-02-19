@@ -31,19 +31,22 @@ class Login(unittest.TestCase):
             response.json(),
             "Wrong answear"
         )
-        session.headers.update(
-            {'Authorization': response.json()['access_token']}
-        )
+        if 'access_token' in response.json():
+            session.headers.update(
+                {'Authorization': "Bearer " + response.json()['access_token']}
+            )
 
     def _try(self, session=None, authorized=True):
         if session is None:
             session = requests.Session()
         if authorized:
             result = {'status': "OK"}
+            code = 200
         else:
             result = {"status": "unauthorized access"}
+            code = 401
         response = session.post(url=self.HOST+"test_login")
-        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.status_code, code, "Wrong response code")
         self.assertDictContainsSubset(result, response.json(), "Wrong answear")
 
     def _login(self, session, name=None, password=None, result=None):
@@ -58,10 +61,11 @@ class Login(unittest.TestCase):
             json={'name': name, 'password': password}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertDictEqual(response.json(), result, "Wrong answear")
-        session.headers.update(
-            {'Authorization': response.json()['access_token']}
-        )
+        self.assertDictContainsSubset(result, response.json(), "Wrong answear")
+        if 'access_token' in response.json():
+            session.headers.update(
+                {'Authorization': "Bearer " + response.json()['access_token']}
+            )
 
     def _logout(self, session):
         response = session.post(url=self.HOST+"logout")
@@ -71,7 +75,8 @@ class Login(unittest.TestCase):
             {'status': 'OK'},
             "Wrong answear"
         )
-        del session.headers.remove['Authorization']
+        if 'Authorization' in session.headers:
+            del session.headers['Authorization']
 
     def test_unautharized(self):
         """Try unautharized access to app."""

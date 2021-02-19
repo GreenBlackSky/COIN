@@ -29,7 +29,7 @@ class Integration(unittest.TestCase):
             "Wrong answear"
         )
 
-    def test_set_redis_value(self):
+    def test_redis(self):
         """Try setting value in redis."""
         response = requests.post(
             url=self.HOST+"test_set_redis_value",
@@ -41,9 +41,6 @@ class Integration(unittest.TestCase):
             {'99': '!'},
             "Wrong answear"
         )
-
-    def test_get_redis_value(self):
-        """Try getting value from redis."""
         response = requests.post(
             url=self.HOST+"test_get_redis_value",
             json={'key': 99}

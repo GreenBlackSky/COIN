@@ -3,13 +3,12 @@
 from hashlib import md5
 
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, current_user, jwt_required, get_current_user
 
 from common.debug_tools import log_request, log_method
 from common.schemas import UserSchema
 
 from . import rpc, jwt
-from flask_jwt_extended import current_user, jwt_required
 
 
 bp = Blueprint('login_bp', __name__)
@@ -31,7 +30,18 @@ def _user_lookup_callback(_jwt_header, jwt_data):
     return UserSchema().load(user)
 
 
+@jwt.unauthorized_loader
+@log_method
+def unauthorized(reason):
+    """Handle unauthirized access."""
+    return {
+        "status": "unauthorized access",
+        "reason": reason
+        }, 401
+
+
 @bp.route("/register", methods=['POST'])
+@jwt_required(optional=True)
 @log_request
 def register():
     """
@@ -39,6 +49,8 @@ def register():
 
     Global variable `request` must contain `name` and `password` fields.
     """
+    if get_current_user():
+        return {'status': 'already authorized'}
     request_data = request.get_json()
     if request_data is None:
         return {'status': 'no json data'}
@@ -86,8 +98,8 @@ def login():
     }
 
 
-@jwt_required()
 @bp.route("/logout", methods=['POST'])
+@jwt_required()
 @log_request
 def logout():
     """Log out user."""

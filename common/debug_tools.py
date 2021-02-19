@@ -40,10 +40,13 @@ def log_request(method):
         assert 'request' in method.__globals__, "no 'request' in globals of logged request"
         name = method.__name__
         request = method.__globals__['request']
-        data = request.get_json()
         print_args = {}
-        if data:
-            print_args.update(data)
+        if request.headers:
+            print_args['H'] = request.headers
+        if request.get_json():
+            print_args['J'] = request.get_json()
+        if request.args:
+            print_args['A'] = request.args
         logging.debug(f">>> {name} {print_args} request")
         ret = method(*args, **kargs)
         logging.debug(f"<<< {name} {ret}")
