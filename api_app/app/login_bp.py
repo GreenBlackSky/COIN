@@ -41,8 +41,8 @@ def unauthorized(reason):
 
 
 @bp.route("/register", methods=['POST'])
-@jwt_required(optional=True)
 @log_request
+@jwt_required(optional=True)
 def register():
     """
     Register new user.
@@ -71,12 +71,16 @@ def register():
 
 
 @bp.route("/login", methods=["POST"])
+@log_request
+@jwt_required(optional=True)
 def login():
     """
     Log in user.
 
     Global variable `request` must contain `name` and `password` fields.
     """
+    if get_current_user():
+        return {'status': 'already authorized'}
     request_data = request.get_json()
     if request_data is None:
         return {'status': 'no json data'}
@@ -99,8 +103,8 @@ def login():
 
 
 @bp.route("/logout", methods=['POST'])
-@jwt_required()
 @log_request
+@jwt_required()
 def logout():
     """Log out user."""
     # TODO balcklist token

@@ -43,8 +43,8 @@ def log_request(method):
         print_args = {}
         if request.headers:
             print_args['H'] = request.headers
-        if request.get_json():
-            print_args['J'] = request.get_json()
+        # if request.json:
+        #     print_args['J'] = request.json
         if request.args:
             print_args['A'] = request.args
         logging.debug(f">>> {name} {print_args} request")
