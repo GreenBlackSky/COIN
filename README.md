@@ -1,15 +1,28 @@
 # COIN
 Simple budget planner.
 
-What's inside?
+## Architecture
 * frontend - flutter
 * gateway - flask + gunicorn
 * backend - nameko microservices + rabbitMQ
 * db - postgresql
 * cache - redis
 
+![Containers](doc/structure.jpg)
+
 All wrapped up in docker containers.
 
+## Database
+Data base contains information about users, their accounts and transactions. 
+
+![DB structure](doc/db_structure.jpg)
+
+## UI
+UI is made with flutter.
+
+![DB structure](doc/ui_structure.jpg)
+
+## Deployment
 * dev deployment - docker-compose. Run `docker-compose build; docker-compose up` to deploy.
 * production deployment - kubernetes
 
@@ -34,9 +47,7 @@ All config values must be stored in `config.env` in project root. It must have f
 * POSTGRES_HOST
 * POSTGRES_PORT
 
-
 TODO
-* Event model
 * flask unit tests
 * nameko unit tests
 * flutter tests

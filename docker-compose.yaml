@@ -61,6 +61,8 @@ services:
 
   postgres:
     build: ./postgres/
+    ports:
+      - 5003:5432
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql/data/
     env_file:
