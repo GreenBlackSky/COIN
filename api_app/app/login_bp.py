@@ -3,7 +3,7 @@
 from hashlib import md5
 
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, current_user, jwt_required, get_current_user
+from flask_jwt_extended import create_access_token, jwt_required, get_current_user
 
 from common.debug_tools import log_request, log_method
 from common.schemas import UserSchema
@@ -108,5 +108,5 @@ def login():
 def logout():
     """Log out user."""
     # TODO balcklist token
-    rpc.cache_service.forget_user(current_user.id)
+    rpc.cache_service.forget_user(get_current_user().id)
     return {"status": "OK"}

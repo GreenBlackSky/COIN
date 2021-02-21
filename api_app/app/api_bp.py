@@ -5,6 +5,7 @@ import logging
 from functools import wraps
 
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required
 
 from . import rpc
 
@@ -12,11 +13,11 @@ from . import rpc
 bp = Blueprint('api_bp', __name__)
 
 
-# @bp.route("/get_user_data", methods=['POST'])
-# @login_required
-# def get_user_data():
-#     """Get user data."""
-#     pass
+@bp.route("/add_event", methods=['POST'])
+@jwt_required()
+def add_event():
+    """Add new event."""
+    return {"method": "add_event"}
 
 
 # @bp.route("/get_unaccepted", methods=['POST'])
@@ -38,34 +39,6 @@ bp = Blueprint('api_bp', __name__)
 # def get_day_events():
 #     """Get events in one day."""
 #     pass
-
-
-# @bp.route("/get_month", methods=['POST'])
-# @login_required
-# def get_month():
-#     """Get statistsics for month."""
-#     pass
-
-
-# @bp.route("/get_year", methods=['POST'])
-# @login_required
-# def get_year():
-#     """Get statistics for year."""
-#     pass
-
-
-# @bp.route("/get_all_years", methods=['POST'])
-# @login_required
-# def get_all_years():
-#     """Get info on all user history."""
-#     pass
-
-
-# @bp.route("/add_event", methods=['POST'])
-# @login_required
-# def add_event():
-#     """Add new event."""
-#     return {"method": "add_event"}
 
 
 # @bp.route("/edit_event", methods=['POST'])
