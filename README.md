@@ -48,8 +48,8 @@ All config values must be stored in `config.env` in project root. It must have f
 * POSTGRES_PORT
 
 TODO
-* flask unit tests
 * nameko unit tests
+* flask unit tests
 * flutter tests
 * expiration tokens
 * handle different token problems

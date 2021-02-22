@@ -4,45 +4,51 @@ CREATE TABLE test_data (
 );
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    password_hash VARCHAR(200)
+    name VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(200)  NOT NULL
 );
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users,
-    actual_date DATE
+    user_id INT REFERENCES users
 );
 CREATE TABLE dates (
     id SERIAL PRIMARY KEY,
     account_id INT REFERENCES accounts,
-    date DATE,
-    balance INT,
+    is_actual BOOLEAN NOT NULL DEFAULT false,
+    date DATE NOT NULL,
+    balance INT NOT NULL,
     unconfirmed_balance INT
 );
+CREATE UNIQUE INDEX only_one_current_balance 
+   ON dates (account_id)
+   WHERE is_actual;
+
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     account_id INT REFERENCES accounts,
-    name VARCHAR(100),
+    name VARCHAR(100) NOT NULL,
     description VARCHAR(200),
     hidden BOOLEAN
 );
 CREATE TABLE events (
-    date_id DATE INT REFERENCES dates,
+    id SERIAL PRIMARY KEY,
+    date_id INT REFERENCES dates,
     account_id INT REFERENCES accounts,
-    time TIME,
-    diff INT,
+    time TIME NOT NULL,
+    diff INT NOT NULL,
     category_id INT REFERENCES categories,
-    description VARCHAR(200),
-    confirmed BOOLEAN
+    description VARCHAR(200) NOT NULL,
+    confirmed BOOLEAN NOT NULL
 );
 CREATE TABLE templates (
-    active BOOLEAN,
+    id SERIAL PRIMARY KEY,
+    active BOOLEAN NOT NULL,
     account_id INT REFERENCES accounts,
-    time TIME,
-    diff INT,
+    time TIME NOT NULL,
+    diff INT NOT NULL,
     category_id INT REFERENCES categories,
-    description VARCHAR(200),
-    last_confirmed_date DATE,
-    template INT,
-    cycle_length INT
+    description VARCHAR(200) NOT NULL,
+    last_confirmed_date INT REFERENCES dates,
+    template INT NOT NULL,
+    cycle_length INT NOT NULL
 );

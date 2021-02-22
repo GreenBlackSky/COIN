@@ -1,5 +1,5 @@
 nameko
-sqlalchemy
 psycopg2-binary
-nameko-sqlalchemy
+sqlalchemy
 marshmallow
+marshmallow_dataclass

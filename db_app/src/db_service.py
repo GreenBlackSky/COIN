@@ -1,19 +1,18 @@
 """Postgres based data base handler service."""
 
 from nameko.rpc import rpc
-from nameko_sqlalchemy import DatabaseSession
 
 from common.debug_tools import log_method
 from common.schemas import UserSchema
 
-from .models import DeclarativeBase, TestData, User as UserModel
+from .models import session, TestData, User as UserModel
 
 
 class DBService:
     """SQL alchemy based db handler class."""
 
     name = "db_service"
-    db = DatabaseSession(DeclarativeBase)
+    db = session
 
     @rpc
     @log_method
