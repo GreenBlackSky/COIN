@@ -2,36 +2,9 @@
 
 from datetime import date as DateType, time as TimeType
 from dataclasses import dataclass
+from typing import List
 
 from marshmallow_dataclass import class_schema
-
-
-@dataclass
-class User:
-    """Well, it's User."""
-
-    id: int
-    name: str
-    password_hash: str
-
-
-@dataclass
-class Account:
-    """Users account. One user can have multiple accounts."""
-
-    id: int
-    user_id: int
-
-
-@dataclass
-class Date:
-    """Unit of time, that is referenced by accounts and events."""
-
-    id: int
-    account_id: int
-    date: DateType
-    balance: int
-    unconfirmed_balance: int
 
 
 @dataclass
@@ -39,18 +12,30 @@ class Category:
     """Category of transaction."""
 
     id: int
-    account_id: int
     name: str
     description: str
+    color: str
     hidden: bool
+
+
+@dataclass
+class Template:
+    """Template for regular transaction."""
+
+    active: bool
+    time: TimeType
+    diff: int
+    category_id: int
+    last_confirmed_date_id: int
+    description: str
+    template: int
+    cycle_length: int
 
 
 @dataclass
 class Event:
     """Transaction event."""
 
-    date_id: int
-    account_id: int
     time: TimeType
     diff: int
     category_id: int
@@ -59,18 +44,33 @@ class Event:
 
 
 @dataclass
-class Template:
-    """Template for regular transaction."""
+class Date:
+    """Unit of time, that is referenced by accounts and events."""
 
-    active: bool
-    account_id: int
-    time: TimeType
-    diff: int
-    category_id: int
-    last_confirmed_date_id: int
-    description: str
-    template: int
-    cycle_length: int
+    date: DateType
+    balance: int
+    unconfirmed_balance: int
+    events: List[Event]
+
+
+@dataclass
+class Account:
+    """Users account. One user can have multiple accounts."""
+
+    id: int
+    name: str
+    dates: List[Date]
+    templates: List[Template]
+    categories: List[Category]
+
+
+@dataclass
+class User:
+    """Well, it's User."""
+
+    id: int
+    name: str
+    accounts: List[int]
 
 
 UserSchema = class_schema(User)

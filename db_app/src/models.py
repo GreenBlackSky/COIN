@@ -20,11 +20,11 @@ engine = create_engine(connection_string)
 Base.prepare(engine, reflect=True)
 
 TestData = Base.classes.test_data
-User = Base.classes.users
-Account = Base.classes.accounts
-Date = Base.classes.dates
-Category = Base.classes.categories
-Event = Base.classes.events
-Template = Base.classes.templates
+UserModel = Base.classes.users
+AccountModel = Base.classes.accounts
+DateModel = Base.classes.dates
+CategoryModel = Base.classes.categories
+EventModel = Base.classes.events
+TemplateModel = Base.classes.templates
 
 session = Session(engine)

@@ -89,12 +89,13 @@ def login():
     if name is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password.encode()).hexdigest()
-    user = rpc.db_service.get_user_by_name(name)
-    if user is None:
-        return {'status': 'no such user'}
-    user = UserSchema().load(user)
-    if user.password_hash != password_hash:
-        return {'status': 'wrong password'}
+    result = rpc.db_service.check_user(name, password_hash)
+    if result and result.get('status') == 'OK':
+        user = UserSchema().load(
+            rpc.cache_service.get_user(result['user_id'])
+        )
+    else:
+        return result
     access_token = create_access_token(identity=user)
     return {
         'status': 'OK',

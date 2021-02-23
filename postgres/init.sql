@@ -5,11 +5,12 @@ CREATE TABLE test_data (
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    password_hash VARCHAR(200)  NOT NULL
+    password_hash VARCHAR(200) NOT NULL
 );
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users
+    user_id INT REFERENCES users,
+    name VARCHAR(100) NOT NULL
 );
 CREATE TABLE dates (
     id SERIAL PRIMARY KEY,
@@ -28,6 +29,7 @@ CREATE TABLE categories (
     account_id INT REFERENCES accounts,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(200),
+    color VARCHAR(6),
     hidden BOOLEAN
 );
 CREATE TABLE events (
