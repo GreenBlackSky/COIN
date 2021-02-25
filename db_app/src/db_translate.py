@@ -5,7 +5,7 @@ from common.schemas import UserSchema
 
 class DBTranslate:
 
-    def user_model2schema(self, user, account, date):
+    def user_model2schema(self, user, account):
         return {
             'id': user.id,
             'name': user.name,

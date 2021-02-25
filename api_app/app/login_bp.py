@@ -5,7 +5,7 @@ from hashlib import md5
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_current_user
 
-from common.debug_tools import log_request, log_method
+from common.debug_tools import log_request, log_function
 from common.schemas import UserSchema
 
 from . import rpc, jwt
@@ -15,13 +15,13 @@ bp = Blueprint('login_bp', __name__)
 
 
 @jwt.user_identity_loader
-@log_method
+@log_function
 def _user_identity_lookup(user):
     return user.id
 
 
 @jwt.user_lookup_loader
-@log_method
+@log_function
 def _user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     user = rpc.cache_service.get_user(identity)
@@ -31,7 +31,7 @@ def _user_lookup_callback(_jwt_header, jwt_data):
 
 
 @jwt.unauthorized_loader
-@log_method
+@log_function
 def unauthorized(reason):
     """Handle unauthirized access."""
     return {

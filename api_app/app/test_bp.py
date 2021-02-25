@@ -5,7 +5,7 @@ import logging
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, current_user
 
-from common.debug_tools import log_method, log_request
+from common.debug_tools import log_function, log_request
 from common.schemas import UserSchema
 
 from . import rpc
@@ -15,14 +15,14 @@ bp = Blueprint('test_bp', __name__)
 
 
 @bp.route("/access_test", methods=['POST'])
-@log_method
+@log_function
 def access_test():
     """Ping."""
     return {'access': 'ok'}
 
 
 @bp.route("/connection_test", methods=['POST'])
-@log_method
+@log_function
 def connection_test():
     """Check connection with cache and db services."""
     redis_val = rpc.cache_service.connection_test()

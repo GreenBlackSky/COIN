@@ -10,8 +10,13 @@ CREATE TABLE users (
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users,
-    name VARCHAR(100) NOT NULL
+    name VARCHAR(100) NOT NULL,
+    is_main BOOLEAN NOT NULL DEFAULT false
 );
+CREATE UNIQUE INDEX only_one_main_account 
+   ON accounts (user_id)
+   WHERE is_main;
+
 CREATE TABLE dates (
     id SERIAL PRIMARY KEY,
     account_id INT REFERENCES accounts,

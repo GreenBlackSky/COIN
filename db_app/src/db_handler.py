@@ -7,32 +7,35 @@ from .models import session, TestData, UserModel, AccountModel, DateModel
 
 
 class DBHandler:
-    """Handle connection to database."""
+    """Handle reading from and writing to database."""
 
     db = session
 
     @log_method
     def create_user(self, name, password_hash):
+        """Create new User record in db."""
         user = self.db.query(UserModel).filter_by(name=name).first()
         if user:
-            return None
+            return None, None, None
         user = UserModel(name=name, password_hash=password_hash)
         self.db.add(user)
-        account = self.create_account(user.id, name, commit=False)
-        dateEnt = self.create_date(account.id, True, dateTools.today(), 0, 0, commit=False)
         self.db.commit()
+        account = self.create_account(user.id, 'Main account', True)
+        dateEnt = self.create_date(account.id, dateTools.today(), 0, 0, True)
         return user, account, dateEnt
 
     @log_method
-    def create_account(self, user_id, name, commit=True):
-        account = AccountModel(user_id=user_id, name=name)
+    def create_account(self, user_id, name, is_main=False, commit=True):
+        """Create new Account record in db."""
+        account = AccountModel(user_id=user_id, name=name, is_main=is_main)
         self.db.add(account)
         if commit:
             self.db.commit()
         return account
 
     @log_method
-    def create_date(self, account_id, is_actual, date, balance, unconfirmed_balance, commit=True):
+    def create_date(self, account_id, date, balance, unconfirmed_balance, is_actual=False, commit=True):
+        """Create new Date record in db."""
         dateEnt = DateModel(
             account_id=account_id,
             is_actual=is_actual,
@@ -55,8 +58,9 @@ class DBHandler:
         else:
             raise Exception("Man, either id or name!")
         if user is None:
-            return None
-        return user
+            return None, None
+        main_account = self.db.query(AccountModel).filter_by(user_id=user.id, is_main=True).first()
+        return user, main_account
 
     @log_method
     def get_account(self):
@@ -84,7 +88,8 @@ class DBHandler:
 
     @log_method
     def clear(self):
-        user_count = self.db.query(UserModel).delete()
+        date_count = self.db.query(DateModel).delete()
         account_count = self.db.query(AccountModel).delete()
+        user_count = self.db.query(UserModel).delete()
         self.db.commit()
-        return {'user': user_count, 'account': account_count}
+        return {'user': user_count, 'account': account_count, 'date': date_count}

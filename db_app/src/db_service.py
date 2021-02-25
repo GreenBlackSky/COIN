@@ -22,16 +22,16 @@ class DBService:
 
         Also, create one account and current date.
         """
-        db_user_data = self.handler.create_user(name, password_hash)
-        if db_user_data is None:
-            return {'status': 'user already exists'}
-        return self.translate.user_model2schema(db_user_data)
+        user, account, _ = self.handler.create_user(name, password_hash)
+        if user is None:
+            return None
+        return self.translate.user_model2schema(user, account)
 
     @rpc
     @log_method
     def check_user(self, name, password_hash):
         """Check user data and get id of ok."""
-        user = self.handler.get_user(name=name)
+        user, _ = self.handler.get_user(name=name)
         if user is None:
             return {'status': 'no such user'}
         if user.password_hash != password_hash:
@@ -42,10 +42,10 @@ class DBService:
     @log_method
     def get_user(self, user_id):
         """Get user by id."""
-        user = self.handler.get_user(user_id=user_id)
+        user, main_account = self.handler.get_user(user_id=user_id)
         if user is None:
             return {'status': 'no such user'}
-        return self.translate.user_model2schema(user)
+        return self.translate.user_model2schema(user, main_account)
 
     # @rpc
     # @log_method
@@ -77,13 +77,13 @@ class DBService:
     @log_method
     def test_set_value(self, value):
         """Test setting value."""
-        return self.handler.test_set_date(value)
+        return self.handler.test_set_value(value)
 
     @rpc
     @log_method
     def test_get_value(self, data_id):
         """Test getting value."""
-        return self.test_get_value(self, data_id)
+        return self.handler.test_get_value(data_id)
 
     @rpc
     @log_method
