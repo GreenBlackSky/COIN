@@ -20,8 +20,7 @@ class DBHandler:
         user = UserModel(name=name, password_hash=password_hash)
         self.db.add(user)
         self.db.commit()
-        account = self.create_account(user.id, 'Main account', True)
-        dateEnt = self.create_date(account.id, dateTools.today(), 0, 0, True)
+        account, dateEnt = self.create_account(user.id, 'Main account', True)
         return user, account, dateEnt
 
     @log_method
@@ -31,7 +30,8 @@ class DBHandler:
         self.db.add(account)
         if commit:
             self.db.commit()
-        return account
+        dateEnt = self.create_date(account.id, dateTools.today(), 0, 0, True)
+        return account, dateEnt
 
     @log_method
     def create_date(self, account_id, date, balance, unconfirmed_balance, is_actual=False, commit=True):

@@ -4,7 +4,7 @@ import unittest
 import requests
 
 
-class Integration(unittest.TestCase):
+class Integrety(unittest.TestCase):
     """Class for coin tests."""
 
     HOST = "http://localhost:5002/"

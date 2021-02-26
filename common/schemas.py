@@ -70,7 +70,7 @@ class User:
 
     id: int
     name: str
-    accounts: List[int]
+    accounts: List[Account]
 
 
 UserSchema = class_schema(User)

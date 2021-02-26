@@ -80,8 +80,8 @@ def test_get_potgres_value():
 
 
 @bp.route("/test_login", methods=['POST'])
-@log_request
 @jwt_required()
+@log_request
 def test_login():
     """Test method for logged in user."""
     return {

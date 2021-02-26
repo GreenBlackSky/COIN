@@ -83,21 +83,6 @@ class Login(unittest.TestCase):
         requests.post(url=self.HOST+"clear_users")
         self._try(authorized=False)
 
-    def test_register(self):
-        """Test regestring new user."""
-        requests.post(url=self.HOST+"clear_users")
-        session = requests.Session()
-        self._register(session, self._user_name, self._user_password)
-        self._try(session)
-
-    def test_logout(self):
-        """Test logging out."""
-        requests.post(url=self.HOST+"clear_users")
-        session = requests.Session()
-        self._register(session, self._user_name, self._user_password)
-        self._logout(session)
-        self._try(session, authorized=False)
-
     def test_login(self):
         """Test logging in."""
         requests.post(url=self.HOST+"clear_users")

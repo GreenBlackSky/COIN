@@ -22,10 +22,18 @@ class DBService:
 
         Also, create one account and current date.
         """
-        user, account, _ = self.handler.create_user(name, password_hash)
+        user, account, date = self.handler.create_user(name, password_hash)
         if user is None:
             return None
-        return self.translate.user_model2schema(user, account)
+        return self.translate.user_model2schema(
+            user,
+            [(
+                account,
+                [(date, [])],
+                [],
+                []
+            )]
+        )
 
     @rpc
     @log_method
@@ -45,7 +53,15 @@ class DBService:
         user, main_account = self.handler.get_user(user_id=user_id)
         if user is None:
             return {'status': 'no such user'}
-        return self.translate.user_model2schema(user, main_account)
+        return self.translate.user_model2schema(
+            user,
+            [(
+                main_account,
+                [],
+                [],
+                []
+            )]
+        )
 
     # @rpc
     # @log_method
