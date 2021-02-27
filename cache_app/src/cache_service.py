@@ -4,7 +4,6 @@ from nameko.rpc import rpc, RpcProxy
 from nameko_redis import Redis
 
 from common.debug_tools import log_method
-from common.schemas import UserSchema
 
 
 class CacheService:
@@ -13,6 +12,45 @@ class CacheService:
     name = "cache_service"
     redis = Redis('redis')
     db_service = RpcProxy('db_service')
+
+    @log_method
+    def _cache_stuff(self, stuff_id, section, method):
+        stuff = self.redis.hget(section, stuff_id)
+        if stuff is None:
+            stuff = method(stuff_id)
+            if stuff is None:
+                return None
+            else:
+                self.redis.hset(section, stuff_id, stuff)
+        return stuff
+
+    @rpc
+    @log_method
+    def get_user(self, user_id):
+        """Get user from db service and cache it."""
+        return self._cache_stuff(user_id, 'user', self.db_service.get_user)
+
+    @rpc
+    @log_method
+    def get_account(self, account_id):
+        """Get account from db service and cache it."""
+        return self._cache_stuff(
+            account_id,
+            'account',
+            self.db_service.get_account
+        )
+
+    @rpc
+    @log_method
+    def forget_account(self, account_id):
+        """Remove account from cache."""
+        self.redis.hdel('account', account_id)
+
+    @rpc
+    @log_method
+    def forget_user(self, user_id):
+        """Remove user from cache."""
+        self.redis.hdel('user', user_id)
 
     @rpc
     @log_method
@@ -32,27 +70,6 @@ class CacheService:
         """Test getting value."""
         value = self.redis.get(key)
         return value
-
-    @rpc
-    @log_method
-    def get_user(self, user_id):
-        """Get user from db service and cache it."""
-        user = self.redis.hget('user', user_id)
-        if user is None:
-            user = self.db_service.get_user(user_id)
-            if user is None:
-                return None
-            else:
-                user = UserSchema().load(user)
-                self.redis.hset('user', user.id, UserSchema().dumps(user))
-        else:
-            user = UserSchema().loads(user)
-        return UserSchema().dump(user)
-
-    @rpc
-    @log_method
-    def forget_user(self, user_id):
-        self.redis.hdel('user', user_id)
 
     @rpc
     @log_method

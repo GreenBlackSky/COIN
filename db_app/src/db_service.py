@@ -16,30 +16,18 @@ class DBService:
 
     @rpc
     @log_method
-    def create_user(self, name, password_hash):
-        """
-        Create new user object and get it back.
-
-        Also, create one account and current date.
-        """
-        user, account, date = self.handler.create_user(name, password_hash)
+    def create_user(self, name, email, password_hash):
+        """Create new user object and get it back."""
+        user = self.handler.create_user(name, email, password_hash)
         if user is None:
             return None
-        return self.translate.user_model2schema(
-            user,
-            [(
-                account,
-                [(date, [])],
-                [],
-                []
-            )]
-        )
+        return self.translate.user_model2schema(user, [])
 
     @rpc
     @log_method
-    def check_user(self, name, password_hash):
+    def check_user(self, email, password_hash):
         """Check user data and get id of ok."""
-        user, _ = self.handler.get_user(name=name)
+        user = self.handler.get_user(email=email)
         if user is None:
             return {'status': 'no such user'}
         if user.password_hash != password_hash:
@@ -50,38 +38,36 @@ class DBService:
     @log_method
     def get_user(self, user_id):
         """Get user by id."""
-        user, main_account = self.handler.get_user(user_id=user_id)
+        user = self.handler.get_user(user_id=user_id)
         if user is None:
             return {'status': 'no such user'}
-        return self.translate.user_model2schema(
-            user,
-            [(
-                main_account,
-                [],
-                [],
-                []
-            )]
-        )
+        return self.translate.user_model2schema(user, [])
 
-    # @rpc
-    # @log_method
-    # def create_account(self, user_id, name):
-    #     pass
+    @rpc
+    @log_method
+    def create_account(self, user_id, name):
+        """Create new account."""
+        account = self.handler.create_account(user_id, name)
+        return self.translate.account_model2Schema(account, [], [], [])
 
-    # @rpc
-    # @log_method
-    # def get_account(self):
-    #     pass
+    @rpc
+    @log_method
+    def get_account(self, account_id):
+        """Get account by id."""
+        account = self.handler.get_account(account_id)
+        if account is None:
+            return {'status': 'no such account'}
+        return self.translate.account_model2Schema(account, [], [], [])
 
-    # @rpc
-    # @log_method
-    # def edit_account(self):
-    #     pass
+    @rpc
+    @log_method
+    def edit_account(self, acc_id, name):
+        pass
 
-    # @rpc
-    # @log_method
-    # def delete_account(self):
-    #     pass
+    @rpc
+    @log_method
+    def delete_account(self, acc_id):
+        pass
 
     @rpc
     @log_method

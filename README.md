@@ -48,21 +48,20 @@ All config values must be stored in `config.env` in project root. It must have f
 * POSTGRES_PORT
 
 TODO
-* db dispatcher
-* choose dates to send with account
+* email
+* edit user
+* create edit delete account
+* create edit delete event
 * broadcast date and time
 * expiration tokens
 * handle different token problems
 * cookies
 * auto-build web app
 * fix versions of libs
-* run build tests with github actions
 * redis password
 * pg admin
 * redis admin
 * rabbit admin
 * dev mode
-* debug method decorator
 * kubernetes
 * nginx for hosting web app
-* dynamic web dispatching

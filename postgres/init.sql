@@ -5,6 +5,7 @@ CREATE TABLE test_data (
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
     password_hash VARCHAR(200) NOT NULL
 );
 CREATE TABLE accounts (

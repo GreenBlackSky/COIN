@@ -12,16 +12,16 @@ class DBHandler:
     db = session
 
     @log_method
-    def create_user(self, name, password_hash):
+    def create_user(self, name, email, password_hash):
         """Create new User record in db."""
         user = self.db.query(UserModel).filter_by(name=name).first()
         if user:
-            return None, None, None
-        user = UserModel(name=name, password_hash=password_hash)
+            return None
+        user = UserModel(name=name, email=email, password_hash=password_hash)
         self.db.add(user)
         self.db.commit()
-        account, dateEnt = self.create_account(user.id, 'Main account', True)
-        return user, account, dateEnt
+        self.create_account(user.id, 'Main account', True)
+        return user
 
     @log_method
     def create_account(self, user_id, name, is_main=False, commit=True):
@@ -30,8 +30,8 @@ class DBHandler:
         self.db.add(account)
         if commit:
             self.db.commit()
-        dateEnt = self.create_date(account.id, dateTools.today(), 0, 0, True)
-        return account, dateEnt
+        self.create_date(account.id, dateTools.today(), 0, 0, True)
+        return account
 
     @log_method
     def create_date(self, account_id, date, balance, unconfirmed_balance, is_actual=False, commit=True):
@@ -49,22 +49,20 @@ class DBHandler:
         return dateEnt
 
     @log_method
-    def get_user(self, user_id=None, name=None):
+    def get_user(self, user_id=None, email=None):
         """Get user by id or by name."""
         if user_id:
             user = self.db.query(UserModel).get(user_id)
-        elif name:
-            user = self.db.query(UserModel).filter_by(name=name).first()
+        elif email:
+            user = self.db.query(UserModel).filter_by(email=email).first()
         else:
-            raise Exception("Man, either id or name!")
-        if user is None:
-            return None, None
-        main_account = self.db.query(AccountModel).filter_by(user_id=user.id, is_main=True).first()
-        return user, main_account
+            raise Exception("Man, either id or email!")
+        return user
 
     @log_method
-    def get_account(self):
-        pass
+    def get_account(self, account_id):
+        """Get account from db by id."""
+        return self.db.query(AccountModel).get(account_id)
 
     @log_method
     def edit_account(self):

@@ -22,6 +22,7 @@ class Category:
 class Template:
     """Template for regular transaction."""
 
+    id: int
     active: bool
     time: TimeType
     diff: int
@@ -36,6 +37,7 @@ class Template:
 class Event:
     """Transaction event."""
 
+    id: int
     time: TimeType
     diff: int
     category_id: int
@@ -47,10 +49,11 @@ class Event:
 class Date:
     """Unit of time, that is referenced by accounts and events."""
 
+    id: int
     date: DateType
     balance: int
     unconfirmed_balance: int
-    events: List[Event]
+    events: List[int]
 
 
 @dataclass
@@ -59,9 +62,9 @@ class Account:
 
     id: int
     name: str
-    dates: List[Date]
-    templates: List[Template]
-    categories: List[Category]
+    dates: List[int]
+    templates: List[int]
+    categories: List[int]
 
 
 @dataclass
@@ -70,7 +73,7 @@ class User:
 
     id: int
     name: str
-    accounts: List[Account]
+    accounts: List[int]
 
 
 UserSchema = class_schema(User)

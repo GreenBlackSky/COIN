@@ -1,11 +1,11 @@
-"""Some test methods."""
+"""System integrety test methods."""
 
 import unittest
 import requests
 
 
 class Integrety(unittest.TestCase):
-    """Class for coin tests."""
+    """System integrety test methods."""
 
     HOST = "http://localhost:5002/"
 

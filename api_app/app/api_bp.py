@@ -1,6 +1,5 @@
-"""Core module contains logic of app."""
+"""Module contains app web."""
 
-# import json
 import logging
 from functools import wraps
 
@@ -8,16 +7,59 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 
 from . import rpc
+from common.debug_tools import log_request
 
 
 bp = Blueprint('api_bp', __name__)
 
 
-@bp.route("/add_event", methods=['POST'])
+@bp.route("/get_account", methods=['POST'])
+@log_request
 @jwt_required()
-def add_event():
-    """Add new event."""
-    return {"method": "add_event"}
+def get_account():
+    """Get existing account by ID."""
+    request_data = request.get_json()
+    if request_data is None:
+        return {'status': 'no json data'}
+    account_id = request_data.get('account_id')
+    if account_id is None:
+        return {'status': 'incomplete user data'}
+    account = rpc.cache_service.get_account(account_id)
+    return {
+        'status': 'OK',
+        'account': account
+    }
+
+
+@bp.route("/rename_account", methods=['POST'])
+@log_request
+@jwt_required()
+def rename_account():
+    """Get existing account by ID."""
+    pass
+
+
+@bp.route("/set_main_account", methods=['POST'])
+@log_request
+@jwt_required()
+def set_main_account():
+    """Get existing account by ID."""
+    pass
+
+
+@bp.route("/delete_account", methods=['POST'])
+@log_request
+@jwt_required()
+def delete_account():
+    """Get existing account by ID."""
+    pass
+
+
+# @bp.route("/add_event", methods=['POST'])
+# @jwt_required()
+# def add_event():
+#     """Add new event."""
+#     return {"method": "add_event"}
 
 
 # @bp.route("/get_unaccepted", methods=['POST'])

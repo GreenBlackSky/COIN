@@ -1,11 +1,11 @@
-"""Logging in and co test."""
+"""Logging in and co tests."""
 
 import unittest
 import requests
 
 
 class Login(unittest.TestCase):
-    """Class for coin tests."""
+    """Logging in and co tests."""
 
     HOST = "http://localhost:5002/"
 

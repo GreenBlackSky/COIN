@@ -59,14 +59,15 @@ def register():
     if name is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password.encode()).hexdigest()  # TODO use actual hashing
+
     user = rpc.db_service.create_user(name, password_hash)
     if user is None:
         return {'status': 'user already exists'}
     user = UserSchema().load(user)
-    access_token = create_access_token(identity=user)
+
     return jsonify({
         'status': 'OK',
-        'access_token': access_token
+        'access_token': create_access_token(identity=user)
     })
 
 
@@ -84,22 +85,23 @@ def login():
     request_data = request.get_json()
     if request_data is None:
         return {'status': 'no json data'}
-    name = request_data.get('name')
+    email = request_data.get('email')
     password = request_data.get('password')
-    if name is None or password is None:
+    if email is None or password is None:
         return {'status': 'incomplete user data'}
     password_hash = md5(password.encode()).hexdigest()
-    result = rpc.db_service.check_user(name, password_hash)
+
+    result = rpc.db_service.check_user(email, password_hash)
     if result and result.get('status') == 'OK':
         user = UserSchema().load(
             rpc.cache_service.get_user(result['user_id'])
         )
     else:
         return result
-    access_token = create_access_token(identity=user)
+
     return {
         'status': 'OK',
-        'access_token': access_token
+        'access_token': create_access_token(identity=user)
     }
 
 
