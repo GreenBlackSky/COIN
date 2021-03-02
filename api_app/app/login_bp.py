@@ -3,11 +3,12 @@
 from hashlib import md5
 
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_current_user
+from flask_jwt_extended import create_access_token, jwt_required, \
+    get_current_user
 
 from common.debug_tools import log_request, log_function
 from common.schemas import UserSchema
-
+from .api_app_common import parse_request
 from . import rpc, jwt
 
 
@@ -43,24 +44,26 @@ def unauthorized(reason):
 @bp.route("/register", methods=['POST'])
 @log_request
 @jwt_required(optional=True)
-def register():
+def create_user():
     """
     Register new user.
 
-    Global variable `request` must contain `name` and `password` fields.
+    Global variable `request` must contain `name`,
+     `email` and `password` fields.
     """
     if get_current_user():
         return {'status': 'already authorized'}
-    request_data = request.get_json()
-    if request_data is None:
-        return {'status': 'no json data'}
-    name = request_data.get('name')
-    password = request_data.get('password')
-    if name is None or password is None:
-        return {'status': 'incomplete user data'}
-    password_hash = md5(password.encode()).hexdigest()  # TODO use actual hashing
 
-    user = rpc.db_service.create_user(name, password_hash)
+    try:
+        name, password, email = parse_request(
+            request,
+            ('name', 'password', 'email')
+        )
+    except Exception as e:
+        return {'status': str(e)}
+
+    password_hash = md5(password.encode()).hexdigest()
+    user = rpc.db_service.create_user(name, email, password_hash)
     if user is None:
         return {'status': 'user already exists'}
     user = UserSchema().load(user)
@@ -78,17 +81,16 @@ def login():
     """
     Log in user.
 
-    Global variable `request` must contain `name` and `password` fields.
+    Global variable `request` must contain `email` and `password` fields.
     """
     if get_current_user():
         return {'status': 'already authorized'}
-    request_data = request.get_json()
-    if request_data is None:
-        return {'status': 'no json data'}
-    email = request_data.get('email')
-    password = request_data.get('password')
-    if email is None or password is None:
-        return {'status': 'incomplete user data'}
+
+    try:
+        email, password = parse_request(request, ('email', 'password'))
+    except Exception as e:
+        return {'status': str(e)}
+
     password_hash = md5(password.encode()).hexdigest()
 
     result = rpc.db_service.check_user(email, password_hash)
@@ -101,7 +103,8 @@ def login():
 
     return {
         'status': 'OK',
-        'access_token': create_access_token(identity=user)
+        'access_token': create_access_token(identity=user),
+        'name': user.name
     }
 
 

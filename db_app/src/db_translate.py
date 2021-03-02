@@ -13,6 +13,7 @@ class DBTranslate:
         user_schema = {
             'id': user.id,
             'name': user.name,
+            'email': user.email,
             'accounts': [acc.id for acc in accounts]
         }
         return user_schema

@@ -43,16 +43,21 @@ def create_app():
 
     jwt.init_app(app)
     rpc.init_app(app)
-    # TODO control with devmode
     CORS(app, resources={r"*": {"origins": "*"}})
 
     with app.app_context():
-        from . import api_bp
-        from . import test_bp
         from . import login_bp
-        app.register_blueprint(api_bp.bp)
-        app.register_blueprint(test_bp.bp)
+        from . import account_bp
+        from . import category_bp
+        from . import event_bp
+        from . import template_bp
+        from . import test_bp
         app.register_blueprint(login_bp.bp)
+        app.register_blueprint(account_bp.bp)
+        app.register_blueprint(category_bp.bp)
+        app.register_blueprint(event_bp.bp)
+        app.register_blueprint(template_bp.bp)
+        app.register_blueprint(test_bp.bp)
 
     return app
 

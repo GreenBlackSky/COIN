@@ -73,6 +73,7 @@ class User:
 
     id: int
     name: str
+    email: str
     accounts: List[int]
 
 

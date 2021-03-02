@@ -23,7 +23,7 @@ class Login(unittest.TestCase):
 
         response = session.post(
             url=self.HOST+"register",
-            json={'name': name, 'password': password}
+            json={'name': name, 'email': name, 'password': password}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(
@@ -58,7 +58,7 @@ class Login(unittest.TestCase):
             result = {'status': 'OK'}
         response = session.post(
             url=self.HOST+"login",
-            json={'name': name, 'password': password}
+            json={'email': name, 'password': password}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(result, response.json(), "Wrong answear")

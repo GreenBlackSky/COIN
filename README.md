@@ -48,10 +48,11 @@ All config values must be stored in `config.env` in project root. It must have f
 * POSTGRES_PORT
 
 TODO
-* email
-* edit user
 * create edit delete account
+* create edit delete category
 * create edit delete event
+* verify email
+* use actual hashing for password
 * broadcast date and time
 * expiration tokens
 * handle different token problems
