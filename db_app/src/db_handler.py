@@ -24,6 +24,17 @@ class DBHandler:
         return user
 
     @log_method
+    def get_user(self, user_id=None, email=None):
+        """Get user by id or by name."""
+        if user_id:
+            user = self.db.query(UserModel).get(user_id)
+        elif email:
+            user = self.db.query(UserModel).filter_by(email=email).first()
+        else:
+            raise Exception("Man, either id or email!")
+        return user
+
+    @log_method
     def create_account(self, user_id, name, is_main=False, commit=True):
         """Create new Account record in db."""
         account = AccountModel(user_id=user_id, name=name, is_main=is_main)
@@ -47,17 +58,6 @@ class DBHandler:
         if commit:
             self.db.commit()
         return dateEnt
-
-    @log_method
-    def get_user(self, user_id=None, email=None):
-        """Get user by id or by name."""
-        if user_id:
-            user = self.db.query(UserModel).get(user_id)
-        elif email:
-            user = self.db.query(UserModel).filter_by(email=email).first()
-        else:
-            raise Exception("Man, either id or email!")
-        return user
 
     @log_method
     def get_account(self, account_id):

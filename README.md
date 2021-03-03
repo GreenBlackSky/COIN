@@ -48,14 +48,16 @@ All config values must be stored in `config.env` in project root. It must have f
 * POSTGRES_PORT
 
 TODO
+* move logic from db app to core app
 * create edit delete account
 * create edit delete category
 * create edit delete event
-* verify email
+* nameko tests
 * use actual hashing for password
-* broadcast date and time
+* balcklist token on logout
 * expiration tokens
 * handle different token problems
+* broadcast date and time
 * cookies
 * auto-build web app
 * fix versions of libs
@@ -66,3 +68,4 @@ TODO
 * dev mode
 * kubernetes
 * nginx for hosting web app
+* verify email

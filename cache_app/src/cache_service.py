@@ -8,6 +8,7 @@ from nameko_redis import Redis
 from common.debug_tools import log_method
 from common.schemas import UserSchema, AccountSchema, \
     CategorySchema, TemplateSchema, DateSchema, EventSchema
+from common.constants import ENTITY
 
 
 class CacheService:
@@ -19,53 +20,39 @@ class CacheService:
 
     def __init__(self):
         """Init service."""
-        self.entities = {
-            'user': (UserSchema(), 'get_user'),
-            'account': (AccountSchema(), 'get_account'),
-            'category': (CategorySchema(), 'get_category'),
-            'template': (TemplateSchema(), 'get_template'),
-            'date': (DateSchema(), 'get_date'),
-            'event': (EventSchema(), 'get_event'),
+        self._schemas = {
+            ENTITY.USER: UserSchema(),
+            ENTITY.ACCOUNT: AccountSchema(),
+            ENTITY.CATEGORY: CategorySchema(),
+            ENTITY.TEMPLATE: TemplateSchema(),
+            ENTITY.DATE: DateSchema(),
+            ENTITY.EVENT: EventSchema(),
         }
 
+    @rpc
     @log_method
-    def _cache_stuff(self, stuff_id, section):
-        schema, method_name = self.entities[section]
-        stuff_raw = self.redis.hget(section, stuff_id)
-        if stuff_raw is None:
-            stuff_raw = getattr(self.db_service, method_name)(stuff_id)
-            if stuff_raw is None:
+    def get_entity(self, entity_type, entity_id):
+        """Get some stuff from cache or db."""
+        schema = self._schemas[entity_type]
+        entity_raw = self.redis.hget(entity_type, entity_id)
+        if entity_raw is None:
+            entity_raw = getattr(
+                self.db_service, f'get_{entity_type}'
+            )(entity_id)
+            if entity_raw is None:
                 return None
             else:
-                stuff = schema.load(stuff_raw)
-                self.redis.hset(section, stuff_id, schema.dumps(stuff))
+                stuff = schema.load(entity_raw)
+                self.redis.hset(entity_type, entity_id, schema.dumps(stuff))
         else:
-            stuff = schema.loads(json_data=stuff_raw)
+            stuff = schema.loads(json_data=entity_raw)
         return schema.dump(stuff)
 
     @rpc
     @log_method
-    def get_user(self, user_id):
-        """Get user from db service and cache it."""
-        return self._cache_stuff(user_id, 'user')
-
-    @rpc
-    @log_method
-    def get_account(self, account_id):
-        """Get account from db service and cache it."""
-        return self._cache_stuff(account_id, 'account')
-
-    @rpc
-    @log_method
-    def forget_account(self, account_id):
-        """Remove account from cache."""
-        self.redis.hdel('account', account_id)
-
-    @rpc
-    @log_method
-    def forget_user(self, user_id):
-        """Remove user from cache."""
-        self.redis.hdel('user', user_id)
+    def forget_entity(self, entity_type, entity_id):
+        """Remove stuff from cache."""
+        self.redis.hdel(entity_type, entity_id)
 
     @rpc
     @log_method
