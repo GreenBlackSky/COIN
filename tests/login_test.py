@@ -13,6 +13,7 @@ class LoginTest(BaseTest):
         BaseTest.setUp(self)
         self._wronguser_password = "ass1"
         self._seconduser_name = "user2"
+        self._seconduser_email = "email2"
         self._seconduser_password = "pass2"
 
     def test_unautharized(self):
@@ -69,6 +70,15 @@ class LoginTest(BaseTest):
         self.register(
             session,
             self._seconduser_name,
+            self._seconduser_email,
             self._seconduser_password,
             result={'status': 'already authorized'}
         )
+
+    def test_rename_user(self):
+        """Try rename user."""
+        raise NotImplementedError()
+
+    def test_change_email_user(self):
+        """Try rename user."""
+        raise NotImplementedError()

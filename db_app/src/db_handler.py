@@ -45,6 +45,19 @@ class DBHandler:
         return account
 
     @log_method
+    def get_account(self, account_id):
+        """Get account from db by id."""
+        return self.db.query(AccountModel).get(account_id)
+
+    @log_method
+    def edit_account(self):
+        pass
+
+    @log_method
+    def delete_account(self):
+        pass
+
+    @log_method
     def create_date(self, account_id, date, balance, unconfirmed_balance, is_actual=False, commit=True):
         """Create new Date record in db."""
         dateEnt = DateModel(
@@ -58,19 +71,6 @@ class DBHandler:
         if commit:
             self.db.commit()
         return dateEnt
-
-    @log_method
-    def get_account(self, account_id):
-        """Get account from db by id."""
-        return self.db.query(AccountModel).get(account_id)
-
-    @log_method
-    def edit_account(self):
-        pass
-
-    @log_method
-    def delete_account(self):
-        pass
 
     @log_method
     def test_set_value(self, value):

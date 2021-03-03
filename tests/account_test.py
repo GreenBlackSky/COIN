@@ -47,13 +47,16 @@ class AccountTest(BaseTest):
         user_data = self.register(session)
 
     def test_rename_account(self):
-        pass
+        raise NotImplementedError()
 
     def test_change_main_account(self):
-        pass
+        raise NotImplementedError()
 
     def test_remove_one_account(self):
-        pass
+        raise NotImplementedError()
 
     def test_remove_main_account(self):
-        pass
+        raise NotImplementedError()
+
+    def test_remove_only_account(self):
+        raise NotImplementedError()

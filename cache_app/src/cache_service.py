@@ -8,7 +8,7 @@ from nameko_redis import Redis
 from common.debug_tools import log_method
 from common.schemas import UserSchema, AccountSchema, \
     CategorySchema, TemplateSchema, DateSchema, EventSchema
-from common.constants import ENTITY
+from common.constants import ENTITY, ENTITY_SCHEMAS
 
 
 class CacheService:
@@ -20,20 +20,12 @@ class CacheService:
 
     def __init__(self):
         """Init service."""
-        self._schemas = {
-            ENTITY.USER: UserSchema(),
-            ENTITY.ACCOUNT: AccountSchema(),
-            ENTITY.CATEGORY: CategorySchema(),
-            ENTITY.TEMPLATE: TemplateSchema(),
-            ENTITY.DATE: DateSchema(),
-            ENTITY.EVENT: EventSchema(),
-        }
 
     @rpc
     @log_method
     def get_entity(self, entity_type, entity_id):
         """Get some stuff from cache or db."""
-        schema = self._schemas[entity_type]
+        schema = ENTITY_SCHEMAS[entity_type]
         entity_raw = self.redis.hget(entity_type, entity_id)
         if entity_raw is None:
             entity_raw = getattr(
@@ -47,6 +39,12 @@ class CacheService:
         else:
             stuff = schema.loads(json_data=entity_raw)
         return schema.dump(stuff)
+
+    @rpc
+    @log_method
+    def edit_entity(self, entity_type, entity_data):
+        """Edit some entity in cache and in db."""
+        pass
 
     @rpc
     @log_method

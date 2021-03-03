@@ -52,6 +52,8 @@ TODO
 * create edit delete account
 * create edit delete category
 * create edit delete event
+* api fabric
+* unify db access methods
 * nameko tests
 * use actual hashing for password
 * balcklist token on logout
