@@ -47,7 +47,7 @@ def get_account():
     except Exception as e:
         return {'status': str(e)}
 
-    account = rpc.cache_service.get_entity(ENTITY.ACCOUNT, account_id)
+    account = rpc.cache_service.get(ENTITY.ACCOUNT, account_id)
     if account is None:
         return {'status': 'no such account'}
     return {'status': 'OK', 'account': account}

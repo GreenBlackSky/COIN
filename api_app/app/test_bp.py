@@ -27,7 +27,12 @@ def connection_test():
     """Check connection with cache and db services."""
     redis_val = rpc.cache_service.connection_test()
     postgres_val = rpc.db_service.connection_test()
-    return {'redis_val': redis_val, 'postgres_val': postgres_val}
+    core_val = rpc.core_service.connection_test()
+    return {
+        'redis_val': redis_val,
+        'postgres_val': postgres_val,
+        'core_val': core_val,
+    }
 
 
 @bp.route("/test_set_redis_value", methods=['POST'])

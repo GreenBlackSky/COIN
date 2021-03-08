@@ -26,7 +26,7 @@ def _user_identity_lookup(user):
 @log_function
 def _user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    user = rpc.cache_service.get_entity(ENTITY.USER, identity)
+    user = rpc.cache_service.get(ENTITY.USER, identity)
     if user is None:
         return None
     return UserSchema().load(user)
@@ -98,7 +98,7 @@ def login():
     result = rpc.db_service.check_user(email, password_hash)
     if result and result.get('status') == 'OK':
         user = UserSchema().load(
-            rpc.cache_service.get_entity(ENTITY.USER, result['user_id'])
+            rpc.cache_service.get(ENTITY.USER, result['user_id'])
         )
     else:
         return result
@@ -110,10 +110,31 @@ def login():
     }
 
 
+@bp.route("/edit_user", methods=['POST'])
+@log_request
+@jwt_required()
+def edit_user():
+    """Edit user."""
+    try:
+        user_data = parse_request(request, 'user')
+    except Exception as e:
+        return {'status': str(e)}
+
+    validation_errors = UserSchema.validate(user_data)
+    if validation_errors:
+        return {'status': str(validation_errors)}
+    if user_data['id'] != get_current_user().id:
+        return {'status': 'user id error'}
+
+    rpc.cache_service.forget(ENTITY.USER, get_current_user().id)
+    rpc.db_service.edit_user(user_data)
+    return {"status": "OK"}
+
+
 @bp.route("/logout", methods=['POST'])
 @log_request
 @jwt_required()
 def logout():
     """Log out user."""
-    rpc.cache_service.forget_entity(ENTITY.USER, get_current_user().id)
+    rpc.cache_service.forget(ENTITY.USER, get_current_user().id)
     return {"status": "OK"}

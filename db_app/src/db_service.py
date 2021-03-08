@@ -45,6 +45,12 @@ class DBService:
 
     @rpc
     @log_method
+    def edit_user(self, user_data):
+        """Edit user in db."""
+        pass
+
+    @rpc
+    @log_method
     def create_account(self, user_id, name):
         """Create new account."""
         account = self.handler.create_account(user_id, name)

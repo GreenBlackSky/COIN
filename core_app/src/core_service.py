@@ -15,5 +15,7 @@ class CoreService:
     name = "core_service"
 
     @rpc
-    def test_core():
-        pass
+    @log_method
+    def connection_test(self):
+        """Test connection."""
+        return 'ok'

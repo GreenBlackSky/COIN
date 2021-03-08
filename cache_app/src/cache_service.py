@@ -23,7 +23,7 @@ class CacheService:
 
     @rpc
     @log_method
-    def get_entity(self, entity_type, entity_id):
+    def get(self, entity_type, entity_id):
         """Get some stuff from cache or db."""
         schema = ENTITY_SCHEMAS[entity_type]
         entity_raw = self.redis.hget(entity_type, entity_id)
@@ -42,13 +42,7 @@ class CacheService:
 
     @rpc
     @log_method
-    def edit_entity(self, entity_type, entity_data):
-        """Edit some entity in cache and in db."""
-        pass
-
-    @rpc
-    @log_method
-    def forget_entity(self, entity_type, entity_id):
+    def forget(self, entity_type, entity_id):
         """Remove stuff from cache."""
         self.redis.hdel(entity_type, entity_id)
 

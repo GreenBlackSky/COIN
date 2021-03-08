@@ -25,7 +25,7 @@ class Integrety(unittest.TestCase):
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictEqual(
             response.json(),
-            {'redis_val': 'ok', 'postgres_val': 'ok'},
+            {'redis_val': 'ok', 'postgres_val': 'ok', 'core_val': 'ok'},
             "Wrong answear"
         )
 
