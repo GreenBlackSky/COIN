@@ -47,7 +47,7 @@ class DBService:
     @log_method
     def edit_user(self, user_data):
         """Edit user in db."""
-        pass
+        self.handler.update_user(user_data, True)
 
     @rpc
     @log_method

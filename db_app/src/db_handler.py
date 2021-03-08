@@ -35,6 +35,16 @@ class DBHandler:
         return user
 
     @log_method
+    def update_user(self, user_data, commit=False):
+        """Update user data in db."""
+        user = self.db.query(UserModel).get(user_data['id'])
+        del user_data['id']
+        for key, val in user_data.items():
+            setattr(user, key, val)
+        if commit:
+            self.db.commit()
+
+    @log_method
     def create_account(self, user_id, name, is_main=False, commit=True):
         """Create new Account record in db."""
         account = AccountModel(user_id=user_id, name=name, is_main=is_main)
