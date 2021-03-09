@@ -19,7 +19,6 @@ Base = automap_base()
 engine = create_engine(connection_string)
 Base.prepare(engine, reflect=True)
 
-TestData = Base.classes.test_data
 UserModel = Base.classes.users
 AccountModel = Base.classes.accounts
 DateModel = Base.classes.dates

@@ -48,25 +48,6 @@ class CacheService:
 
     @rpc
     @log_method
-    def connection_test(self):
-        """Test connection."""
-        return 'ok'
-
-    @rpc
-    @log_method
-    def test_set_value(self, key, value):
-        """Test setting value."""
-        self.redis.set(key, value)
-
-    @rpc
-    @log_method
-    def test_get_value(self, key):
-        """Test getting value."""
-        value = self.redis.get(key)
-        return value
-
-    @rpc
-    @log_method
     def clear(self):
         """Clear cache."""
         self.redis.flushdb()

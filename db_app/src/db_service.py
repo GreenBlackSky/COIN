@@ -77,24 +77,6 @@ class DBService:
 
     @rpc
     @log_method
-    def connection_test(self):
-        """Test connection."""
-        return 'ok'
-
-    @rpc
-    @log_method
-    def test_set_value(self, value):
-        """Test setting value."""
-        return self.handler.test_set_value(value)
-
-    @rpc
-    @log_method
-    def test_get_value(self, data_id):
-        """Test getting value."""
-        return self.handler.test_get_value(data_id)
-
-    @rpc
-    @log_method
     def clear_users(self):
         """Clear all records."""
         self.handler.clear()

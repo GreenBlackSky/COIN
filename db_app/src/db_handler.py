@@ -3,7 +3,7 @@
 from datetime import date as dateTools, time
 
 from common.debug_tools import log_method
-from .models import session, TestData, UserModel, AccountModel, DateModel
+from .models import session, UserModel, AccountModel, DateModel
 
 
 class DBHandler:
@@ -71,18 +71,6 @@ class DBHandler:
     #     if commit:
     #         self.db.commit()
     #     return dateEnt
-
-    @log_method
-    def test_set_value(self, value):
-        data = TestData(value=value)
-        self.db.add(data)
-        self.db.commit()
-        return data.id
-
-    @log_method
-    def test_get_value(self, data_id):
-        data = self.db.query(TestData).get(data_id)
-        return data.value if data else None
 
     @log_method
     def clear(self):
