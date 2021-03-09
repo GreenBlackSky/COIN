@@ -25,7 +25,7 @@ class CacheService:
     @log_method
     def get(self, entity_type, entity_id):
         """Get some stuff from cache or db."""
-        schema = ENTITY_SCHEMAS[entity_type]
+        schema = ENTITY_SCHEMAS[entity_type]()
         entity_raw = self.redis.hget(entity_type, entity_id)
         if entity_raw is None:
             entity_raw = getattr(

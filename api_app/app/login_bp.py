@@ -116,18 +116,13 @@ def login():
 def edit_user():
     """Edit user."""
     try:
-        user_data = parse_request(request, 'user')
+        field, value = parse_request(request, ('field', 'value'))
     except Exception as e:
         return {'status': str(e)}
 
-    validation_errors = UserSchema.validate(user_data)
-    if validation_errors:
-        return {'status': str(validation_errors)}
-    if user_data['id'] != get_current_user().id:
-        return {'status': 'user id error'}
-
-    rpc.cache_service.forget(ENTITY.USER, get_current_user().id)
-    rpc.db_service.edit_user(user_data)
+    user_id = get_current_user().id
+    rpc.cache_service.forget(ENTITY.USER, user_id)
+    rpc.db_service.edit_user(user_id, field, value)
     return {"status": "OK"}
 
 

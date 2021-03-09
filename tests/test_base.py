@@ -94,7 +94,7 @@ class BaseTest(unittest.TestCase):
         user[field_name] = self._seconduser_name
         response = session.post(
             url=self.HOST+"edit_user",
-            json={field_name, value}
+            json={"field": field_name, "value": value}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(
