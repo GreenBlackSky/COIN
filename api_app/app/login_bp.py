@@ -78,16 +78,12 @@ def create_user():
 
 @bp.route("/login", methods=["POST"])
 @log_request
-@jwt_required(optional=True)
 def login():
     """
     Log in user.
 
     Global variable `request` must contain `email` and `password` fields.
     """
-    if get_current_user():
-        return {'status': 'already authorized'}
-
     try:
         email, password = parse_request(request, ('email', 'password'))
     except Exception as e:
@@ -116,13 +112,16 @@ def login():
 def edit_user():
     """Edit user."""
     try:
-        field, value = parse_request(request, ('field', 'value'))
+        username, email, old_pass, new_pass = parse_request(
+            request,
+            ('username', 'email', 'old_pass', 'new_pass')
+        )
     except Exception as e:
         return {'status': str(e)}
 
     user_id = get_current_user().id
     rpc.cache_service.forget(ENTITY.USER, user_id)
-    rpc.db_service.edit_user(user_id, field, value)
+    rpc.db_service.edit_user(user_id, username, email, old_pass, new_pass)
     return {"status": "OK"}
 
 
