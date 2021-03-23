@@ -114,15 +114,24 @@ def edit_user():
     try:
         username, email, old_pass, new_pass = parse_request(
             request,
-            ('username', 'email', 'old_pass', 'new_pass')
+            ('username', 'email'),
+            ('old_pass', 'new_pass')
         )
     except Exception as e:
         return {'status': str(e)}
 
     user_id = get_current_user().id
+
+    if new_pass is not None and old_pass is not None:
+        password_hash = md5(old_pass.encode()).hexdigest()
+        result = rpc.db_service.edit_user_pass(user_id, old_pass, new_pass)
+        if result['status'] != 'OK':
+            return result
+
     rpc.cache_service.forget(ENTITY.USER, user_id)
-    rpc.db_service.edit_user(user_id, username, email, old_pass, new_pass)
-    return {"status": "OK"}
+    result = rpc.db_service.edit_user_data(user_id, username, email)
+
+    return result  # {'status': 'OK', 'user': user}
 
 
 @bp.route("/logout", methods=['POST'])
