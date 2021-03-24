@@ -70,7 +70,7 @@ class LoginTest(BaseTest):
             stay_logged_in=True,
             get_user=True
         )
-        user = self.edit_user('name', self._second_user_name)
+        user = self.edit_user(session, username=self._second_user_name)
         self.logout(session)
         edited_user = self.login(session)
         self.assertDictEqual(user, edited_user)
@@ -92,10 +92,22 @@ class LoginTest(BaseTest):
             stay_logged_in=True,
             get_user=True
         )
-        user = self.edit_user('password', self._second_user_password)
+        user = self.edit_user(
+            old_pass=self._user_password,
+            new_pass=self._second_user_password
+        )
         self.logout(session)
         edited_user = self.login(session, password=self._second_user_password)
         self.assertDictEqual(user, edited_user)
 
     def test_change_password_with_wrong_passwod(self):
-        pass
+        """Test changing password with wrong current password."""
+        session, user = self.prepare(
+            stay_logged_in=True,
+            get_user=True
+        )
+        user = self.edit_user(
+            old_pass=self._second_user_password,
+            new_pass=self._second_user_password,
+            result={'status': 'wrong password'}
+        )

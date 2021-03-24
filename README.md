@@ -48,6 +48,8 @@ All config values must be stored in `config.env` in project root. It must have f
 * POSTGRES_PORT
 
 TODO
+* figure out api of every service
+* wrap returns into dicts
 * move logic from db app to core app
 * create edit delete account
 * create edit delete category

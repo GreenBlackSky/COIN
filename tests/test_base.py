@@ -95,12 +95,12 @@ class BaseTest(unittest.TestCase):
             "username": username if username is not None else self._user_name,
             "email": email if email is not None else self._user_email,
         }
-        if new_pass is None:
+        if new_pass is not None:
             requestData['new_pass'] = new_pass
             if old_pass is not None:
                 requestData['old_pass'] = old_pass
             else:
-                requestData['old_pass'] = self._user_password,
+                requestData['old_pass'] = self._user_password
         if result is None:
             result = {'status': 'OK'}
         response = session.post(

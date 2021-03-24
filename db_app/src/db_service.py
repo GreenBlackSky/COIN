@@ -45,9 +45,17 @@ class DBService:
 
     @rpc
     @log_method
-    def edit_user(self, user_id, field, value):
+    def edit_user_data(self, user_id, username, email, new_pass):
         """Edit user in db."""
-        self.handler.update_user(user_id, field, value, True)
+        user = self.handler.update_user(
+            user_id, username, email, new_pass, True
+        )
+        if user is None:
+            return {'status': 'no such user'}
+        return {
+            'status': 'OK',
+            'user': self.translate.user_model2schema(user, [])
+        }
 
     @rpc
     @log_method
