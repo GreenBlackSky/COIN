@@ -1,6 +1,8 @@
 """Some tools for working with requests."""
 
+from common.debug_tools import log_function
 
+@log_function
 def parse_request(request, keys, optional_keys=None):
     """
     Parse given requests json data with given keys.

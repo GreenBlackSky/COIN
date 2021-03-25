@@ -70,10 +70,22 @@ class LoginTest(BaseTest):
             stay_logged_in=True,
             get_user=True
         )
-        user = self.edit_user(session, username=self._second_user_name)
+        response = session.post(
+            url=self.HOST+"edit_user",
+            json={
+                "username": self._second_user_name,
+                "email": self._user_email
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictContainsSubset(
+            {'status': 'OK'},
+            response.json(),
+            "Wrong answear"
+        )
         self.logout(session)
-        edited_user = self.login(session)
-        self.assertDictEqual(user, edited_user)
+        user = self.login(session)
+        self.assertEqual(user['name'], self._second_user_name, "Wrong name")
 
     def test_change_email(self):
         """Test changing email."""
@@ -81,10 +93,25 @@ class LoginTest(BaseTest):
             stay_logged_in=True,
             get_user=True
         )
-        user = self.edit_user(session, email=self._second_user_email)
+        response = session.post(
+            url=self.HOST+"edit_user",
+            json={
+                "username": self._user_name,
+                "email": self._second_user_email
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictContainsSubset(
+            {'status': 'OK'},
+            response.json(),
+            "Wrong answear"
+        )
         self.logout(session)
-        edited_user = self.login(session, email=self._second_user_email)
-        self.assertDictEqual(user, edited_user)
+        user = self.login(session, email=self._second_user_email)
+        self.assertEqual(user['email'], self._second_user_email, "Wrong email")
+
+    def test_change_email_into_duplicate(self):
+        assert False
 
     def test_change_password(self):
         """Test changing password."""
@@ -92,13 +119,23 @@ class LoginTest(BaseTest):
             stay_logged_in=True,
             get_user=True
         )
-        user = self.edit_user(
-            old_pass=self._user_password,
-            new_pass=self._second_user_password
+        response = session.post(
+            url=self.HOST+"edit_user",
+            json={
+                "username": self._user_name,
+                "email": self._user_email,
+                "old_pass": self._user_password,
+                "new_pass": self._second_user_password
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictContainsSubset(
+            {'status': 'OK'},
+            response.json(),
+            "Wrong answear"
         )
         self.logout(session)
-        edited_user = self.login(session, password=self._second_user_password)
-        self.assertDictEqual(user, edited_user)
+        self.login(session, password=self._second_user_password)
 
     def test_change_password_with_wrong_passwod(self):
         """Test changing password with wrong current password."""
@@ -106,8 +143,25 @@ class LoginTest(BaseTest):
             stay_logged_in=True,
             get_user=True
         )
-        user = self.edit_user(
-            old_pass=self._second_user_password,
-            new_pass=self._second_user_password,
-            result={'status': 'wrong password'}
+        response = session.post(
+            url=self.HOST+"edit_user",
+            json={
+                "username": self._user_name,
+                "email": self._user_email,
+                "old_pass": self._second_user_password,
+                "new_pass": self._user_password
+            }
         )
+        self.assertEqual(response.status_code, 405, "Wrong response code")
+        self.assertDictContainsSubset(
+            {'status': 'wrong password'},
+            response.json(),
+            "Wrong answear"
+        )
+        self.logout(session)
+        self.login(
+            session,
+            password=self._second_user_password,
+            result={"status": "wrong password"}
+        )
+        self.login(session, password=self._user_password)

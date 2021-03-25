@@ -131,8 +131,10 @@ def edit_user():
         result = rpc.db_service.check_user(user.email, old_hash)
         if result['status'] != 'OK':
             return result
+        new_hash = md5(new_pass.encode()).hexdigest()
+    else:
+        new_hash = None
 
-    new_hash = md5(new_pass.encode()).hexdigest()
     rpc.cache_service.forget(ENTITY.USER, user.id)
     return rpc.db_service.edit_user_data(user.id, username, email, new_hash)
 

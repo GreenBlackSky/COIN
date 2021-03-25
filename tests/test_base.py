@@ -89,29 +89,6 @@ class BaseTest(unittest.TestCase):
         if 'user' in response.json():
             return response.json()['user']
 
-    def edit_user(self, session, username=None, email=None, old_pass=None, new_pass=None, result=None):
-        """Test edit user."""
-        requestData = {
-            "username": username if username is not None else self._user_name,
-            "email": email if email is not None else self._user_email,
-        }
-        if new_pass is not None:
-            requestData['new_pass'] = new_pass
-            if old_pass is not None:
-                requestData['old_pass'] = old_pass
-            else:
-                requestData['old_pass'] = self._user_password
-        if result is None:
-            result = {'status': 'OK'}
-        response = session.post(
-            url=self.HOST+"edit_user",
-            json=requestData
-        )
-        self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertDictContainsSubset(result, response.json(), "Wrong answear")
-        if 'user' in response.json():
-            return response.json()['user']
-
     def logout(self, session):
         """Logout."""
         response = session.post(url=self.HOST+"logout")

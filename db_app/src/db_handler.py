@@ -42,7 +42,8 @@ class DBHandler:
             return None
         user.name = name
         user.email = email
-        user.password = password
+        if password is not None:
+            user.password = password
         if commit:
             self.db.commit()
         return user
