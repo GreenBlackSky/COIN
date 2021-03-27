@@ -20,7 +20,6 @@ class DBHandler:
         user = UserModel(name=name, email=email, password_hash=password_hash)
         self.db.add(user)
         self.db.commit()
-        # self.create_account(user.id, 'Main account', True)
         return user
 
     @log_method

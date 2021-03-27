@@ -135,6 +135,11 @@ def edit_user():
     else:
         new_hash = None
 
+    if email != user.email:
+        result = rpc.db_service.check_email(email)
+        if result['status'] != 'OK':
+            return result
+
     rpc.cache_service.forget(ENTITY.USER, user.id)
     return rpc.db_service.edit_user_data(user.id, username, email, new_hash)
 

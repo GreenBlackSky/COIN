@@ -36,6 +36,15 @@ class DBService:
 
     @rpc
     @log_method
+    def check_email(self, email):
+        """Check if email is already taken."""
+        user = self.handler.get_user(email=email)
+        if user is not None:
+            return {'status': 'user exists'}
+        return {'status': 'OK'}
+
+    @rpc
+    @log_method
     def get_user(self, user_id):
         """Get user by id."""
         user = self.handler.get_user(user_id=user_id)
