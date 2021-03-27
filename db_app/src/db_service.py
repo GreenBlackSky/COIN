@@ -3,6 +3,7 @@
 from nameko.rpc import rpc
 
 from common.debug_tools import log_method
+from common.constants import MAIN_ACCOUNT_NAME
 from .db_translate import DBTranslate
 from .db_handler import DBHandler
 
@@ -21,7 +22,8 @@ class DBService:
         user = self.handler.create_user(name, email, password_hash)
         if user is None:
             return None
-        return self.translate.user_model2schema(user, [])
+        account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME, True, True)
+        return self.translate.user_model2schema(user, [account.id])
 
     @rpc
     @log_method

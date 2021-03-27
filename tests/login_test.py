@@ -11,10 +11,10 @@ class LoginTest(BaseTest):
     def setUp(self):
         """Set test values."""
         BaseTest.setUp(self)
-        self._wronguser_password = "ass1"
-        self._second_user_name = "user2"
-        self._second_user_email = "email2"
-        self._second_user_password = "pass2"
+        self._wrong_password = "ass1"
+        self._user_name_2 = "user2"
+        self._user_email_2 = "email2"
+        self._user_password_2 = "pass2"
 
     def test_unautharized(self):
         """Try unautharized access to app."""
@@ -33,7 +33,7 @@ class LoginTest(BaseTest):
         session = self.prepare()
         self.login(
             session,
-            password=self._wronguser_password,
+            password=self._wrong_password,
             result={'status': 'wrong password'}
         )
         self.check_authorization(session, authorized=False)
@@ -58,9 +58,9 @@ class LoginTest(BaseTest):
         session = self.prepare(stay_logged_in=True)
         self.register(
             session,
-            self._second_user_name,
-            self._second_user_email,
-            self._second_user_password,
+            self._user_name_2,
+            self._user_email_2,
+            self._user_password_2,
             result={'status': 'already authorized'}
         )
 
@@ -73,7 +73,7 @@ class LoginTest(BaseTest):
         response = session.post(
             url=self.HOST+"edit_user",
             json={
-                "username": self._second_user_name,
+                "username": self._user_name_2,
                 "email": self._user_email
             }
         )
@@ -85,7 +85,7 @@ class LoginTest(BaseTest):
         )
         self.logout(session)
         user = self.login(session)
-        self.assertEqual(user['name'], self._second_user_name, "Wrong name")
+        self.assertEqual(user['name'], self._user_name_2, "Wrong name")
 
     def test_change_email(self):
         """Test changing email."""
@@ -97,7 +97,7 @@ class LoginTest(BaseTest):
             url=self.HOST+"edit_user",
             json={
                 "username": self._user_name,
-                "email": self._second_user_email
+                "email": self._user_email_2
             }
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
@@ -107,8 +107,8 @@ class LoginTest(BaseTest):
             "Wrong answear"
         )
         self.logout(session)
-        user = self.login(session, email=self._second_user_email)
-        self.assertEqual(user['email'], self._second_user_email, "Wrong email")
+        user = self.login(session, email=self._user_email_2)
+        self.assertEqual(user['email'], self._user_email_2, "Wrong email")
 
     def test_change_email_into_duplicate(self):
         """Try change email into one, that is already exists."""
@@ -117,7 +117,7 @@ class LoginTest(BaseTest):
             get_user=True
         )
         self.logout(session)
-        user2 = self.register(session, email=self._second_user_email)
+        user2 = self.register(session, email=self._user_email_2)
         response = session.post(
             url=self.HOST+"edit_user",
             json={
@@ -144,7 +144,7 @@ class LoginTest(BaseTest):
                 "username": self._user_name,
                 "email": self._user_email,
                 "old_pass": self._user_password,
-                "new_pass": self._second_user_password
+                "new_pass": self._user_password_2
             }
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
@@ -154,7 +154,7 @@ class LoginTest(BaseTest):
             "Wrong answear"
         )
         self.logout(session)
-        self.login(session, password=self._second_user_password)
+        self.login(session, password=self._user_password_2)
 
     def test_change_password_with_wrong_passwod(self):
         """Test changing password with wrong current password."""
@@ -167,7 +167,7 @@ class LoginTest(BaseTest):
             json={
                 "username": self._user_name,
                 "email": self._user_email,
-                "old_pass": self._second_user_password,
+                "old_pass": self._user_password_2,
                 "new_pass": self._user_password
             }
         )
@@ -180,7 +180,7 @@ class LoginTest(BaseTest):
         self.logout(session)
         self.login(
             session,
-            password=self._second_user_password,
+            password=self._user_password_2,
             result={"status": "wrong password"}
         )
         self.login(session, password=self._user_password)

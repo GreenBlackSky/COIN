@@ -47,15 +47,15 @@ class DBHandler:
             self.db.commit()
         return user
 
-    # @log_method
-    # def create_account(self, user_id, name, is_main=False, commit=True):
-    #     """Create new Account record in db."""
-    #     account = AccountModel(user_id=user_id, name=name, is_main=is_main)
-    #     self.db.add(account)
-    #     if commit:
-    #         self.db.commit()
-    #     self.create_date(account.id, dateTools.today(), 0, 0, True)
-    #     return account
+    @log_method
+    def create_account(self, user_id, name, is_main=False, commit=True):
+        """Create new Account record in db."""
+        account = AccountModel(user_id=user_id, name=name, is_main=is_main)
+        self.db.add(account)
+        if commit:
+            self.db.commit()
+        # self.create_date(account.id, dateTools.today(), 0, 0, True)
+        return account
 
     # @log_method
     # def get_account(self, account_id):

@@ -23,3 +23,5 @@ ENTITY_SCHEMAS = {
     ENTITY.DATE: EventSchema,
     ENTITY.EVENT: TemplateSchema,
 }
+
+MAIN_ACCOUNT_NAME = "Account"
