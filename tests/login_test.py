@@ -111,7 +111,26 @@ class LoginTest(BaseTest):
         self.assertEqual(user['email'], self._second_user_email, "Wrong email")
 
     def test_change_email_into_duplicate(self):
-        assert False
+        """Try change email into one, that is already exists."""
+        session, user1 = self.prepare(
+            stay_logged_in=True,
+            get_user=True
+        )
+        self.logout(session)
+        user2 = self.register(session, email=self._second_user_email)
+        response = session.post(
+            url=self.HOST+"edit_user",
+            json={
+                "username": self._user_name,
+                "email": self._user_email
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictContainsSubset(
+            {'status': 'user already exists'},
+            response.json(),
+            "Wrong answear"
+        )
 
     def test_change_password(self):
         """Test changing password."""
