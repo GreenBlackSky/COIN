@@ -2,7 +2,7 @@
 
 from hashlib import md5
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import create_access_token, jwt_required, \
     get_current_user
 
@@ -130,7 +130,7 @@ def edit_user():
         old_hash = md5(old_pass.encode()).hexdigest()
         result = rpc.db_service.check_user(user.email, old_hash)
         if result['status'] != 'OK':
-            return result
+            return make_response(result, 405)
         new_hash = md5(new_pass.encode()).hexdigest()
     else:
         new_hash = None

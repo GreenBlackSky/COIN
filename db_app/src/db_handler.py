@@ -14,7 +14,7 @@ class DBHandler:
     @log_method
     def create_user(self, name, email, password_hash):
         """Create new User record in db."""
-        user = self.db.query(UserModel).filter_by(name=name).first()
+        user = self.db.query(UserModel).filter_by(email=email).first()
         if user:
             return None
         user = UserModel(name=name, email=email, password_hash=password_hash)
@@ -34,15 +34,15 @@ class DBHandler:
         return user
 
     @log_method
-    def update_user(self, user_id, name, email, password, commit=False):
+    def update_user(self, user_id, name, email, password_hash, commit=False):
         """Update user data in db."""
         user = self.db.query(UserModel).get(user_id)
         if user is None:
             return None
         user.name = name
         user.email = email
-        if password is not None:
-            user.password = password
+        if password_hash is not None:
+            user.password_hash = password_hash
         if commit:
             self.db.commit()
         return user
@@ -79,8 +79,13 @@ class DBHandler:
 
     @log_method
     def clear(self):
+        """Clear database."""
         date_count = self.db.query(DateModel).delete()
         account_count = self.db.query(AccountModel).delete()
         user_count = self.db.query(UserModel).delete()
         self.db.commit()
-        return {'user': user_count, 'account': account_count, 'date': date_count}
+        return {
+            'user': user_count,
+            'account': account_count,
+            'date': date_count
+        }

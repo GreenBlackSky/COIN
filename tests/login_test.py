@@ -112,12 +112,8 @@ class LoginTest(BaseTest):
 
     def test_change_email_into_duplicate(self):
         """Try change email into one, that is already exists."""
-        session, user1 = self.prepare(
-            stay_logged_in=True,
-            get_user=True
-        )
-        self.logout(session)
-        user2 = self.register(session, email=self._user_email_2)
+        session = self.prepare()
+        self.register(session, email=self._user_email_2)
         response = session.post(
             url=self.HOST+"edit_user",
             json={
@@ -127,17 +123,14 @@ class LoginTest(BaseTest):
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(
-            {'status': 'user already exists'},
+            {'status': 'user exists'},
             response.json(),
             "Wrong answear"
         )
 
     def test_change_password(self):
         """Test changing password."""
-        session, user = self.prepare(
-            stay_logged_in=True,
-            get_user=True
-        )
+        session = self.prepare(stay_logged_in=True)
         response = session.post(
             url=self.HOST+"edit_user",
             json={
@@ -154,14 +147,16 @@ class LoginTest(BaseTest):
             "Wrong answear"
         )
         self.logout(session)
+        self.login(
+            session,
+            password=self._user_password,
+            result={'status': 'wrong password'}
+        )
         self.login(session, password=self._user_password_2)
 
     def test_change_password_with_wrong_passwod(self):
         """Test changing password with wrong current password."""
-        session, user = self.prepare(
-            stay_logged_in=True,
-            get_user=True
-        )
+        session = self.prepare(stay_logged_in=True)
         response = session.post(
             url=self.HOST+"edit_user",
             json={

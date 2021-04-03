@@ -22,8 +22,13 @@ class DBService:
         user = self.handler.create_user(name, email, password_hash)
         if user is None:
             return None
-        account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME, True, True)
-        return self.translate.user_model2schema(user, [account.id])
+        account = self.handler.create_account(
+            user.id,
+            MAIN_ACCOUNT_NAME,
+            True,
+            True
+        )
+        return self.translate.user_model2schema(user, [account])
 
     @rpc
     @log_method
@@ -56,10 +61,10 @@ class DBService:
 
     @rpc
     @log_method
-    def edit_user_data(self, user_id, username, email, new_pass):
+    def edit_user_data(self, user_id, username, email, password_hash):
         """Edit user in db."""
         user = self.handler.update_user(
-            user_id, username, email, new_pass, True
+            user_id, username, email, password_hash, True
         )
         if user is None:
             return {'status': 'no such user'}
