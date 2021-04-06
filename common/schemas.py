@@ -27,7 +27,7 @@ class Template:
     time: TimeType
     diff: int
     category_id: int
-    last_confirmed_date_id: int
+    last_confirmed_date: DateType
     description: str
     template: int
     cycle_length: int
@@ -38,6 +38,7 @@ class Event:
     """Transaction event."""
 
     id: int
+    date: DateType
     time: TimeType
     diff: int
     category_id: int
@@ -46,23 +47,14 @@ class Event:
 
 
 @dataclass
-class Date:
-    """Unit of time, that is referenced by accounts and events."""
-
-    id: int
-    date: DateType
-    balance: int
-    unconfirmed_balance: int
-    events: List[int]
-
-
-@dataclass
 class Account:
     """Users account. One user can have multiple accounts."""
 
     id: int
     name: str
-    dates: List[int]
+    actual_date: DateType
+    balance: float
+    unconfirmed_balance: float
     templates: List[int]
     categories: List[int]
 
@@ -72,14 +64,12 @@ class User:
     """Well, it's User."""
 
     id: int
-    name: str
     email: str
     accounts: List[int]
 
 
 UserSchema = class_schema(User)
 AccountSchema = class_schema(Account)
-DateSchema = class_schema(Date)
 CategorySchema = class_schema(Category)
 EventSchema = class_schema(Event)
 TemplateSchema = class_schema(Template)

@@ -7,7 +7,7 @@ from nameko_redis import Redis
 
 from common.debug_tools import log_method
 from common.schemas import UserSchema, AccountSchema, \
-    CategorySchema, TemplateSchema, DateSchema, EventSchema
+    CategorySchema, TemplateSchema, EventSchema
 from common.constants import ENTITY, ENTITY_SCHEMAS
 
 

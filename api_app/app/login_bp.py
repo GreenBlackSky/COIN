@@ -49,22 +49,19 @@ def create_user():
     """
     Register new user.
 
-    Global variable `request` must contain `name`,
+    Global variable `request` must contain
      `email` and `password` fields.
     """
     if get_current_user():
         return {'status': 'already authorized'}
 
     try:
-        name, password, email = parse_request(
-            request,
-            ('name', 'password', 'email')
-        )
+        password, email = parse_request(request, ('password', 'email'))
     except Exception as e:
         return {'status': str(e)}
 
     password_hash = md5(password.encode()).hexdigest()
-    user = rpc.db_service.create_user(name, email, password_hash)
+    user = rpc.db_service.create_user(email, password_hash)
     if user is None:
         return {'status': 'user already exists'}
     user = UserSchema().load(user)
@@ -112,9 +109,9 @@ def login():
 def edit_user():
     """Edit user."""
     try:
-        username, email, old_pass, new_pass = parse_request(
+        email, old_pass, new_pass = parse_request(
             request,
-            ('username', 'email'),
+            ('email',),
             ('old_pass', 'new_pass')
         )
     except Exception as e:
@@ -141,7 +138,7 @@ def edit_user():
             return result
 
     rpc.cache_service.forget(ENTITY.USER, user.id)
-    return rpc.db_service.edit_user_data(user.id, username, email, new_hash)
+    return rpc.db_service.edit_user_data(user.id, email, new_hash)
 
 
 @bp.route("/logout", methods=['POST'])

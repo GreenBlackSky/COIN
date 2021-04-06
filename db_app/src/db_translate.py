@@ -2,7 +2,7 @@
 
 from datetime import date as DateType
 
-from common.schemas import UserSchema, AccountSchema, DateSchema
+from common.schemas import UserSchema, AccountSchema
 from common.debug_tools import log_method
 
 
@@ -26,15 +26,6 @@ class DBTranslate:
             'dates': [date.id for date in dates],
             'templates': [template.id for template in templates],
             'categories': [category.id for category in categories]
-        }
-
-    @log_method
-    def date_model2schema(self, date, events):
-        return {
-            'date': str(date.date),
-            'balance': date.balance,
-            'unconfirmed_balance': date.unconfirmed_balance,
-            'events':  [event.id for event in events]
         }
 
     @log_method

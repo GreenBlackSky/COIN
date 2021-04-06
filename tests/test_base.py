@@ -11,7 +11,6 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
         """Set test values."""
-        self._user_name = "user1"
         self._user_password = "pass1"
         self._user_email = "email1"
 
@@ -26,10 +25,8 @@ class BaseTest(unittest.TestCase):
             return session, user
         return session
 
-    def register(self, session, name=None, email=None, password=None, result=None):
+    def register(self, session, email=None, password=None, result=None):
         """Create new account."""
-        if name is None:
-            name = self._user_name
         if password is None:
             password = self._user_password
         if email is None:
@@ -39,7 +36,7 @@ class BaseTest(unittest.TestCase):
 
         response = session.post(
             url=self.HOST+"register",
-            json={'name': name, 'email': email, 'password': password}
+            json={'email': email, 'password': password}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(
