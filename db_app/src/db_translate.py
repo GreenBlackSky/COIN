@@ -12,18 +12,19 @@ class DBTranslate:
     def user_model2schema(self, user, accounts):
         user_schema = {
             'id': user.id,
-            'name': user.name,
             'email': user.email,
             'accounts': [acc.id for acc in accounts]
         }
         return user_schema
 
     @log_method
-    def account_model2Schema(self, account, dates, templates, categories):
+    def account_model2Schema(self, account, templates, categories):
         return {
             'id': account.id,
             'name': account.name,
-            'dates': [date.id for date in dates],
+            'actual_date': None,
+            'balance': None,
+            'unconfirmed_balance': None,
             'templates': [template.id for template in templates],
             'categories': [category.id for category in categories]
         }

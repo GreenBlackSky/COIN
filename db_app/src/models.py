@@ -21,7 +21,6 @@ Base.prepare(engine, reflect=True)
 
 UserModel = Base.classes.users
 AccountModel = Base.classes.accounts
-DateModel = Base.classes.dates
 CategoryModel = Base.classes.categories
 EventModel = Base.classes.events
 TemplateModel = Base.classes.templates

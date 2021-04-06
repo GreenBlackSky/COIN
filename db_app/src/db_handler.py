@@ -1,9 +1,9 @@
 """Handle connection to database."""
 
-from datetime import date as dateTools, time
+from datetime import date as dateTools, time, datetime
 
 from common.debug_tools import log_method
-from .models import session, UserModel, AccountModel, DateModel
+from .models import session, UserModel, AccountModel
 
 
 class DBHandler:
@@ -47,9 +47,16 @@ class DBHandler:
         return user
 
     @log_method
-    def create_account(self, user_id, is_main=False, commit=True):
+    def create_account(self, user_id, account_name, is_main=False, commit=True):
         """Create new Account record in db."""
-        account = AccountModel(user_id=user_id, is_main=is_main)
+        account = AccountModel(
+            user_id=user_id,
+            name=account_name,
+            actual_date=dateTools.today(),
+            balance=0,
+            unconfirmed_balance=0,
+            is_main=is_main
+        )
         self.db.add(account)
         if commit:
             self.db.commit()
@@ -64,7 +71,6 @@ class DBHandler:
     @log_method
     def clear(self):
         """Clear database."""
-        date_count = self.db.query(DateModel).delete()
         account_count = self.db.query(AccountModel).delete()
         user_count = self.db.query(UserModel).delete()
         self.db.commit()
