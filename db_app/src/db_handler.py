@@ -1,9 +1,12 @@
 """Handle connection to database."""
 
 from datetime import date as dateTools, time, datetime
+from typing import List, Optional
 
 from common.debug_tools import log_method
-from .models import session, UserModel, AccountModel
+
+from .models import session, CategoryModel, TemplateModel, \
+    UserModel, AccountModel
 
 
 class DBHandler:
@@ -34,7 +37,7 @@ class DBHandler:
         return user
 
     @log_method
-    def update_user(self, user_id, email, password_hash, commit=False):
+    def update_user(self, user_id, email, password_hash):
         """Update user data in db."""
         user = self.db.query(UserModel).get(user_id)
         if user is None:
@@ -42,13 +45,18 @@ class DBHandler:
         user.email = email
         if password_hash is not None:
             user.password_hash = password_hash
-        if commit:
-            self.db.commit()
+        self.db.commit()
         return user
 
     @log_method
-    def create_account(self, user_id, account_name, is_main=False, commit=True):
+    def create_account(self, user_id, account_name, is_main=False):
         """Create new Account record in db."""
+        account = self.db.query(AccountModel).filter(
+            user_id == user_id,
+            account_name == account_name
+        ).first()
+        if account:
+            return None
         account = AccountModel(
             user_id=user_id,
             name=account_name,
@@ -58,15 +66,31 @@ class DBHandler:
             is_main=is_main
         )
         self.db.add(account)
-        if commit:
-            self.db.commit()
-        # self.create_date(account.id, dateTools.today(), 0, 0, True)
+        self.db.commit()
         return account
 
-    # @log_method
-    # def get_account(self, account_id):
-    #     """Get account from db by id."""
-    #     return self.db.query(AccountModel).get(account_id)
+    @log_method
+    def get_accounts(self, user_id) -> Optional[UserModel]:
+        """Get account from db by id."""
+        return self.db.query(AccountModel).filter(
+            AccountModel.user_id == user_id
+        )
+
+    @log_method
+    def create_starting_categories(self, account_id) -> List[CategoryModel]:
+        pass
+
+    @log_method
+    def get_categories(self, account_id) -> List[CategoryModel]:
+        pass
+
+    @log_method
+    def get_templates(self, account_id) -> TemplateModel:
+        pass
+
+    @log_method
+    def create_starting_templates(self, account_id):
+        pass
 
     @log_method
     def clear(self):
@@ -77,5 +101,4 @@ class DBHandler:
         return {
             'user': user_count,
             'account': account_count,
-            'date': date_count
         }

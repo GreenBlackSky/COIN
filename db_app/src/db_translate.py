@@ -1,38 +1,47 @@
 """Translate between db model and marshmallow schema objects."""
 
 from datetime import date as DateType
+from typing import Dict, Tuple, List
 
-from common.schemas import UserSchema, AccountSchema
 from common.debug_tools import log_method
+
+from .models import CategoryModel, TemplateModel, UserModel, AccountModel
 
 
 class DBTranslate:
+    """Transalte entities models into schemas and back."""
 
     @log_method
-    def user_model2schema(self, user, accounts):
-        user_schema = {
+    def m2s_user(self, user: UserModel):
+        """Tranalte user model into user schema."""
+        return {
             'id': user.id,
             'email': user.email,
-            'accounts': [acc.id for acc in accounts]
+            'pass_hash': user.password_hash
         }
-        return user_schema
 
     @log_method
-    def account_model2Schema(self, account, templates, categories):
+    def m2s_account(self, account: AccountModel):
+        """Translate account model into account schema."""
         return {
             'id': account.id,
             'name': account.name,
-            'actual_date': None,
-            'balance': None,
-            'unconfirmed_balance': None,
-            'templates': [template.id for template in templates],
-            'categories': [category.id for category in categories]
+            'actual_date': account.actual_date,
+            'balance': account.balance,
+            'unconfirmed_balance': account.unconfirmed_balance,
+        }
+
+    @log_method
+    def m2s_category(self, category):
+        """Translate category model into schema."""
+        return {
+            "id": category.id,
+            "name": category.name,
+            "description": category.description,
+            "color": category.color,
+            "hidden": category.hidden,
         }
 
     @log_method
     def template_model2schema(self, template):
-        pass
-
-    @log_method
-    def category_model2schema(self, category):
         pass

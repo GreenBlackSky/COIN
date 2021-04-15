@@ -55,8 +55,6 @@ class Account:
     actual_date: DateType
     balance: float
     unconfirmed_balance: float
-    templates: List[int]
-    categories: List[int]
 
 
 @dataclass
@@ -65,7 +63,7 @@ class User:
 
     id: int
     email: str
-    accounts: List[int]
+    pass_hash: str
 
 
 UserSchema = class_schema(User)

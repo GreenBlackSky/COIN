@@ -4,6 +4,7 @@ from nameko.rpc import rpc
 
 from common.debug_tools import log_method
 from common.constants import MAIN_ACCOUNT_NAME
+
 from .db_translate import DBTranslate
 from .db_handler import DBHandler
 
@@ -22,63 +23,35 @@ class DBService:
         user = self.handler.create_user(email, password_hash)
         if user is None:
             return None
-        account = self.handler.create_account(
-            user.id,
-            MAIN_ACCOUNT_NAME,
-            True,
-            True
-        )
-        return self.translate.user_model2schema(user, [account])
+        account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME, True)
+        self.handler.create_starting_categories(account.id)
+        self.handler.create_starting_templates(account.id)
+        return self.translate.m2s_user(user)
 
     @rpc
     @log_method
-    def check_user(self, email, password_hash):
-        """Check user data and get id of ok."""
-        user = self.handler.get_user(email=email)
+    def get_user(self, user_id=None, email=None):
+        """Get user by id or email."""
+        user = self.handler.get_user(user_id=user_id, email=email)
         if user is None:
-            return {'status': 'no such user'}
-        if user.password_hash != password_hash:
-            return {'status': 'wrong password'}
-        return {'status': 'OK', 'user_id': user.id}
+            return None
+        return self.translate.m2s_user(user)
 
     @rpc
     @log_method
-    def check_email(self, email):
-        """Check if email is already taken."""
-        user = self.handler.get_user(email=email)
-        if user is not None:
-            return {'status': 'user exists'}
-        return {'status': 'OK'}
-
-    @rpc
-    @log_method
-    def get_user(self, user_id):
-        """Get user by id."""
-        user = self.handler.get_user(user_id=user_id)
-        if user is None:
-            return {'status': 'no such user'}
-        return self.translate.user_model2schema(user, [])
-
-    @rpc
-    @log_method
-    def edit_user_data(self, user_id, email, password_hash):
+    def update_user(self, user_id, email, password_hash):
         """Edit user in db."""
-        user = self.handler.update_user(
-            user_id, email, password_hash, True
-        )
+        user = self.handler.update_user(user_id, email, password_hash)
         if user is None:
-            return {'status': 'no such user'}
-        return {
-            'status': 'OK',
-            'user': self.translate.user_model2schema(user, [])
-        }
+            return None
+        return self.translate.m2s_user(user)
 
     @rpc
     @log_method
     def create_account(self, user_id, name):
         """Create new account."""
         account = self.handler.create_account(user_id, name)
-        return self.translate.account_model2Schema(account, [], [], [])
+        return self.translate.m2s_account(account)
 
     @rpc
     @log_method
@@ -86,8 +59,8 @@ class DBService:
         """Get account by id."""
         account = self.handler.get_account(account_id)
         if account is None:
-            return {'status': 'no such account'}
-        return self.translate.account_model2Schema(account, [], [], [])
+            return None
+        return self.translate.m2s_account(account)
 
     @rpc
     @log_method
@@ -101,6 +74,6 @@ class DBService:
 
     @rpc
     @log_method
-    def clear_users(self):
+    def clear(self):
         """Clear all records."""
         self.handler.clear()

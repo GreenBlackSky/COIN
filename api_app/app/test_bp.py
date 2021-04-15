@@ -29,6 +29,6 @@ def test_login():
 @log_request
 def clear():
     """Clear all users from db and clear cache."""
-    rpc.cache_service.clear()
-    count = rpc.db_service.clear_users()
+    # rpc.cache_service.clear()
+    count = rpc.db_service.clear()
     return {"users removed": count}

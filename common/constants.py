@@ -1,24 +1,30 @@
 """Some common for project constants."""
 
-from .schemas import UserSchema, AccountSchema, \
-    CategorySchema, EventSchema, TemplateSchema
+# from .schemas import UserSchema, AccountSchema, \
+#     CategorySchema, EventSchema, TemplateSchema
 
 
-class ENTITY:
-    """App entity type."""
+# class ENTITY:
+#     """App entity type."""
 
-    USER = 'user'
-    ACCOUNT = 'account'
-    CATEGORY = 'category'
-    TEMPLATE = 'template'
-    EVENT = 'event'
+#     USER = 'user'
+#     ACCOUNT = 'account'
+#     CATEGORY = 'category'
+#     TEMPLATE = 'template'
+#     EVENT = 'event'
 
 
-ENTITY_SCHEMAS = {
-    ENTITY.USER: UserSchema,
-    ENTITY.ACCOUNT: AccountSchema,
-    ENTITY.TEMPLATE: CategorySchema,
-    ENTITY.EVENT: TemplateSchema,
-}
+# ENTITY_SCHEMAS = {
+#     ENTITY.USER: UserSchema,
+#     ENTITY.ACCOUNT: AccountSchema,
+#     ENTITY.TEMPLATE: CategorySchema,
+#     ENTITY.EVENT: TemplateSchema,
+# }
 
 MAIN_ACCOUNT_NAME = "Account"
+
+MAX_ACCOUNTS = 100
+
+STARTING_CATEGORIES = []
+
+STARTING_TEMPLATES = []

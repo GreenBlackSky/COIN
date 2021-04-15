@@ -2,13 +2,14 @@
 
 from hashlib import md5
 
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, \
     get_current_user
 
 from common.debug_tools import log_request, log_function
 from common.schemas import UserSchema
-from common.constants import ENTITY
+# from common.constants import ENTITY
+
 from .api_app_common import parse_request
 from . import rpc, jwt
 
@@ -26,7 +27,7 @@ def _user_identity_lookup(user):
 @log_function
 def _user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    user = rpc.cache_service.get(ENTITY.USER, identity)
+    user = rpc.db_service.get_user(user_id=identity)
     if user is None:
         return None
     return UserSchema().load(user)
@@ -39,7 +40,7 @@ def unauthorized(reason):
     return {
         "status": "unauthorized access",
         "reason": reason
-        }, 401
+    }, 401
 
 
 @bp.route("/register", methods=['POST'])
@@ -86,15 +87,12 @@ def login():
     except Exception as e:
         return {'status': str(e)}
 
-    password_hash = md5(password.encode()).hexdigest()
-
-    result = rpc.db_service.check_user(email, password_hash)
-    if result and result.get('status') == 'OK':
-        user = UserSchema().load(
-            rpc.cache_service.get(ENTITY.USER, result['user_id'])
-        )
-    else:
-        return result
+    user = rpc.db_service.get_user(email=email)
+    if user is None:
+        return {'status': 'no such user'}
+    user = UserSchema().load(user)
+    if user.pass_hash != md5(password.encode()).hexdigest():
+        return {'status': 'wrong password'}
 
     return {
         'status': 'OK',
@@ -125,20 +123,21 @@ def edit_user():
     user = get_current_user()
     if got_old_pass and got_new_pass:
         old_hash = md5(old_pass.encode()).hexdigest()
-        result = rpc.db_service.check_user(user.email, old_hash)
-        if result['status'] != 'OK':
-            return make_response(result, 405)
+        if old_hash != user.pass_hash:
+            return {'status': 'wrong password'}, 405
         new_hash = md5(new_pass.encode()).hexdigest()
     else:
         new_hash = None
 
     if email != user.email:
-        result = rpc.db_service.check_email(email)
-        if result['status'] != 'OK':
-            return result
+        other_user = rpc.db_service.get_user(email=email)
+        if other_user:
+            return {'status': 'user already exists'}
 
-    rpc.cache_service.forget(ENTITY.USER, user.id)
-    return rpc.db_service.edit_user_data(user.id, email, new_hash)
+    return {
+        'status': 'OK',
+        'user': rpc.db_service.update_user(user.id, email, new_hash)
+    }
 
 
 @bp.route("/logout", methods=['POST'])
@@ -146,5 +145,4 @@ def edit_user():
 @jwt_required()
 def logout():
     """Log out user."""
-    rpc.cache_service.forget(ENTITY.USER, get_current_user().id)
     return {"status": "OK"}
