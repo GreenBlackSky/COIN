@@ -1,7 +1,6 @@
 """Translate between db model and marshmallow schema objects."""
 
 from datetime import date as DateType
-from typing import Dict, Tuple, List
 
 from common.debug_tools import log_method
 
@@ -17,7 +16,7 @@ class DBTranslate:
         return {
             'id': user.id,
             'email': user.email,
-            'pass_hash': user.password_hash
+            'password_hash': user.password_hash
         }
 
     @log_method

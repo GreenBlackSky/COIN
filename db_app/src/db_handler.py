@@ -51,11 +51,10 @@ class DBHandler:
     @log_method
     def create_account(self, user_id, account_name, is_main=False):
         """Create new Account record in db."""
-        account = self.db.query(AccountModel).filter(
-            user_id == user_id,
-            account_name == account_name
-        ).first()
-        if account:
+        if self.db.query(AccountModel).filter(
+            AccountModel.user_id == user_id,
+            AccountModel.name == account_name
+        ).first():
             return None
         account = AccountModel(
             user_id=user_id,

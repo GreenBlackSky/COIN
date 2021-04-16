@@ -61,13 +61,13 @@ services:
     env_file:
       - config.env
 
-  redis:
-    image: "redis:alpine"
-    command: redis-server
-    volumes:
-      - ./redis/redis_data:/var/lib/redis
-    env_file:
-      - config.env
+  # redis:
+  #   image: "redis:alpine"
+  #   command: redis-server
+  #   volumes:
+  #     - ./redis/redis_data:/var/lib/redis
+  #   env_file:
+  #     - config.env
 
   postgres:
     build: ./postgres/

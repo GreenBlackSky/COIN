@@ -49,7 +49,7 @@ class LoginTest(BaseTest):
         session = self.prepare()
         self.register(
             session,
-            result={'status': 'user already exists'}
+            result={'status': 'user exists'}
         )
 
     def test_register_while_logged_in(self):

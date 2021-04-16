@@ -64,7 +64,7 @@ def create_user():
     password_hash = md5(password.encode()).hexdigest()
     user = rpc.db_service.create_user(email, password_hash)
     if user is None:
-        return {'status': 'user already exists'}
+        return {'status': 'user exists'}
     user = UserSchema().load(user)
 
     return jsonify({
@@ -91,7 +91,7 @@ def login():
     if user is None:
         return {'status': 'no such user'}
     user = UserSchema().load(user)
-    if user.pass_hash != md5(password.encode()).hexdigest():
+    if user.password_hash != md5(password.encode()).hexdigest():
         return {'status': 'wrong password'}
 
     return {
@@ -123,7 +123,7 @@ def edit_user():
     user = get_current_user()
     if got_old_pass and got_new_pass:
         old_hash = md5(old_pass.encode()).hexdigest()
-        if old_hash != user.pass_hash:
+        if old_hash != user.password_hash:
             return {'status': 'wrong password'}, 405
         new_hash = md5(new_pass.encode()).hexdigest()
     else:
@@ -132,7 +132,7 @@ def edit_user():
     if email != user.email:
         other_user = rpc.db_service.get_user(email=email)
         if other_user:
-            return {'status': 'user already exists'}
+            return {'status': 'user exists'}
 
     return {
         'status': 'OK',

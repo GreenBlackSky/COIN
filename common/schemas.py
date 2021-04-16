@@ -2,7 +2,6 @@
 
 from datetime import date as DateType, time as TimeType
 from dataclasses import dataclass
-from typing import List
 
 from marshmallow_dataclass import class_schema
 
@@ -63,7 +62,7 @@ class User:
 
     id: int
     email: str
-    pass_hash: str
+    password_hash: str
 
 
 UserSchema = class_schema(User)
