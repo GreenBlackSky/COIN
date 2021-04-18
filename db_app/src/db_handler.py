@@ -49,7 +49,7 @@ class DBHandler:
         return user
 
     @log_method
-    def create_account(self, user_id, account_name, is_main=False):
+    def create_account(self, user_id, account_name):
         """Create new Account record in db."""
         if self.db.query(AccountModel).filter(
             AccountModel.user_id == user_id,
@@ -60,31 +60,31 @@ class DBHandler:
             user_id=user_id,
             name=account_name,
             actual_date=dateTools.today(),
-            balance=0,
-            unconfirmed_balance=0,
-            is_main=is_main
         )
         self.db.add(account)
         self.db.commit()
         return account
 
     @log_method
-    def get_accounts(self, user_id) -> Optional[UserModel]:
+    def get_accounts(self, user_id):
         """Get account from db by id."""
-        return self.db.query(AccountModel).filter(
+        accounts = self.db.query(AccountModel).filter(
             AccountModel.user_id == user_id
         )
+        if accounts.count() == 0:
+            return None
+        return accounts.all()
 
     @log_method
-    def create_starting_categories(self, account_id) -> List[CategoryModel]:
+    def create_starting_categories(self, account_id):
         pass
 
     @log_method
-    def get_categories(self, account_id) -> List[CategoryModel]:
+    def get_categories(self, account_id):
         pass
 
     @log_method
-    def get_templates(self, account_id) -> TemplateModel:
+    def get_templates(self, account_id):
         pass
 
     @log_method

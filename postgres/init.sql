@@ -8,21 +8,13 @@ CREATE TABLE accounts (
     user_id INT REFERENCES users,
     name VARCHAR(100) NOT NULL,
     actual_date DATE NOT NULL,
-    balance INT NOT NULL,
-    unconfirmed_balance INT,
-    is_main BOOLEAN NOT NULL DEFAULT false
 );
-CREATE UNIQUE INDEX only_one_main_account 
-   ON accounts (user_id)
-   WHERE is_main;
-
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     account_id INT REFERENCES accounts,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(200),
     color VARCHAR(6),
-    hidden BOOLEAN
 );
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,

@@ -1,6 +1,5 @@
 """Accounts stuff tests."""
 
-import unittest
 import requests
 from tests.test_base import BaseTest
 
@@ -49,13 +48,7 @@ class AccountTest(BaseTest):
     def test_rename_account(self):
         raise NotImplementedError()
 
-    def test_change_main_account(self):
-        raise NotImplementedError()
-
     def test_remove_one_account(self):
-        raise NotImplementedError()
-
-    def test_remove_main_account(self):
         raise NotImplementedError()
 
     def test_remove_only_account(self):

@@ -23,7 +23,7 @@ class DBService:
         user = self.handler.create_user(email, password_hash)
         if user is None:
             return None
-        account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME, True)
+        account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME)
         self.handler.create_starting_categories(account.id)
         self.handler.create_starting_templates(account.id)
         return self.translate.m2s_user(user)
@@ -55,12 +55,12 @@ class DBService:
 
     @rpc
     @log_method
-    def get_account(self, account_id):
+    def get_accounts(self, user_id):
         """Get account by id."""
-        account = self.handler.get_account(account_id)
-        if account is None:
+        accounts = self.handler.get_accounts(user_id)
+        if accounts is None:
             return None
-        return self.translate.m2s_account(account)
+        return [self.translate.m2s_account(account) for account in accounts]
 
     @rpc
     @log_method

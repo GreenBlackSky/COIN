@@ -7,29 +7,21 @@ from marshmallow_dataclass import class_schema
 
 
 @dataclass
-class Category:
-    """Category of transaction."""
+class User:
+    """Well, it's User."""
 
     id: int
-    name: str
-    description: str
-    color: str
-    hidden: bool
+    email: str
+    password_hash: str
 
 
 @dataclass
-class Template:
-    """Template for regular transaction."""
+class Account:
+    """Users account. One user can have multiple accounts."""
 
     id: int
-    active: bool
-    time: TimeType
-    diff: int
-    category_id: int
-    last_confirmed_date: DateType
-    description: str
-    template: int
-    cycle_length: int
+    name: str
+    actual_date: DateType
 
 
 @dataclass
@@ -46,23 +38,28 @@ class Event:
 
 
 @dataclass
-class Account:
-    """Users account. One user can have multiple accounts."""
+class Category:
+    """Category of transaction."""
 
     id: int
     name: str
-    actual_date: DateType
-    balance: float
-    unconfirmed_balance: float
+    description: str
+    color: str
 
 
 @dataclass
-class User:
-    """Well, it's User."""
+class Template:
+    """Template for regular transaction."""
 
     id: int
-    email: str
-    password_hash: str
+    active: bool
+    time: TimeType
+    diff: int
+    category_id: int
+    last_confirmed_date: DateType
+    description: str
+    template: int
+    cycle_length: int
 
 
 UserSchema = class_schema(User)
