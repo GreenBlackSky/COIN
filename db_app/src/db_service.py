@@ -18,9 +18,9 @@ class DBService:
 
     @rpc
     @log_method
-    def create_user(self, email, password_hash):
+    def create_user(self, name, password_hash):
         """Create new user object and get it back."""
-        user = self.handler.create_user(email, password_hash)
+        user = self.handler.create_user(name, password_hash)
         if user is None:
             return None
         account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME)
@@ -30,18 +30,18 @@ class DBService:
 
     @rpc
     @log_method
-    def get_user(self, user_id=None, email=None):
-        """Get user by id or email."""
-        user = self.handler.get_user(user_id=user_id, email=email)
+    def get_user(self, user_id=None, name=None):
+        """Get user by id or name."""
+        user = self.handler.get_user(user_id=user_id, name=name)
         if user is None:
             return None
         return self.translate.m2s_user(user)
 
     @rpc
     @log_method
-    def update_user(self, user_id, email, password_hash):
+    def update_user(self, user_id, name, password_hash):
         """Edit user in db."""
-        user = self.handler.update_user(user_id, email, password_hash)
+        user = self.handler.update_user(user_id, name, password_hash)
         if user is None:
             return None
         return self.translate.m2s_user(user)

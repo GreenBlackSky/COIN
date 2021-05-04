@@ -51,18 +51,18 @@ def create_user():
     Register new user.
 
     Global variable `request` must contain
-     `email` and `password` fields.
+     `name` and `password` fields.
     """
     if get_current_user():
         return {'status': 'already authorized'}
 
     try:
-        password, email = parse_request(request, ('password', 'email'))
+        password, name = parse_request(request, ('password', 'name'))
     except Exception as e:
         return {'status': str(e)}
 
     password_hash = md5(password.encode()).hexdigest()
-    user = rpc.db_service.create_user(email, password_hash)
+    user = rpc.db_service.create_user(name, password_hash)
     if user is None:
         return {'status': 'user exists'}
     user = UserSchema().load(user)
@@ -80,14 +80,14 @@ def login():
     """
     Log in user.
 
-    Global variable `request` must contain `email` and `password` fields.
+    Global variable `request` must contain `name` and `password` fields.
     """
     try:
-        email, password = parse_request(request, ('email', 'password'))
+        name, password = parse_request(request, ('name', 'password'))
     except Exception as e:
         return {'status': str(e)}
 
-    user = rpc.db_service.get_user(email=email)
+    user = rpc.db_service.get_user(name=name)
     if user is None:
         return {'status': 'no such user'}
     user = UserSchema().load(user)
@@ -107,9 +107,9 @@ def login():
 def edit_user():
     """Edit user."""
     try:
-        email, old_pass, new_pass = parse_request(
+        name, old_pass, new_pass = parse_request(
             request,
-            ('email',),
+            ('name',),
             ('old_pass', 'new_pass')
         )
     except Exception as e:
@@ -129,14 +129,14 @@ def edit_user():
     else:
         new_hash = None
 
-    if email != user.email:
-        other_user = rpc.db_service.get_user(email=email)
+    if name != user.name:
+        other_user = rpc.db_service.get_user(name=name)
         if other_user:
             return {'status': 'user exists'}
 
     return {
         'status': 'OK',
-        'user': rpc.db_service.update_user(user.id, email, new_hash)
+        'user': rpc.db_service.update_user(user.id, name, new_hash)
     }
 
 

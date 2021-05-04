@@ -15,7 +15,7 @@ class DBTranslate:
         """Tranalte user model into user schema."""
         return {
             'id': user.id,
-            'email': user.email,
+            'name': user.name,
             'password_hash': user.password_hash
         }
 

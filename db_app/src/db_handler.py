@@ -15,34 +15,34 @@ class DBHandler:
     db = session
 
     @log_method
-    def create_user(self, email, password_hash):
+    def create_user(self, name, password_hash):
         """Create new User record in db."""
-        user = self.db.query(UserModel).filter_by(email=email).first()
+        user = self.db.query(UserModel).filter_by(name=name).first()
         if user:
             return None
-        user = UserModel(email=email, password_hash=password_hash)
+        user = UserModel(name=name, password_hash=password_hash)
         self.db.add(user)
         self.db.commit()
         return user
 
     @log_method
-    def get_user(self, user_id=None, email=None):
-        """Get user by id or by email."""
+    def get_user(self, user_id=None, name=None):
+        """Get user by id or by name."""
         if user_id:
             user = self.db.query(UserModel).get(user_id)
-        elif email:
-            user = self.db.query(UserModel).filter_by(email=email).first()
+        elif name:
+            user = self.db.query(UserModel).filter_by(name=name).first()
         else:
-            raise Exception("Man, either id or email!")
+            raise Exception("Man, either id or name!")
         return user
 
     @log_method
-    def update_user(self, user_id, email, password_hash):
+    def update_user(self, user_id, name, password_hash):
         """Update user data in db."""
         user = self.db.query(UserModel).get(user_id)
         if user is None:
             return None
-        user.email = email
+        user.name = name
         if password_hash is not None:
             user.password_hash = password_hash
         self.db.commit()

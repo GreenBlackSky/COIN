@@ -1,12 +1,11 @@
 """Flask blueprint with test methods."""
 
-import logging
+from time import sleep
 
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, current_user
 
-from common.debug_tools import log_function, log_request
-from common.schemas import UserSchema
+from common.debug_tools import log_request
 
 from . import rpc
 
@@ -23,6 +22,22 @@ def test_login():
         'status': "OK",
         'user_id': current_user.id
     }
+
+
+@bp.route("/get_accounts", methods=['POST'])
+@jwt_required()
+@log_request
+def test_get_accounts():
+    sleep(1)
+    return {'status': "OK"}
+
+
+@bp.route("/get_events", methods=['POST'])
+@jwt_required()
+@log_request
+def test_get_events():
+    sleep(1)
+    return {'status': "OK"}
 
 
 @bp.route("/clear_users", methods=['POST'])

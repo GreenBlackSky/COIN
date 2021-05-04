@@ -1,20 +1,20 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(200) NOT NULL,
+    name VARCHAR(200) NOT NULL,
     password_hash VARCHAR(500) NOT NULL
 );
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users,
     name VARCHAR(100) NOT NULL,
-    actual_date DATE NOT NULL,
+    actual_date DATE NOT NULL
 );
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     account_id INT REFERENCES accounts,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(200),
-    color VARCHAR(6),
+    color VARCHAR(6)
 );
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,

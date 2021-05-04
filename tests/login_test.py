@@ -12,7 +12,7 @@ class LoginTest(BaseTest):
         """Set test values."""
         BaseTest.setUp(self)
         self._wrong_password = "ass1"
-        self._user_email_2 = "email2"
+        self._user_name_2 = "name2"
         self._user_password_2 = "pass2"
 
     def test_unautharized(self):
@@ -38,7 +38,7 @@ class LoginTest(BaseTest):
         self.check_authorization(session, authorized=False)
 
     def test_login_with_wrong_user(self):
-        """Test logging in with wrong email."""
+        """Test logging in with wrong name."""
         self.clear_users()
         session = requests.Session()
         self.login(session, result={'status': 'no such user'})
@@ -57,13 +57,13 @@ class LoginTest(BaseTest):
         session = self.prepare(stay_logged_in=True)
         self.register(
             session,
-            self._user_email_2,
+            self._user_name_2,
             self._user_password_2,
             result={'status': 'already authorized'}
         )
 
-    def test_change_email(self):
-        """Test changing email."""
+    def test_change_name(self):
+        """Test changing name."""
         session, user = self.prepare(
             stay_logged_in=True,
             get_user=True
@@ -71,7 +71,7 @@ class LoginTest(BaseTest):
         response = session.post(
             url=self.HOST+"edit_user",
             json={
-                "email": self._user_email_2
+                "name": self._user_name_2
             }
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
@@ -81,17 +81,17 @@ class LoginTest(BaseTest):
             "Wrong answear"
         )
         self.logout(session)
-        user = self.login(session, email=self._user_email_2)
-        self.assertEqual(user['email'], self._user_email_2, "Wrong email")
+        user = self.login(session, name=self._user_name_2)
+        self.assertEqual(user['name'], self._user_name_2, "Wrong name")
 
-    def test_change_email_into_duplicate(self):
-        """Try change email into one, that is already exists."""
+    def test_change_name_into_duplicate(self):
+        """Try change name into one, that is already exists."""
         session = self.prepare()
-        self.register(session, email=self._user_email_2)
+        self.register(session, name=self._user_name_2)
         response = session.post(
             url=self.HOST+"edit_user",
             json={
-                "email": self._user_email
+                "name": self._user_name
             }
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
@@ -107,7 +107,7 @@ class LoginTest(BaseTest):
         response = session.post(
             url=self.HOST+"edit_user",
             json={
-                "email": self._user_email,
+                "name": self._user_name,
                 "old_pass": self._user_password,
                 "new_pass": self._user_password_2
             }
@@ -132,7 +132,7 @@ class LoginTest(BaseTest):
         response = session.post(
             url=self.HOST+"edit_user",
             json={
-                "email": self._user_email,
+                "name": self._user_name,
                 "old_pass": self._user_password_2,
                 "new_pass": self._user_password
             }

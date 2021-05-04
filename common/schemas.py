@@ -11,7 +11,7 @@ class User:
     """Well, it's User."""
 
     id: int
-    email: str
+    name: str
     password_hash: str
 
 

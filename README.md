@@ -51,11 +51,12 @@ TODO
 * move logic from db app to core app
 * accounts
 * event
-* categories and labels
+* labels
 * templates
 * api fabric
 * nameko tests
 * use actual hashing for password
+* shared access
 * balcklist token on logout
 * expiration tokens
 * handle different token problems
@@ -70,4 +71,3 @@ TODO
 * dev mode
 * kubernetes
 * nginx for hosting web app
-* verify email

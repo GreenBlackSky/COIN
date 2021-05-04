@@ -12,7 +12,7 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         """Set test values."""
         self._user_password = "pass1"
-        self._user_email = "email1"
+        self._user_name = "name1"
 
     def prepare(self, stay_logged_in=False, get_user=False):
         """Clesr users and create new one."""
@@ -25,18 +25,18 @@ class BaseTest(unittest.TestCase):
             return session, user
         return session
 
-    def register(self, session, email=None, password=None, result=None):
+    def register(self, session, name=None, password=None, result=None):
         """Create new account."""
         if password is None:
             password = self._user_password
-        if email is None:
-            email = self._user_email
+        if name is None:
+            name = self._user_name
         if result is None:
             result = {'status': 'OK'}
 
         response = session.post(
             url=self.HOST+"register",
-            json={'email': email, 'password': password}
+            json={'name': name, 'password': password}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(
@@ -65,17 +65,17 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(response.status_code, code, "Wrong response code")
         self.assertDictContainsSubset(result, response.json(), "Wrong answear")
 
-    def login(self, session, email=None, password=None, result=None):
+    def login(self, session, name=None, password=None, result=None):
         """Login."""
-        if email is None:
-            email = self._user_email
+        if name is None:
+            name = self._user_name
         if password is None:
             password = self._user_password
         if result is None:
             result = {'status': 'OK'}
         response = session.post(
             url=self.HOST+"login",
-            json={'email': email, 'password': password}
+            json={'name': name, 'password': password}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(result, response.json(), "Wrong answear")
