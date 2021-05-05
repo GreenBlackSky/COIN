@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  web_entrypoint:
-    build: ./web_entrypoint/
-    ports:
-      - 5001:5000
-    volumes:
-      - ./web_entrypoint/src/build/web:/app
+  # web_entrypoint:
+  #   build: ./web_entrypoint/
+  #   ports:
+  #     - 5001:5000
+  #   volumes:
+  #     - ./web_entrypoint/src/build/web:/app
 
   api_app:
     build: ./api_app/
