@@ -24,7 +24,7 @@ class DBService:
         if user is None:
             return None
         account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME)
-        self.handler.create_starting_categories(account.id)
+        self.handler.create_starting_labels(account.id)
         self.handler.create_starting_templates(account.id)
         return self.translate.m2s_user(user)
 

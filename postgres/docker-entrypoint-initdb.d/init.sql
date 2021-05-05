@@ -9,7 +9,7 @@ CREATE TABLE accounts (
     name VARCHAR(100) NOT NULL,
     actual_date DATE NOT NULL
 );
-CREATE TABLE categories (
+CREATE TABLE labels (
     id SERIAL PRIMARY KEY,
     account_id INT REFERENCES accounts,
     name VARCHAR(100) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE events (
     account_id INT REFERENCES accounts,
     time TIME NOT NULL,
     diff INT NOT NULL,
-    category_id INT REFERENCES categories,
+    category_id INT REFERENCES labels,
     description VARCHAR(200) NOT NULL,
     confirmed BOOLEAN NOT NULL
 );
@@ -32,7 +32,7 @@ CREATE TABLE templates (
     account_id INT REFERENCES accounts,
     time TIME NOT NULL,
     diff INT NOT NULL,
-    category_id INT REFERENCES categories,
+    category_id INT REFERENCES labels,
     description VARCHAR(200) NOT NULL,
     last_confirmed_date DATE NOT NULL,
     template INT NOT NULL,

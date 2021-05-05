@@ -76,11 +76,11 @@ class DBHandler:
         return accounts.all()
 
     @log_method
-    def create_starting_categories(self, account_id):
+    def create_starting_labels(self, account_id):
         pass
 
     @log_method
-    def get_categories(self, account_id):
+    def get_labels(self, account_id):
         pass
 
     @log_method
