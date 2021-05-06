@@ -7,7 +7,8 @@ CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users,
     name VARCHAR(100) NOT NULL,
-    actual_date DATE NOT NULL
+    actual_date DATE NOT NULL,
+    balance INT NOT NULL
 );
 CREATE TABLE labels (
     id SERIAL PRIMARY KEY,

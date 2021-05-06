@@ -60,6 +60,7 @@ class DBHandler:
             user_id=user_id,
             name=account_name,
             actual_date=dateTools.today(),
+            balance=0
         )
         self.db.add(account)
         self.db.commit()
