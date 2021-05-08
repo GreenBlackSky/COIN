@@ -62,6 +62,18 @@ class LoginTest(BaseTest):
             result={'status': 'already authorized'}
         )
 
+    def test_change_name_unauthorized(self):
+        """Try editing unser data without authorization."""
+        session = self.prepare()
+        response = session.post(
+            url=self.HOST+"edit_user",
+            json={
+                "name": self._user_name_2
+            }
+        )
+        self.assertEqual(response.status_code, 401, "Wrong response code")
+        self.assertDictContainsSubset({}, response.json(), "Wrong answear")
+
     def test_change_name(self):
         """Test changing name."""
         session, user = self.prepare(

@@ -1,10 +1,10 @@
 """Flask blueprint, that contains accounts manipulation methods."""
 
-from os import O_SHORT_LIVED
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, current_user
 
 from common.debug_tools import log_request
+from common.constants import MAX_ACCOUNTS
 
 from .api_app_common import parse_request
 from . import rpc
@@ -22,6 +22,10 @@ def create_account():
         (name,) = parse_request(request, ('name',))
     except Exception as e:
         return {'status': str(e)}
+
+    accounts = rpc.db_service.get_accounts(current_user.id)
+    if len(accounts) >= MAX_ACCOUNTS:
+        return {'status': 'max accounts'}
 
     account = rpc.db_service.create_account(name, current_user.id)
     if account is None:
@@ -72,8 +76,12 @@ def delete_account():
     except Exception as e:
         return {'status': str(e)}
 
-    account = rpc.db_service.delete_account(name, current_user.id)
-    if account is None:
+    accounts = rpc.db_service.get_accounts(current_user.id)
+    names = {account['name'] for account in accounts}
+    if name not in names:
         return {'status': "no such account"}
+    if len(accounts) == 1:
+        return {'status': "can't delete the only account"}
 
+    rpc.db_service.delete_account(name, current_user.id)
     return {'status': 'OK'}

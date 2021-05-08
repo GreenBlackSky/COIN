@@ -21,7 +21,7 @@
 #     ENTITY.EVENT: TemplateSchema,
 # }
 
-MAIN_ACCOUNT_NAME = "Account"
+MAIN_ACCOUNT_NAME = "Main Account"
 
 MAX_ACCOUNTS = 100
 

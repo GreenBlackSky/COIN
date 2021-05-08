@@ -33,17 +33,13 @@ class DBService:
     def get_user(self, user_id=None, name=None):
         """Get user by id or name."""
         user = self.handler.get_user(user_id=user_id, name=name)
-        if user is None:
-            return None
         return self.translate.m2s_user(user)
 
     @rpc
     @log_method
-    def update_user(self, user_id, name, password_hash):
+    def edit_user(self, user_id, name, password_hash):
         """Edit user in db."""
-        user = self.handler.update_user(user_id, name, password_hash)
-        if user is None:
-            return None
+        user = self.handler.edit_user(user_id, name, password_hash)
         return self.translate.m2s_user(user)
 
     @rpc
@@ -64,13 +60,16 @@ class DBService:
 
     @rpc
     @log_method
-    def edit_account(self, old_name, acc_id, new_name):
-        pass
+    def edit_account(self, old_name, user_id, new_name):
+        """Edit account name."""
+        account = self.handler.edit_account(old_name, user_id, new_name)
+        return self.translate.m2s_account(account)
 
     @rpc
     @log_method
     def delete_account(self, name, user_id):
-        pass
+        """Delete account."""
+        self.handler.delete_account(name, user_id)
 
     @rpc
     @log_method

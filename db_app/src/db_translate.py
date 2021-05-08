@@ -13,6 +13,8 @@ class DBTranslate:
     @log_method
     def m2s_user(self, user: UserModel):
         """Tranalte user model into user schema."""
+        if user is None:
+            return None
         return {
             'id': user.id,
             'name': user.name,
@@ -22,6 +24,8 @@ class DBTranslate:
     @log_method
     def m2s_account(self, account: AccountModel):
         """Translate account model into account schema."""
+        if account is None:
+            return None
         return {
             'id': account.id,
             'name': account.name,

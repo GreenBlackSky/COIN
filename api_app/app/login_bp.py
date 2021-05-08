@@ -134,7 +134,7 @@ def edit_user():
 
     return {
         'status': 'OK',
-        'user': rpc.db_service.update_user(user.id, name, new_hash)
+        'user': rpc.db_service.edit_user(user.id, name, new_hash)
     }
 
 
