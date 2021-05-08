@@ -27,11 +27,10 @@ class DBTranslate:
             'name': account.name,
             'actual_date': account.actual_date,
             'balance': account.balance,
-            'unconfirmed_balance': account.unconfirmed_balance,
         }
 
     @log_method
-    def m2s_category(self, category):
+    def m2s_label(self, category):
         """Translate category model into schema."""
         return {
             "id": category.id,

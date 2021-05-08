@@ -8,7 +8,7 @@ CREATE TABLE accounts (
     user_id INT REFERENCES users,
     name VARCHAR(100) NOT NULL,
     actual_date DATE NOT NULL,
-    balance INT NOT NULL
+    balance FLOAT NOT NULL
 );
 CREATE TABLE labels (
     id SERIAL PRIMARY KEY,

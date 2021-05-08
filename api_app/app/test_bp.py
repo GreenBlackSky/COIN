@@ -24,14 +24,6 @@ def test_login():
     }
 
 
-@bp.route("/get_accounts", methods=['POST'])
-@jwt_required()
-@log_request
-def test_get_accounts():
-    sleep(1)
-    return {'status': "OK"}
-
-
 @bp.route("/get_events", methods=['POST'])
 @jwt_required()
 @log_request

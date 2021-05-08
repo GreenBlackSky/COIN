@@ -22,6 +22,7 @@ class Account:
     id: int
     name: str
     actual_date: DateType
+    balance: float
 
 
 @dataclass

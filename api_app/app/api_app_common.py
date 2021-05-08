@@ -2,22 +2,12 @@
 
 from common.debug_tools import log_function
 
+
 @log_function
 def parse_request(request, keys, optional_keys=None):
-    """
-    Parse given requests json data with given keys.
-
-    If keys is iterable, return list with values from request.
-    If keys is not iterable - treat it as a key
-     and return one value by that key from request.
-    """
-    if not isinstance(keys, (list, tuple)):
-        keys = [keys]
-
+    """Parse given requests json data with given keys."""
     if optional_keys is None:
         optional_keys = []
-    if not isinstance(optional_keys, (list, tuple)):
-        optional_keys = [optional_keys]
 
     request_data = request.get_json()
     if request_data is None:

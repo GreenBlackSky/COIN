@@ -65,12 +65,11 @@ def create_user():
     user = rpc.db_service.create_user(name, password_hash)
     if user is None:
         return {'status': 'user exists'}
-    user = UserSchema().load(user)
 
     return jsonify({
         'status': 'OK',
-        'access_token': create_access_token(identity=user),
-        'user': UserSchema().dump(user)
+        'access_token': create_access_token(identity=UserSchema().load(user)),
+        'user': user
     })
 
 
@@ -90,14 +89,13 @@ def login():
     user = rpc.db_service.get_user(name=name)
     if user is None:
         return {'status': 'no such user'}
-    user = UserSchema().load(user)
-    if user.password_hash != md5(password.encode()).hexdigest():
+    if user["password_hash"] != md5(password.encode()).hexdigest():
         return {'status': 'wrong password'}
 
     return {
         'status': 'OK',
-        'access_token': create_access_token(identity=user),
-        'user': UserSchema().dump(user)
+        'access_token': create_access_token(identity=UserSchema().load(user)),
+        'user': user
     }
 
 

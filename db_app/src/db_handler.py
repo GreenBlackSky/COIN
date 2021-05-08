@@ -49,7 +49,7 @@ class DBHandler:
         return user
 
     @log_method
-    def create_account(self, user_id, account_name):
+    def create_account(self, account_name, user_id):
         """Create new Account record in db."""
         if self.db.query(AccountModel).filter(
             AccountModel.user_id == user_id,
@@ -77,15 +77,15 @@ class DBHandler:
         return accounts.all()
 
     @log_method
+    def edit_account(self, old_name, acc_id, new_name):
+        pass
+
+    @log_method
+    def delete_account(self, name, user_id):
+        pass
+
+    @log_method
     def create_starting_labels(self, account_id):
-        pass
-
-    @log_method
-    def get_labels(self, account_id):
-        pass
-
-    @log_method
-    def get_templates(self, account_id):
         pass
 
     @log_method

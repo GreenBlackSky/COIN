@@ -48,9 +48,9 @@ class DBService:
 
     @rpc
     @log_method
-    def create_account(self, user_id, name):
+    def create_account(self, name, user_id):
         """Create new account."""
-        account = self.handler.create_account(user_id, name)
+        account = self.handler.create_account(name, user_id)
         return self.translate.m2s_account(account)
 
     @rpc
@@ -64,12 +64,12 @@ class DBService:
 
     @rpc
     @log_method
-    def edit_account(self, acc_id, name):
+    def edit_account(self, old_name, acc_id, new_name):
         pass
 
     @rpc
     @log_method
-    def delete_account(self, acc_id):
+    def delete_account(self, name, user_id):
         pass
 
     @rpc
