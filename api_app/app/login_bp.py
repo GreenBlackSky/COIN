@@ -100,8 +100,8 @@ def login():
 
 
 @bp.route("/edit_user", methods=['POST'])
-@log_request
 @jwt_required()
+@log_request
 def edit_user():
     """Edit user."""
     try:

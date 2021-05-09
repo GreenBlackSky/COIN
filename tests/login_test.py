@@ -162,3 +162,24 @@ class LoginTest(BaseTest):
             result={"status": "wrong password"}
         )
         self.login(session, password=self._user_password)
+
+    # def test_signup_with_incorrect_args(self):
+    #     raise NotImplementedError()
+
+    # def test_login_with_incorrect_args(self):
+    #     raise NotImplementedError()
+
+    # def test_edit_with_incorrect_args(self):
+    #     raise NotImplementedError()
+
+    # def test_signup_with_too_long_name(self):
+    #     raise NotImplementedError()
+
+    # def test_signup_with_too_long_password(self):
+    #     raise NotImplementedError()
+
+    # def test_change_name_into_too_long_one(self):
+    #     raise NotImplementedError()
+
+    # def test_change_password_into_too_long_one(self):
+    #     raise NotImplementedError()

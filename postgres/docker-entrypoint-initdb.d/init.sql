@@ -6,9 +6,7 @@ CREATE TABLE users (
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users,
-    name VARCHAR(100) NOT NULL,
-    actual_date DATE NOT NULL,
-    balance FLOAT NOT NULL
+    name VARCHAR(100) NOT NULL
 );
 CREATE TABLE labels (
     id SERIAL PRIMARY KEY,
@@ -19,23 +17,29 @@ CREATE TABLE labels (
 );
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
-    date DATE NOT NULL,
+    time TIMESTAMP NOT NULL,
     account_id INT REFERENCES accounts,
-    time TIME NOT NULL,
     diff INT NOT NULL,
-    category_id INT REFERENCES labels,
     description VARCHAR(200) NOT NULL,
+    result_balance FLOAT NOT NULL,
     confirmed BOOLEAN NOT NULL
+);
+CREATE TABLE events_labels (
+    event_id INT REFERENCES events,
+    label_id INT REFERENCES labels
 );
 CREATE TABLE templates (
     id SERIAL PRIMARY KEY,
-    active BOOLEAN NOT NULL,
+    time TIMESTAMP NOT NULL,
     account_id INT REFERENCES accounts,
-    time TIME NOT NULL,
     diff INT NOT NULL,
-    category_id INT REFERENCES labels,
     description VARCHAR(200) NOT NULL,
-    last_confirmed_date DATE NOT NULL,
-    template INT NOT NULL,
+    last_confirmed TIMESTAMP NOT NULL,
+    active BOOLEAN NOT NULL,
+    cycle INT NOT NULL,
     cycle_length INT NOT NULL
+);
+CREATE TABLE templates_labels (
+    template_id INT REFERENCES templates,
+    label_id INT REFERENCES labels
 );

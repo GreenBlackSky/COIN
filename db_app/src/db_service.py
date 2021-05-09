@@ -46,7 +46,7 @@ class DBService:
     @log_method
     def create_account(self, name, user_id):
         """Create new account."""
-        account = self.handler.create_account(name, user_id)
+        account = self.handler.create_account(user_id, name)
         return self.translate.m2s_account(account)
 
     @rpc

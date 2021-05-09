@@ -56,7 +56,7 @@ def edit_account():
         return {'status': str(e)}
 
     accounts = rpc.db_service.get_accounts(current_user.id)
-    if any(account['id'] == acc_id for account in accounts):
+    if not any(account['id'] == acc_id for account in accounts):
         return {'status': "no such account"}
     if any(account['name'] == name for account in accounts):
         return {'status': "account already exists"}
@@ -81,5 +81,5 @@ def delete_account():
     if not any(account['id'] == acc_id for account in accounts):
         return {'status': "no such account"}
 
-    rpc.db_service.delete_account(current_user.id, acc_id)
-    return {'status': 'OK'}
+    account = rpc.db_service.delete_account(current_user.id, acc_id)
+    return {'status': 'OK', 'account': account}

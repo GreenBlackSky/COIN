@@ -29,8 +29,6 @@ class DBTranslate:
         return {
             'id': account.id,
             'name': account.name,
-            'actual_date': account.actual_date,
-            'balance': account.balance,
         }
 
     @log_method

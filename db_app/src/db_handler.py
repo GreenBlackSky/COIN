@@ -1,7 +1,5 @@
 """Handle connection to database."""
 
-from datetime import date as dateTools
-
 from common.debug_tools import log_method
 
 from .models import session, UserModel, AccountModel
@@ -47,7 +45,7 @@ class DBHandler:
         return user
 
     @log_method
-    def create_account(self, account_name, user_id):
+    def create_account(self, user_id, account_name):
         """Create new Account record in db."""
         if self.db.query(AccountModel).filter(
             AccountModel.user_id == user_id,
@@ -57,8 +55,6 @@ class DBHandler:
         account = AccountModel(
             user_id=user_id,
             name=account_name,
-            actual_date=dateTools.today(),
-            balance=0
         )
         self.db.add(account)
         self.db.commit()
