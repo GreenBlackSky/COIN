@@ -48,9 +48,10 @@ All config values must be stored in `config.env` in project root. It must have f
 * POSTGRES_PORT
 
 TODO
-* move logic from db app to core app
 * accounts
-* event
+* events
+* status codes
+* move logic from api app and db app to core app
 * labels
 * templates
 * api fabric

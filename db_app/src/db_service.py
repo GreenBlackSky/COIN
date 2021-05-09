@@ -60,16 +60,17 @@ class DBService:
 
     @rpc
     @log_method
-    def edit_account(self, old_name, user_id, new_name):
+    def edit_account(self, user_id, acc_id, name):
         """Edit account name."""
-        account = self.handler.edit_account(old_name, user_id, new_name)
+        account = self.handler.edit_account(user_id, acc_id, name)
         return self.translate.m2s_account(account)
 
     @rpc
     @log_method
-    def delete_account(self, name, user_id):
+    def delete_account(self, user_id, acc_id):
         """Delete account."""
-        self.handler.delete_account(name, user_id)
+        account = self.handler.delete_account(user_id, acc_id)
+        return self.translate.m2s_account(account)
 
     @rpc
     @log_method

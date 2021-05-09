@@ -75,34 +75,35 @@ class DBHandler:
         return accounts.all()
 
     @log_method
-    def edit_account(self, old_name, user_id, new_name):
+    def edit_account(self, user_id, acc_id, name):
         """Edit account name in db."""
         if self.db.query(AccountModel).filter(
             AccountModel.user_id == user_id,
-            AccountModel.name == new_name
+            AccountModel.name == name
         ).first():
             return None
         account = self.db.query(AccountModel).filter(
             AccountModel.user_id == user_id,
-            AccountModel.name == old_name
+            AccountModel.id == acc_id
         ).first()
         if not account:
             return None
-        account.name = new_name
+        account.name = name
         self.db.commit()
         return account
 
     @log_method
-    def delete_account(self, name, user_id):
+    def delete_account(self, user_id, acc_id):
         """Remove account from db."""
         account = self.db.query(AccountModel).filter(
             AccountModel.user_id == user_id,
-            AccountModel.name == name
+            AccountModel.id == acc_id
         ).first()
         if not account:
-            return
+            return None
         self.db.delete(account)
         self.db.commit()
+        return account
 
     @log_method
     def create_starting_labels(self, account_id):

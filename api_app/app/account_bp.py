@@ -51,18 +51,17 @@ def get_accounts():
 def edit_account():
     """Request to create new account."""
     try:
-        (old_name, new_name) = parse_request(request, ('old_name', 'new_name'))
+        (acc_id, name) = parse_request(request, ('id', 'name'))
     except Exception as e:
         return {'status': str(e)}
 
     accounts = rpc.db_service.get_accounts(current_user.id)
-    names = {account['name'] for account in accounts}
-    if old_name not in names:
+    if any(account['id'] == acc_id for account in accounts):
         return {'status': "no such account"}
-    if new_name in names:
+    if any(account['name'] == name for account in accounts):
         return {'status': "account already exists"}
 
-    account = rpc.db_service.edit_account(old_name, current_user.id, new_name)
+    account = rpc.db_service.edit_account(current_user.id, acc_id, name)
     return {'status': 'OK', 'account': account}
 
 
@@ -72,16 +71,15 @@ def edit_account():
 def delete_account():
     """Delete existing account."""
     try:
-        (name,) = parse_request(request, ('name',))
+        (acc_id,) = parse_request(request, ('id',))
     except Exception as e:
         return {'status': str(e)}
 
     accounts = rpc.db_service.get_accounts(current_user.id)
-    names = {account['name'] for account in accounts}
-    if name not in names:
-        return {'status': "no such account"}
     if len(accounts) == 1:
         return {'status': "can't delete the only account"}
+    if not any(account['id'] == acc_id for account in accounts):
+        return {'status': "no such account"}
 
-    rpc.db_service.delete_account(name, current_user.id)
+    rpc.db_service.delete_account(current_user.id, acc_id)
     return {'status': 'OK'}
