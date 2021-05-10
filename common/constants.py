@@ -14,12 +14,19 @@
 #     EVENT = 'event'
 
 
-# ENTITY_SCHEMAS = {
-#     ENTITY.USER: UserSchema,
-#     ENTITY.ACCOUNT: AccountSchema,
-#     ENTITY.TEMPLATE: CategorySchema,
-#     ENTITY.EVENT: TemplateSchema,
-# }
+#     ENTITY_SCHEMAS = {
+#         USER: UserSchema,
+#         ACCOUNT: AccountSchema,
+#         TEMPLATE: CategorySchema,
+#         EVENT: TemplateSchema,
+#     }
+
+
+class STATUS_CODE:
+    """In-app status codes."""
+
+    pass
+
 
 MAIN_ACCOUNT_NAME = "Main Account"
 

@@ -67,17 +67,20 @@ class BaseTest(unittest.TestCase):
 
     def login(self, session, name=None, password=None, result=None):
         """Login."""
+        code = 200
         if name is None:
             name = self._user_name
         if password is None:
             password = self._user_password
         if result is None:
             result = {'status': 'OK'}
+        elif result == {"status": "wrong password"}:
+            code = 405
         response = session.post(
             url=self.HOST+"login",
             json={'name': name, 'password': password}
         )
-        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.status_code, code, "Wrong response code")
         self.assertDictContainsSubset(result, response.json(), "Wrong answear")
         if 'access_token' in response.json():
             session.headers.update(

@@ -21,8 +21,8 @@ Base.prepare(engine, reflect=True)
 
 UserModel = Base.classes.users
 AccountModel = Base.classes.accounts
-CategoryModel = Base.classes.labels
 EventModel = Base.classes.events
+LabelModel = Base.classes.labels
 TemplateModel = Base.classes.templates
 
 session = Session(engine)

@@ -31,15 +31,15 @@ services:
   #   env_file:
   #     - config.env
 
-  # core_app:
-  #   build: ./core_app/
-  #   volumes:
-  #     - ./core_app/src:/app/src
-  #     - ./common:/app/common
-  #   depends_on:
-  #     - rabbit
-  #   env_file:
-  #     - config.env
+  core_app:
+    build: ./core_app/
+    volumes:
+      - ./core_app/src:/app/src
+      - ./common:/app/common
+    depends_on:
+      - rabbit
+    env_file:
+      - config.env
 
   db_app:
     build: ./db_app/

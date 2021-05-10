@@ -4,7 +4,7 @@ from datetime import date as DateType
 
 from common.debug_tools import log_method
 
-from .models import CategoryModel, TemplateModel, UserModel, AccountModel
+from .models import UserModel, AccountModel
 
 
 class DBTranslate:
