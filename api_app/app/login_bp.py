@@ -9,11 +9,10 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, \
     current_user
 
-from common.debug_tools import log_request, log_function
+from common.debug_tools import wrap_request, log_function
 from common.schemas import UserSchema
 # from common.constants import ENTITY
 
-from .api_app_common import parse_request
 from . import rpc, jwt
 
 
@@ -47,9 +46,9 @@ def unauthorized(reason):
 
 
 @bp.route("/register", methods=['POST'])
-@log_request
 @jwt_required(optional=True)
-def create_user():
+@wrap_request('name', 'password')
+def create_user(name, password):
     """
     Register new user.
 
@@ -59,11 +58,6 @@ def create_user():
     if current_user:
         return {'status': 'already authorized'}
 
-    try:
-        password, name = parse_request(request, ('password', 'name'))
-    except Exception as e:
-        return {'status': str(e)}
-
     result = rpc.core_service.create_user(name, password)
     if result['status'] == 'OK':
         result['access_token'] = create_access_token(identity=result['user'])
@@ -71,18 +65,13 @@ def create_user():
 
 
 @bp.route("/login", methods=["POST"])
-@log_request
-def login():
+@wrap_request('name', 'password')
+def login(name, password):
     """
     Log in user.
 
     Global variable `request` must contain `name` and `password` fields.
     """
-    try:
-        name, password = parse_request(request, ('name', 'password'))
-    except Exception as e:
-        return {'status': str(e)}
-
     result = rpc.core_service.get_user(name, password)
     if result['status'] == 'OK':
         result['access_token'] = create_access_token(identity=result['user'])
@@ -93,18 +82,9 @@ def login():
 
 @bp.route("/edit_user", methods=['POST'])
 @jwt_required()
-@log_request
-def edit_user():
+@wrap_request('name', optional_arg_names=('old_pass', 'new_pass'))
+def edit_user(name, old_pass=None, new_pass=None):
     """Edit user."""
-    try:
-        name, old_pass, new_pass = parse_request(
-            request,
-            ('name',),
-            ('old_pass', 'new_pass')
-        )
-    except Exception as e:
-        return {'status': str(e)}
-
     result = rpc.core_service.edit_user(
         UserSchema().dump(current_user), name,
         old_pass, new_pass
@@ -115,7 +95,7 @@ def edit_user():
 
 
 @bp.route("/logout", methods=['POST'])
-@log_request
+@wrap_request()
 @jwt_required()
 def logout():
     """Log out user."""

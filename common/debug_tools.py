@@ -51,26 +51,53 @@ def log_method(method):
             raise e
     return _wrapper
 
-def log_request(method):
-    """Decorate flask request for logging ints input and output."""
-    @wraps(method)
-    def _wrapper(*args, **kargs):
-        assert 'request' in method.__globals__, "no 'request' in globals of logged request"
-        name = method.__name__
-        request = method.__globals__['request']
-        print_args = {}
-        if request.headers:
-            print_args['H'] = request.headers
-        # if request.json:
-        #     print_args['J'] = request.json
-        if request.args:
-            print_args['A'] = request.args
-        logging.debug(f">>> {name} {print_args} request")
-        try:
-            ret = method(*args, **kargs)
-            logging.debug(f"<<< {name} {ret}")
-            return ret
-        except Exception as e:
-            logging.debug(f"<!< {name} {str(e)}")
-            return {'status': 'error'}, 500
-    return _wrapper
+
+def wrap_request(*arg_names, optional_arg_names=None):
+    """
+    Request decorator.
+
+    Parse given args from json data from request.
+    Also, log input and output.
+    """
+    if optional_arg_names is None:
+        optional_arg_names = []
+
+    def _decorator(method):
+        @wraps(method)
+        def _wrapper():
+            assert 'request' in method.__globals__, \
+                "no 'request' in globals of logged request"
+            name = method.__name__
+            request = method.__globals__['request']
+
+            request_data = request.get_json()
+            if (arg_names or optional_arg_names) and request_data is None:
+                logging.debug(f">>> {name} request")
+                logging.debug(f"<!< {name} no json data")
+                return {'status': 'error'}, 500
+
+            args = [request_data.get(key) for key in arg_names]
+            missing_keys = [
+                key
+                for key, val in zip(arg_names, args)
+                if val is None
+            ]
+            if missing_keys:
+                logging.debug(f">>> {name} request")
+                logging.debug(
+                    f"<!< {name} incomplete data: {' '.join(missing_keys)}"
+                )
+                return {'status': 'error'}, 500
+            args += [request_data.get(key) for key in optional_arg_names]
+
+            logging.debug(f">>> {name} {args} request")
+            try:
+                ret = method(*args)
+                logging.debug(f"<<< {name} {ret}")
+                return ret
+            except Exception as e:
+                logging.debug(f"<!< {name} {str(e)}")
+                return {'status': 'error'}, 500
+        return _wrapper
+
+    return _decorator

@@ -54,8 +54,6 @@ TODO
 * events back
 * events front
 * events tests
-* cross user tests
-* parse_args decorator
 * transform entity decorator
 * status codes
 * move logic from api app and db app to core app

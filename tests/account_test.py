@@ -310,3 +310,6 @@ class AccountTest(BaseTest):
 
     # def test_rename_with_too_long_name(self):
     #     raise NotImplementedError()
+
+    # def test_get_account_from_other_user(self):
+    #     raise NotImplementedError()
