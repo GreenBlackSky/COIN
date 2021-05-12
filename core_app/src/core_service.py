@@ -6,6 +6,7 @@ from nameko.rpc import rpc, RpcProxy
 
 from common.schemas import UserSchema
 from common.debug_tools import log_method
+from common.constants import MAX_ACCOUNTS, MAIN_ACCOUNT_NAME
 
 
 class CoreService:
@@ -22,7 +23,9 @@ class CoreService:
         user = self.db_service.create_user(name, password_hash)
         if user is None:
             return {'status': 'user exists'}
-
+        account = self.db_service.create_account(user['id'], MAIN_ACCOUNT_NAME)
+        # self.db_service.create_starting_labels(account.id)
+        # self.db_service.create_starting_templates(account.id)
         return {
             'status': 'OK',
             'user': user
@@ -30,7 +33,7 @@ class CoreService:
 
     @rpc
     @log_method
-    def get_user(self, name, password):
+    def validate_user(self, name, password):
         """Get user by name and password."""
         user = self.db_service.get_user(name=name)
         if user is None:
@@ -72,3 +75,43 @@ class CoreService:
             'status': 'OK',
             'user': self.db_service.edit_user(user.id, name, new_hash)
         }
+
+    @rpc
+    @log_method
+    def create_account(self, user_id, name):
+        """Create new account."""
+        accounts = self.db_service.get_accounts(user_id)
+        if len(accounts) >= MAX_ACCOUNTS:
+            return {'status': 'max accounts'}
+
+        account = self.db_service.create_account(user_id, name)
+        if account is None:
+            return {'status': "account already exists"}
+
+        return {'status': 'OK', 'account': account}
+
+    @rpc
+    @log_method
+    def edit_account(self, user_id, acc_id, name):
+        """Edit account name."""
+        accounts = self.db_service.get_accounts(user_id)
+        if not any(account['id'] == acc_id for account in accounts):
+            return {'status': "no such account"}
+        if any(account['name'] == name for account in accounts):
+            return {'status': "account already exists"}
+
+        account = self.db_service.edit_account(user_id, acc_id, name)
+        return {'status': 'OK', 'account': account}
+
+    @rpc
+    @log_method
+    def delete_account(self, user_id, acc_id):
+        """Delete account."""
+        accounts = self.db_service.get_accounts(user_id)
+        if len(accounts) == 1:
+            return {'status': "can't delete the only account"}
+        if not any(account['id'] == acc_id for account in accounts):
+            return {'status': "no such account"}
+
+        account = self.db_service.delete_account(user_id, acc_id)
+        return {'status': 'OK', 'account': account}

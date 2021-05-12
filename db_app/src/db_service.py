@@ -1,79 +1,133 @@
-"""DB api service."""
+"""DB handler."""
 
 from nameko.rpc import rpc
 
+from common.schemas import UserSchema, AccountSchema
 from common.debug_tools import log_method
-from common.constants import MAIN_ACCOUNT_NAME
 
-from .db_translate import DBTranslate
-from .db_handler import DBHandler
+from .db_translate import transform_return
+from .models import session, UserModel, AccountModel
 
 
 class DBService:
     """SQL alchemy based db handler class."""
 
     name = "db_service"
-    handler = DBHandler()
-    translate = DBTranslate()
+    db = session
 
     @rpc
     @log_method
+    @transform_return(UserSchema)
     def create_user(self, name, password_hash):
-        """Create new user object and get it back."""
-        user = self.handler.create_user(name, password_hash)
-        if user is None:
+        """Create new User record in db."""
+        user = self.db.query(UserModel).filter_by(name=name).first()
+        if user:
             return None
-        account = self.handler.create_account(user.id, MAIN_ACCOUNT_NAME)
-        self.handler.create_starting_labels(account.id)
-        self.handler.create_starting_templates(account.id)
-        return self.translate.m2s_user(user)
+        user = UserModel(name=name, password_hash=password_hash)
+        self.db.add(user)
+        self.db.commit()
+        return user
 
     @rpc
     @log_method
+    @transform_return(UserSchema)
     def get_user(self, user_id=None, name=None):
         """Get user by id or name."""
-        user = self.handler.get_user(user_id=user_id, name=name)
-        return self.translate.m2s_user(user)
+        if user_id:
+            user = self.db.query(UserModel).get(user_id)
+        elif name:
+            user = self.db.query(UserModel).filter_by(name=name).first()
+        else:
+            raise Exception("Man, either id or name!")
+        return user
 
     @rpc
     @log_method
+    @transform_return(UserSchema)
     def edit_user(self, user_id, name, password_hash):
         """Edit user in db."""
-        user = self.handler.edit_user(user_id, name, password_hash)
-        return self.translate.m2s_user(user)
-
-    @rpc
-    @log_method
-    def create_account(self, name, user_id):
-        """Create new account."""
-        account = self.handler.create_account(user_id, name)
-        return self.translate.m2s_account(account)
-
-    @rpc
-    @log_method
-    def get_accounts(self, user_id):
-        """Get account by id."""
-        accounts = self.handler.get_accounts(user_id)
-        if accounts is None:
+        user = self.db.query(UserModel).get(user_id)
+        if user is None:
             return None
-        return [self.translate.m2s_account(account) for account in accounts]
+        user.name = name
+        if password_hash is not None:
+            user.password_hash = password_hash
+        self.db.commit()
+        return user
 
     @rpc
     @log_method
+    @transform_return(AccountSchema)
+    def create_account(self, user_id, account_name):
+        """Create new account."""
+        if self.db.query(AccountModel).filter(
+            AccountModel.user_id == user_id,
+            AccountModel.name == account_name
+        ).first():
+            return None
+        account = AccountModel(
+            user_id=user_id,
+            name=account_name,
+        )
+        self.db.add(account)
+        self.db.commit()
+        return account
+
+    @rpc
+    @log_method
+    @transform_return(AccountSchema)
+    def get_accounts(self, user_id):
+        """Get account from db by id."""
+        accounts = self.db.query(AccountModel).filter(
+            AccountModel.user_id == user_id
+        )
+        if accounts.count() == 0:
+            return None
+        return accounts.all()
+
+    @rpc
+    @log_method
+    @transform_return(AccountSchema)
     def edit_account(self, user_id, acc_id, name):
         """Edit account name."""
-        account = self.handler.edit_account(user_id, acc_id, name)
-        return self.translate.m2s_account(account)
+        if self.db.query(AccountModel).filter(
+            AccountModel.user_id == user_id,
+            AccountModel.name == name
+        ).first():
+            return None
+        account = self.db.query(AccountModel).filter(
+            AccountModel.user_id == user_id,
+            AccountModel.id == acc_id
+        ).first()
+        if not account:
+            return None
+        account.name = name
+        self.db.commit()
+        return account
 
     @rpc
     @log_method
+    @transform_return(AccountSchema)
     def delete_account(self, user_id, acc_id):
         """Delete account."""
-        account = self.handler.delete_account(user_id, acc_id)
-        return self.translate.m2s_account(account)
+        account = self.db.query(AccountModel).filter(
+            AccountModel.user_id == user_id,
+            AccountModel.id == acc_id
+        ).first()
+        if not account:
+            return None
+        self.db.delete(account)
+        self.db.commit()
+        return account
 
     @rpc
     @log_method
     def clear(self):
-        """Clear all records."""
-        self.handler.clear()
+        """Clear database."""
+        account_count = self.db.query(AccountModel).delete()
+        user_count = self.db.query(UserModel).delete()
+        self.db.commit()
+        return {
+            'user': user_count,
+            'account': account_count,
+        }

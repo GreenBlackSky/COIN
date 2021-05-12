@@ -313,3 +313,6 @@ class AccountTest(BaseTest):
 
     # def test_get_account_from_other_user(self):
     #     raise NotImplementedError()
+
+    # def test_rename_account_with_same_name(self):
+    #     raise NotImplementedError()

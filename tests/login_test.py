@@ -166,6 +166,12 @@ class LoginTest(BaseTest):
     # def test_signup_with_incorrect_args(self):
     #     raise NotImplementedError()
 
+    # def test_change_name_into_itself(self):
+    #     raise NotImplementedError()
+
+    # def test_change_password_into_itself(self):
+    #     raise NotImplementedError()
+
     # def test_login_with_incorrect_args(self):
     #     raise NotImplementedError()
 

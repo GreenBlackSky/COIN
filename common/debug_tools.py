@@ -58,6 +58,8 @@ def wrap_request(*arg_names, optional_arg_names=None):
 
     Parse given args from json data from request.
     Also, log input and output.
+    Problems: non obvious usage of request from globals,
+    logging and parsing in one, incompatable with other decorators. =(
     """
     if optional_arg_names is None:
         optional_arg_names = []

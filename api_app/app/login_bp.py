@@ -5,13 +5,12 @@ This module contains methods to create new user or
 to get access to existing one.
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, jwt_required, \
     current_user
 
 from common.debug_tools import wrap_request, log_function
 from common.schemas import UserSchema
-# from common.constants import ENTITY
 
 from . import rpc, jwt
 
@@ -72,7 +71,7 @@ def login(name, password):
 
     Global variable `request` must contain `name` and `password` fields.
     """
-    result = rpc.core_service.get_user(name, password)
+    result = rpc.core_service.validate_user(name, password)
     if result['status'] == 'OK':
         result['access_token'] = create_access_token(identity=result['user'])
     elif result['status'] == 'wrong password':
