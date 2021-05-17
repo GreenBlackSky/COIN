@@ -49,20 +49,19 @@ All config values must be stored in `config.env` in project root. It must have f
 
 TODO
 * accounts front
-* accounts_bp -> core_app
-* db_service -> core_app
 * events back
 * events front
 * events tests
-* transform entity decorator
 * status codes
-* move logic from api app and db app to core app
+* process db errors
+* split core_app
+* split db_app
 * labels
 * templates
 * api fabric
 * nameko tests
 * use actual hashing for password
-* shared access
+* shared access to accounts
 * balcklist token on logout
 * expiration tokens
 * handle different token problems
