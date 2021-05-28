@@ -36,10 +36,10 @@ services:
     env_file:
       - config.env
 
-  api_app:
-    build: ./api_app/
+  api_service:
+    build: ./api_service/
     volumes:
-      - ./api_app/app:/app/app
+      - ./api_service/app:/app/app
       - ./common:/app/common
     ports:
       - 5002:5000
@@ -59,10 +59,10 @@ services:
     env_file:
       - api_db_config.env
       
-  account_app:
-    build: ./account_app/
+  account_service:
+    build: ./account_service/
     volumes:
-      - ./account_app/src:/app/src
+      - ./account_service/src:/app/src
       - ./common:/app/common
     depends_on:
       - rabbit
