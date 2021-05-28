@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 
 
-connection_string = "postgresql://{}:{}@{}:{}/coin_db".format(
+connection_string = "postgresql://{}:{}@{}:{}/account_db".format(
     os.environ['POSTGRES_USER'],
     os.environ['POSTGRES_PASSWORD'],
     os.environ['POSTGRES_HOST'],
@@ -19,8 +19,5 @@ engine = create_engine(connection_string)
 Base.prepare(engine, reflect=True)
 
 AccountModel = Base.classes.accounts
-EventModel = Base.classes.events
-LabelModel = Base.classes.labels
-TemplateModel = Base.classes.templates
 
 session = Session(engine)

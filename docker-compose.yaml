@@ -7,6 +7,25 @@ services:
   #     - 5001:5000
   #   volumes:
   #     - ./web_entrypoint/src/build/web:/app
+  
+    # cache_app:
+    #   build: ./cache_app/
+    #   volumes:
+    #     - ./cache_app/src:/app/src
+    #     - ./common:/app/common
+    #   depends_on:
+    #     - rabbit
+    #     - redis
+    #   env_file:
+    #     - config.env
+  
+    # redis:
+    #   image: "redis:alpine"
+    #   command: redis-server
+    #   volumes:
+    #     - ./redis/redis_data:/var/lib/redis
+    #   env_file:
+    #     - config.env
 
   api_app:
     build: ./api_app/
@@ -19,38 +38,18 @@ services:
       - rabbit
     env_file:
       - config.env
+      - user_db_config.env
 
-  # cache_app:
-  #   build: ./cache_app/
-  #   volumes:
-  #     - ./cache_app/src:/app/src
-  #     - ./common:/app/common
-  #   depends_on:
-  #     - rabbit
-  #     - redis
-  #   env_file:
-  #     - config.env
-
-  core_app:
-    build: ./core_app/
+  account_app:
+    build: ./account_app/
     volumes:
-      - ./core_app/src:/app/src
+      - ./account_app/src:/app/src
       - ./common:/app/common
     depends_on:
       - rabbit
     env_file:
       - config.env
-
-  db_app:
-    build: ./db_app/
-    volumes:
-      - ./db_app/src:/app/src
-      - ./common:/app/common
-    depends_on:
-      - rabbit
-      - postgres
-    env_file:
-      - config.env
+      - account_db_config.env
   
   rabbit:
     image: rabbitmq:3.7-management
@@ -61,28 +60,20 @@ services:
     env_file:
       - config.env
 
-  # redis:
-  #   image: "redis:alpine"
-  #   command: redis-server
-  #   volumes:
-  #     - ./redis/redis_data:/var/lib/redis
-  #   env_file:
-  #     - config.env
-
-  postgres:
+  account_db:
     image: postgres
-    # ports:
-    #   - 5003:5432
+    ports: # for debug purpuses
+      - 5003:5432
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql/data/
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
-      - config.env
+      - account_db_config.env
 
   user_db:
     image: postgres
-    # ports:
-    #   - 5003:5432
+    ports:  # for debug purpuses
+      - 5004:5432
     volumes:
       - ./user_db/postgres_data:/var/lib/postgresql/data/
       - ./user_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/

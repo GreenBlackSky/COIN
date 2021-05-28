@@ -1,3 +1,0 @@
-nameko
-marshmallow
-marshmallow_dataclass

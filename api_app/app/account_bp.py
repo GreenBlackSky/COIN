@@ -16,7 +16,7 @@ bp = Blueprint('account_bp', __name__)
 @wrap_request('name')
 def create_account(name):
     """Request to create new account."""
-    return rpc.core_service.create_account(current_user.id, name)
+    return rpc.account_service.create_account(current_user.id, name)
 
 
 @bp.route("/get_accounts", methods=['POST'])
@@ -24,10 +24,7 @@ def create_account(name):
 @wrap_request()
 def get_accounts():
     """Get all accounts user has."""
-    return {
-        'status': 'OK',
-        'accounts': rpc.db_service.get_accounts(current_user.id)
-    }
+    rpc.account_service.get_accounts(current_user.id)
 
 
 @bp.route("/edit_account", methods=['POST'])
@@ -35,7 +32,7 @@ def get_accounts():
 @wrap_request('id', 'name')
 def edit_account(acc_id, name):
     """Request to create new account."""
-    return rpc.core_service.edit_account(current_user.id, acc_id, name)
+    return rpc.account_service.edit_account(current_user.id, acc_id, name)
 
 
 @bp.route("/delete_account", methods=['POST'])
@@ -43,4 +40,4 @@ def edit_account(acc_id, name):
 @wrap_request('id')
 def delete_account(acc_id):
     """Delete existing account."""
-    return rpc.core_service.delete_account(current_user.id, acc_id)
+    return rpc.account_service.delete_account(current_user.id, acc_id)

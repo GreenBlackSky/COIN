@@ -44,17 +44,11 @@ All config values must be stored in `config.env` in project root. It must have f
 * REDIS_INDEX
 * REDIS_REPLICATION_MODE
 
+There is also must be user_db_config.env and account_db_config.env. Both contain access creds for corresponding db's:
 * POSTGRES_USER
 * POSTGRES_PASSWORD
 * POSTGRES_HOST
 * POSTGRES_PORT
-
-There is also must be user_db_config.env. It must have folowing variables:
-* POSTGRES_USER
-* POSTGRES_PASSWORD
-* POSTGRES_HOST
-* POSTGRES_PORT
-Variables must be set to the same values, as in config.env
 
 TODO
 * accounts front
@@ -63,9 +57,6 @@ TODO
 * events front
 * events tests
 * status codes
-* process db errors
-* split core_app
-* split db_app
 * labels
 * templates
 * api fabric

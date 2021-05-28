@@ -1,12 +1,11 @@
 """Flask blueprint with test methods."""
 
-from common.debug_tools import wrap_request
 from time import sleep
 
-from flask import Blueprint, request
+from flask import Blueprint
 from flask_jwt_extended import jwt_required, current_user
 
-# from common.debug_tools import log_request
+from common.debug_tools import wrap_request
 
 from . import rpc
 from .model import session, UserModel
@@ -38,7 +37,9 @@ def test_get_events():
 @wrap_request()
 def clear():
     """Clear all users from db and clear cache."""
-    # rpc.cache_service.clear()
-    session.query(UserModel).delete()
-    count = rpc.db_service.clear()
-    return {"users removed": count}
+    user_count = session.query(UserModel).delete()
+    account_count = rpc.account_service.clear()
+    return {
+        "users removed": user_count,
+        "accounts removed": account_count,
+    }
