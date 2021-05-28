@@ -16,7 +16,6 @@ class CacheService:
 
     name = "cache_service"
     redis = Redis('redis')
-    db_service = RpcProxy('db_service')
 
     # @rpc
     # @log_method

@@ -35,7 +35,7 @@ class AccountsService:
         )
         session.add(account)
         session.commit()
-        return {'status': 'OK', 'account': AccountModel().dump(account)}
+        return {'status': 'OK', 'account': AccountSchema().dump(account)}
 
     @rpc
     @log_method

@@ -26,6 +26,15 @@ services:
     #     - ./redis/redis_data:/var/lib/redis
     #   env_file:
     #     - config.env
+    
+  rabbit:
+    image: rabbitmq:3.7-management
+    volumes:
+    - ./rabbitmq/etc/:/etc/rabbitmq/
+    - ./rabbitmq/data/:/var/lib/rabbitmq/
+    - ./rabbitmq/logs/:/var/log/rabbitmq/
+    env_file:
+      - config.env
 
   api_app:
     build: ./api_app/
@@ -38,8 +47,18 @@ services:
       - rabbit
     env_file:
       - config.env
-      - user_db_config.env
-
+      - api_db_config.env
+  
+  api_db:
+    image: postgres
+    ports:  # for debug purpuses
+      - 5004:5432
+    volumes:
+      - ./api_db/postgres_data:/var/lib/postgresql/data/
+      - ./api_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+    env_file:
+      - api_db_config.env
+      
   account_app:
     build: ./account_app/
     volumes:
@@ -50,32 +69,13 @@ services:
     env_file:
       - config.env
       - account_db_config.env
-  
-  rabbit:
-    image: rabbitmq:3.7-management
-    volumes:
-    - ./rabbitmq/etc/:/etc/rabbitmq/
-    - ./rabbitmq/data/:/var/lib/rabbitmq/
-    - ./rabbitmq/logs/:/var/log/rabbitmq/
-    env_file:
-      - config.env
 
   account_db:
     image: postgres
     ports: # for debug purpuses
       - 5003:5432
     volumes:
-      - ./postgres/postgres_data:/var/lib/postgresql/data/
-      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+      - ./account_db/postgres_data:/var/lib/postgresql/data/
+      - ./account_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
       - account_db_config.env
-
-  user_db:
-    image: postgres
-    ports:  # for debug purpuses
-      - 5004:5432
-    volumes:
-      - ./user_db/postgres_data:/var/lib/postgresql/data/
-      - ./user_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
-    env_file:
-      - user_db_config.env

@@ -2,7 +2,7 @@
 
 from time import sleep
 
-from flask import Blueprint
+from flask import Blueprint, request  # do not remove request just yet
 from flask_jwt_extended import jwt_required, current_user
 
 from common.debug_tools import wrap_request

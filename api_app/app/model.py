@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 
 
-connection_string = "postgresql://{}:{}@{}:{}/user_db".format(
+connection_string = "postgresql://{}:{}@{}:{}/api_db".format(
     os.environ['POSTGRES_USER'],
     os.environ['POSTGRES_PASSWORD'],
     os.environ['POSTGRES_HOST'],

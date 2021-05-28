@@ -69,13 +69,13 @@ def create_user(name, password):
     user = UserModel(name=name, password_hash=password_hash)
     session.add(user)
     session.commit()
-    account = rpc.db_service.create_account(user.id, MAIN_ACCOUNT_NAME)
+    account = rpc.account_service.create_account(user.id, MAIN_ACCOUNT_NAME)
     # self.db_service.create_starting_labels(account.id)
     # self.db_service.create_starting_templates(account.id)
     return {
         'access_token': create_access_token(identity=user),
         'status': 'OK',
-        'user': user
+        'user': UserSchema().dump(user)
     }
 
 
@@ -91,7 +91,7 @@ def login(name, password):
     if user is None:
         return {'status': 'no such user'}, 401
 
-    if user["password_hash"] != md5(password.encode()).hexdigest():
+    if user.password_hash != md5(password.encode()).hexdigest():
         return {'status': 'wrong password'}, 401
 
     return {
