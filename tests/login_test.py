@@ -149,7 +149,7 @@ class LoginTest(BaseTest):
                 "new_pass": self._user_password
             }
         )
-        self.assertEqual(response.status_code, 405, "Wrong response code")
+        self.assertEqual(response.status_code, 401, "Wrong response code")
         self.assertDictContainsSubset(
             {'status': 'wrong password'},
             response.json(),

@@ -74,8 +74,8 @@ class BaseTest(unittest.TestCase):
             password = self._user_password
         if result is None:
             result = {'status': 'OK'}
-        elif result == {"status": "wrong password"}:
-            code = 405
+        elif result['status'] in {"wrong password", "no such user"}:
+            code = 401
         response = session.post(
             url=self.HOST+"login",
             json={'name': name, 'password': password}

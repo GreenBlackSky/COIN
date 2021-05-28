@@ -6,7 +6,7 @@ until nc -z ${RABBITMQ_HOST} ${RABBITMQ_PORT}; do
 done
 
 until nc -z ${POSTGRES_HOST} ${POSTGRES_PORT}; do
-    echo "$(date) - waiting for postgres..."
+    echo "$(date) - waiting for postgres at ${POSTGRES_HOST} ${POSTGRES_PORT}... "
     sleep 2
 done
 

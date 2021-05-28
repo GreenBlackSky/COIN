@@ -24,7 +24,7 @@ def create_account(name):
 @wrap_request()
 def get_accounts():
     """Get all accounts user has."""
-    rpc.account_service.get_accounts(current_user.id)
+    return rpc.account_service.get_accounts(current_user.id)
 
 
 @bp.route("/edit_account", methods=['POST'])

@@ -76,7 +76,7 @@ class AccountsService:
             AccountModel.id == acc_id
         ).first()
         account.name = name
-        self.db.commit()
+        session.commit()
         return {'status': 'OK', 'account': AccountSchema().dump(account)}
 
     @rpc
@@ -87,12 +87,18 @@ class AccountsService:
             AccountModel.user_id == user_id,
             AccountModel.id == acc_id
         ).first()
-        if not account:
+        if account is None:
             return {'status': "no such account"}
+
+        accounts = session.query(AccountModel).filter(
+            AccountModel.user_id == user_id,
+        )
+        if accounts.count() == 1:
+            return {'status': "can't delete the only account"}
 
         session.delete(account)
         session.commit()
-        return {'status': 'OK', 'account': account}
+        return {'status': 'OK', 'account': AccountSchema().dump(account)}
 
     @rpc
     @log_method
