@@ -1,11 +1,7 @@
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    password_hash VARCHAR(500) NOT NULL
-);
+
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users,
+    user_id INT,
     name VARCHAR(100) NOT NULL
 );
 CREATE TABLE labels (

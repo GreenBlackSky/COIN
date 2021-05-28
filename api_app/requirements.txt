@@ -6,3 +6,5 @@ flask-cors
 gunicorn
 marshmallow
 marshmallow_dataclass
+psycopg2-binary
+sqlalchemy

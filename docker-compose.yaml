@@ -71,10 +71,20 @@ services:
 
   postgres:
     image: postgres
-    ports:
-      - 5003:5432
+    # ports:
+    #   - 5003:5432
     volumes:
       - ./postgres/postgres_data:/var/lib/postgresql/data/
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
       - config.env
+
+  user_db:
+    image: postgres
+    # ports:
+    #   - 5003:5432
+    volumes:
+      - ./user_db/postgres_data:/var/lib/postgresql/data/
+      - ./user_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+    env_file:
+      - user_db_config.env

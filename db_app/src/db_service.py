@@ -6,7 +6,7 @@ from common.schemas import UserSchema, AccountSchema
 from common.debug_tools import log_method
 
 from .db_translate import transform_return
-from .models import session, UserModel, AccountModel
+from .models import session, AccountModel
 
 
 class DBService:
@@ -14,46 +14,6 @@ class DBService:
 
     name = "db_service"
     db = session
-
-    @rpc
-    @log_method
-    @transform_return(UserSchema)
-    def create_user(self, name, password_hash):
-        """Create new User record in db."""
-        user = self.db.query(UserModel).filter_by(name=name).first()
-        if user:
-            return None
-        user = UserModel(name=name, password_hash=password_hash)
-        self.db.add(user)
-        self.db.commit()
-        return user
-
-    @rpc
-    @log_method
-    @transform_return(UserSchema)
-    def get_user(self, user_id=None, name=None):
-        """Get user by id or name."""
-        if user_id:
-            user = self.db.query(UserModel).get(user_id)
-        elif name:
-            user = self.db.query(UserModel).filter_by(name=name).first()
-        else:
-            raise Exception("Man, either id or name!")
-        return user
-
-    @rpc
-    @log_method
-    @transform_return(UserSchema)
-    def edit_user(self, user_id, name, password_hash):
-        """Edit user in db."""
-        user = self.db.query(UserModel).get(user_id)
-        if user is None:
-            return None
-        user.name = name
-        if password_hash is not None:
-            user.password_hash = password_hash
-        self.db.commit()
-        return user
 
     @rpc
     @log_method
@@ -125,9 +85,7 @@ class DBService:
     def clear(self):
         """Clear database."""
         account_count = self.db.query(AccountModel).delete()
-        user_count = self.db.query(UserModel).delete()
         self.db.commit()
         return {
-            'user': user_count,
             'account': account_count,
         }

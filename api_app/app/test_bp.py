@@ -9,6 +9,7 @@ from flask_jwt_extended import jwt_required, current_user
 # from common.debug_tools import log_request
 
 from . import rpc
+from .model import session, UserModel
 
 
 bp = Blueprint('test_bp', __name__)
@@ -38,5 +39,6 @@ def test_get_events():
 def clear():
     """Clear all users from db and clear cache."""
     # rpc.cache_service.clear()
+    session.query(UserModel).delete()
     count = rpc.db_service.clear()
     return {"users removed": count}

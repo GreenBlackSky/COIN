@@ -31,24 +31,34 @@ All config values must be stored in `config.env` in project root. It must have f
 * RABBITMQ_DEFAULT_USER
 * RABBITMQ_DEFAULT_PASS
 * RABBITMQ_HOST RABBITMQ_PORT
+
 * SECRET_KEY
 * FLASK_ENV
 * FLASK_APP
 * FLASK_DEBUG
 * JWT_SECRET_KEY
+
 * REDIS_PASSWORD
 * REDIS_HOST
 * REDIS_PORT
 * REDIS_INDEX
 * REDIS_REPLICATION_MODE
+
 * POSTGRES_USER
 * POSTGRES_PASSWORD
-* POSTGRES_DB
 * POSTGRES_HOST
 * POSTGRES_PORT
 
+There is also must be user_db_config.env. It must have folowing variables:
+* POSTGRES_USER
+* POSTGRES_PASSWORD
+* POSTGRES_HOST
+* POSTGRES_PORT
+Variables must be set to the same values, as in config.env
+
 TODO
 * accounts front
+* use flask_sqlalchemy
 * events back
 * events front
 * events tests
