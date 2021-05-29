@@ -1,15 +1,15 @@
 """Account logic service."""
 
-from common.schemas import AccountSchema
 from nameko.rpc import rpc
 
 from common.debug_tools import log_method
 from common.constants import MAX_ACCOUNTS
+from common.schemas import AccountSchema
 
 from .model import session, AccountModel
 
 
-class AccountsService:
+class AccountService:
     """Class contains logic that concerns accounts."""
 
     name = "account_service"

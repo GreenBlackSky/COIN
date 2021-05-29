@@ -48,7 +48,7 @@ def unauthorized(reason):
     }, 401
 
 
-@bp.route("/register", methods=['POST'])
+@bp.post("/register")
 @jwt_required(optional=True)
 @wrap_request('name', 'password')
 def create_user(name, password):
@@ -79,7 +79,7 @@ def create_user(name, password):
     }
 
 
-@bp.route("/login", methods=["POST"])
+@bp.post("/login")
 @wrap_request('name', 'password')
 def login(name, password):
     """
@@ -101,7 +101,7 @@ def login(name, password):
     }
 
 
-@bp.route("/edit_user", methods=['POST'])
+@bp.post("/edit_user")
 @jwt_required()
 @wrap_request('name', optional_arg_names=('old_pass', 'new_pass'))
 def edit_user(name, old_pass=None, new_pass=None):
@@ -134,7 +134,7 @@ def edit_user(name, old_pass=None, new_pass=None):
     }
 
 
-@bp.route("/logout", methods=['POST'])
+@bp.post("/logout")
 @wrap_request()
 @jwt_required()
 def logout():

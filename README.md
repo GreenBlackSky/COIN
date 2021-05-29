@@ -52,28 +52,53 @@ There is also must be user_db_config.env and account_db_config.env. Both contain
 
 TODO
 * accounts front
-* use flask_sqlalchemy
-* events back
+* shared access to accounts
+
+* events service
+* labels
 * events front
 * events tests
+
+* templates service
+* templates front
+* templates tests
+
+* statistics service
+* statistics front
+* statistics tests
+
+* ads service
+* ads front
+* ads tests
+
 * status codes
-* labels
-* templates
 * api fabric
+
 * nameko tests
-* use actual hashing for password
-* shared access to accounts
-* balcklist token on logout
+* flask tests
+* flutter tests
+
 * expiration tokens
+* balcklist token on logout
 * handle different token problems
-* broadcast date and time
+
+* color schemes
+* animations
 * cookies
+
+* broadcast date and time
+* log service 
+
+* use flask_sqlalchemy
+* use actual hashing for password
+* nginx for hosting web app
+
 * auto-build web app
 * fix versions of libs
+* dev mode
+* kubernetes
+
 * redis password
 * pg admin
 * redis admin
 * rabbit admin
-* dev mode
-* kubernetes
-* nginx for hosting web app

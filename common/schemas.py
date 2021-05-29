@@ -1,7 +1,7 @@
 """Module contains marshmallow schemas for objects, services exchange with."""
 
-from datetime import date as DateType, time as TimeType
 from dataclasses import dataclass
+from datetime import datetime
 
 from marshmallow_dataclass import class_schema
 
@@ -27,17 +27,19 @@ class Account:
 class Event:
     """Transaction event."""
 
+    user_id: int
+    account_id: int
     id: int
-    date: DateType
-    time: TimeType
+    event_time: datetime
+    created_at: datetime
     diff: int
-    category_id: int
+    total: int
     description: str
     confirmed: bool
 
 
 @dataclass
-class Category:
+class Label:
     """Category of transaction."""
 
     id: int
@@ -46,23 +48,23 @@ class Category:
     color: str
 
 
-@dataclass
-class Template:
-    """Template for regular transaction."""
+# @dataclass
+# class Template:
+#     """Template for regular transaction."""
 
-    id: int
-    active: bool
-    time: TimeType
-    diff: int
-    category_id: int
-    last_confirmed_date: DateType
-    description: str
-    template: int
-    cycle_length: int
+#     id: int
+#     active: bool
+#     time: TimeType
+#     diff: int
+#     category_id: int
+#     last_confirmed_date: DateType
+#     description: str
+#     template: int
+#     cycle_length: int
 
 
 UserSchema = class_schema(User)
 AccountSchema = class_schema(Account)
-CategorySchema = class_schema(Category)
+LabelSchema = class_schema(Label)
 EventSchema = class_schema(Event)
-TemplateSchema = class_schema(Template)
+# TemplateSchema = class_schema(Template)

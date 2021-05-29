@@ -11,18 +11,9 @@ CREATE TABLE accounts (
 --     description VARCHAR(200),
 --     color VARCHAR(6)
 -- );
--- CREATE TABLE events (
---     id SERIAL PRIMARY KEY,
---     time TIMESTAMP NOT NULL,
---     account_id INT REFERENCES accounts,
---     diff INT NOT NULL,
---     description VARCHAR(200) NOT NULL,
---     result_balance FLOAT NOT NULL,
---     confirmed BOOLEAN NOT NULL
--- );
 -- CREATE TABLE events_labels (
 --     event_id INT REFERENCES events,
---     label_id INT REFERENCES labels
+--     label_id INT
 -- );
 -- CREATE TABLE templates (
 --     id SERIAL PRIMARY KEY,

@@ -11,7 +11,7 @@ from . import rpc
 bp = Blueprint('account_bp', __name__)
 
 
-@bp.route("/create_account", methods=['POST'])
+@bp.post("/create_account")
 @jwt_required()
 @wrap_request('name')
 def create_account(name):
@@ -19,7 +19,7 @@ def create_account(name):
     return rpc.account_service.create_account(current_user.id, name)
 
 
-@bp.route("/get_accounts", methods=['POST'])
+@bp.post("/get_accounts")
 @jwt_required()
 @wrap_request()
 def get_accounts():
@@ -27,15 +27,15 @@ def get_accounts():
     return rpc.account_service.get_accounts(current_user.id)
 
 
-@bp.route("/edit_account", methods=['POST'])
+@bp.post("/edit_account")
 @jwt_required()
 @wrap_request('id', 'name')
 def edit_account(acc_id, name):
-    """Request to create new account."""
+    """Request to edit account."""
     return rpc.account_service.edit_account(current_user.id, acc_id, name)
 
 
-@bp.route("/delete_account", methods=['POST'])
+@bp.post("/delete_account")
 @jwt_required()
 @wrap_request('id')
 def delete_account(acc_id):

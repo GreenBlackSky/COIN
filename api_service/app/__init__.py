@@ -49,9 +49,11 @@ def create_app():
         from . import test_bp
         from . import login_bp
         from . import account_bp
+        from . import event_bp
         app.register_blueprint(test_bp.bp)
         app.register_blueprint(login_bp.bp)
         app.register_blueprint(account_bp.bp)
+        app.register_blueprint(event_bp.bp)
 
     return app
 
