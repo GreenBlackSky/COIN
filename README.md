@@ -55,9 +55,12 @@ TODO
 * shared access to accounts
 
 * events service
-* labels
 * events front
 * events tests
+
+* labels service
+* labels front
+* labels tests
 
 * templates service
 * templates front

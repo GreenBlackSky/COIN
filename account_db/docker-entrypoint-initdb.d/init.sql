@@ -4,17 +4,6 @@ CREATE TABLE accounts (
     user_id INT,
     name VARCHAR(100) NOT NULL
 );
--- CREATE TABLE labels (
---     id SERIAL PRIMARY KEY,
---     account_id INT REFERENCES accounts,
---     name VARCHAR(100) NOT NULL,
---     description VARCHAR(200),
---     color VARCHAR(6)
--- );
--- CREATE TABLE events_labels (
---     event_id INT REFERENCES events,
---     label_id INT
--- );
 -- CREATE TABLE templates (
 --     id SERIAL PRIMARY KEY,
 --     time TIMESTAMP NOT NULL,

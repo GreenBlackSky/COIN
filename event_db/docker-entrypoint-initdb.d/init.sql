@@ -9,3 +9,7 @@ CREATE TABLE events (
     description VARCHAR(200) NOT NULL,
     confirmed BOOLEAN NOT NULL
 );
+CREATE TABLE events_labels (
+    event_id INT REFERENCES events,
+    label_id INT
+);

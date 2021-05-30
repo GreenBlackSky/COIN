@@ -8,36 +8,36 @@ from common.debug_tools import wrap_request
 from . import rpc
 
 
-bp = Blueprint('event_bp', __name__)
+bp = Blueprint('label_bp', __name__)
 
 
-@bp.post("/create_event")
+@bp.post("/create_label")
 @jwt_required()
 @wrap_request()
-def create_event():
+def create_label():
     """Request to create new event."""
-    return rpc.event_service.create_event()
+    return rpc.label_service.create_label()
 
 
-@bp.post("/get_events")
+@bp.post("/get_labels")
 @jwt_required()
 @wrap_request()
-def get_events():
-    """Get all events user has."""
-    return rpc.event_service.get_events()
+def get_labels():
+    """Get all labels user has."""
+    return rpc.label_service.get_labels()
 
 
-@bp.post("/edit_event")
+@bp.post("/edit_label")
 @jwt_required()
 @wrap_request()
-def edit_event():
+def edit_label():
     """Request to edit event."""
-    return rpc.event_service.edit_event()
+    return rpc.label_service.edit_label()
 
 
-@bp.post("/delete_event")
+@bp.post("/delete_label")
 @jwt_required()
 @wrap_request()
-def delete_event():
+def delete_label():
     """Delete existing event."""
-    return rpc.event_service.delete_event()
+    return rpc.label_service.delete_label()

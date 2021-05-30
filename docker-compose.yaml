@@ -103,3 +103,25 @@ services:
       - ./event_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
       - event_db_config.env
+  
+  label_service:
+    build: ./label_service/
+    volumes:
+      - ./label_service/src:/app/src
+      - ./common:/app/common
+    depends_on:
+      - rabbit
+      - label_db
+    env_file:
+      - config.env
+      - label_db_config.env
+
+  label_db:
+    image: postgres
+    ports: # for debug purpuses
+      - 5005:5432
+    volumes:
+      - ./label_db/postgres_data:/var/lib/postgresql/data/
+      - ./label_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+    env_file:
+      - label_db_config.env

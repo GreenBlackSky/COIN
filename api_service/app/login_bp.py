@@ -5,6 +5,7 @@ This module contains methods to create new user or
 to get access to existing one.
 """
 
+from datetime import datetime
 from hashlib import md5
 
 from flask import Blueprint, request
@@ -66,7 +67,11 @@ def create_user(name, password):
         return {'status': 'user exists'}
 
     password_hash = md5(password.encode()).hexdigest()
-    user = UserModel(name=name, password_hash=password_hash)
+    user = UserModel(
+        name=name,
+        password_hash=password_hash,
+        created_at=datetime.now()
+    )
     session.add(user)
     session.commit()
     account = rpc.account_service.create_account(user.id, MAIN_ACCOUNT_NAME)

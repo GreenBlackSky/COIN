@@ -1,0 +1,5 @@
+nameko
+marshmallow
+marshmallow_dataclass
+psycopg2-binary
+sqlalchemy
