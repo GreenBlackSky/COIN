@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  # web_entrypoint:
-  #   build: ./web_entrypoint/
-  #   ports:
-  #     - 5001:5000
-  #   volumes:
-  #     - ./web_entrypoint/src/build/web:/app
+  web_entrypoint:
+    build: ./web_entrypoint/
+    ports:
+      - 5001:5000
+    volumes:
+      - ./web_entrypoint/src/build/web:/app
   
     # cache_app:
     #   build: ./cache_app/
@@ -27,34 +27,59 @@ services:
     #   env_file:
     #     - config.env
     
-  # rabbit:
-  #   image: rabbitmq:3.7-management
-  #   volumes:
-  #   - ./rabbitmq/etc/:/etc/rabbitmq/
-  #   - ./rabbitmq/data/:/var/lib/rabbitmq/
-  #   - ./rabbitmq/logs/:/var/log/rabbitmq/
-  #   env_file:
-  #     - config.env
-
-  server:
-    build: ./server/
+  rabbit:
+    image: rabbitmq:3.7-management
     volumes:
-      - ./server/app:/app/app
+    - ./rabbitmq/etc/:/etc/rabbitmq/
+    - ./rabbitmq/data/:/var/lib/rabbitmq/
+    - ./rabbitmq/logs/:/var/log/rabbitmq/
+    env_file:
+      - config.env
+
+  api_service:
+    build: ./api_service/
+    volumes:
+      - ./api_service/app:/app/app
       - ./common:/app/common
     ports:
       - 5002:5000
     depends_on:
-      # - rabbit
-      - server_db
+      - rabbit
+      - api_db
     env_file:
       - config.env
+      - api_db_config.env    
   
-  server_db:
+  api_db:
     image: postgres
     ports:  # for debug purpuses
       - 5003:5432
     volumes:
-      - ./server_db/postgres_data:/var/lib/postgresql/data/
-      - ./server_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+      - ./api_db/postgres_data:/var/lib/postgresql/data/
+      - ./api_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
-      - config.env    
+      - api_db_config.env    
+
+  cores_service:
+    build: ./core_service/
+    volumes:
+      - ./core_service/app:/app/app
+      - ./common:/app/common
+    ports:
+      - 5004:5000
+    depends_on:
+      - rabbit
+      - api_db
+    env_file:
+      - config.env
+      - core_db_config.env    
+  
+  core_db:
+    image: postgres
+    ports:  # for debug purpuses
+      - 5005:5432
+    volumes:
+      - ./core_db/postgres_data:/var/lib/postgresql/data/
+      - ./core_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+    env_file:
+      - core_db_config.env    
