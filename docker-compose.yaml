@@ -27,101 +27,34 @@ services:
     #   env_file:
     #     - config.env
     
-  rabbit:
-    image: rabbitmq:3.7-management
-    volumes:
-    - ./rabbitmq/etc/:/etc/rabbitmq/
-    - ./rabbitmq/data/:/var/lib/rabbitmq/
-    - ./rabbitmq/logs/:/var/log/rabbitmq/
-    env_file:
-      - config.env
+  # rabbit:
+  #   image: rabbitmq:3.7-management
+  #   volumes:
+  #   - ./rabbitmq/etc/:/etc/rabbitmq/
+  #   - ./rabbitmq/data/:/var/lib/rabbitmq/
+  #   - ./rabbitmq/logs/:/var/log/rabbitmq/
+  #   env_file:
+  #     - config.env
 
-  api_service:
-    build: ./api_service/
+  server:
+    build: ./server/
     volumes:
-      - ./api_service/app:/app/app
+      - ./server/app:/app/app
       - ./common:/app/common
     ports:
       - 5002:5000
     depends_on:
-      - rabbit
-      - api_db
+      # - rabbit
+      - server_db
     env_file:
       - config.env
-      - api_db_config.env
   
-  api_db:
+  server_db:
     image: postgres
     ports:  # for debug purpuses
       - 5003:5432
     volumes:
-      - ./api_db/postgres_data:/var/lib/postgresql/data/
-      - ./api_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+      - ./server_db/postgres_data:/var/lib/postgresql/data/
+      - ./server_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
-      - api_db_config.env
-      
-  account_service:
-    build: ./account_service/
-    volumes:
-      - ./account_service/src:/app/src
-      - ./common:/app/common
-    depends_on:
-      - rabbit
-      - account_db
-    env_file:
-      - config.env
-      - account_db_config.env
-
-  account_db:
-    image: postgres
-    ports: # for debug purpuses
-      - 5004:5432
-    volumes:
-      - ./account_db/postgres_data:/var/lib/postgresql/data/
-      - ./account_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
-    env_file:
-      - account_db_config.env
-  
-  event_service:
-    build: ./event_service/
-    volumes:
-      - ./event_service/src:/app/src
-      - ./common:/app/common
-    depends_on:
-      - rabbit
-      - event_db
-    env_file:
-      - config.env
-      - event_db_config.env
-
-  event_db:
-    image: postgres
-    ports: # for debug purpuses
-      - 5005:5432
-    volumes:
-      - ./event_db/postgres_data:/var/lib/postgresql/data/
-      - ./event_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
-    env_file:
-      - event_db_config.env
-  
-  label_service:
-    build: ./label_service/
-    volumes:
-      - ./label_service/src:/app/src
-      - ./common:/app/common
-    depends_on:
-      - rabbit
-      - label_db
-    env_file:
-      - config.env
-      - label_db_config.env
-
-  label_db:
-    image: postgres
-    ports: # for debug purpuses
-      - 5005:5432
-    volumes:
-      - ./label_db/postgres_data:/var/lib/postgresql/data/
-      - ./label_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
-    env_file:
-      - label_db_config.env
+      - config.env    

@@ -1,4 +1,0 @@
-nameko
-nameko_redis
-marshmallow
-marshmallow_dataclass
