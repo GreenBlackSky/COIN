@@ -14,10 +14,10 @@ bp = Blueprint('account_bp', __name__)
 
 @bp.post("/create_account")
 @jwt_required()
-@parse_request_args(request, ('name',))
-@log_request
-def create_account_view(name):
+@log_request(request)
+def create_account_view():
     """Request creating new account."""
+    (name,), _ = parse_request_args(request, ('name',))
     return celery_app.send_task(
         'app.handlers.account.create_account',
         kwargs={'user_id': current_user.id, 'name': name}
@@ -26,8 +26,7 @@ def create_account_view(name):
 
 @bp.post("/get_accounts")
 @jwt_required()
-@parse_request_args(request)
-@log_request
+@log_request(request)
 def get_accounts():
     """Get account from db by id."""
     return celery_app.send_task(
@@ -38,10 +37,10 @@ def get_accounts():
 
 @bp.post("/edit_account")
 @jwt_required()
-@parse_request_args(request, ('id', 'name'))
-@log_request
-def edit_account(acc_id, name):
+@log_request(request)
+def edit_account():
     """Request to edit account."""
+    (acc_id, name), _ = parse_request_args(request, ('id', 'name'))
     return celery_app.send_task(
         'app.handlers.account.edit_account',
         kwargs={'user_id': current_user.id, 'acc_id': acc_id, 'name': name}
@@ -50,10 +49,10 @@ def edit_account(acc_id, name):
 
 @bp.post("/delete_account")
 @jwt_required()
-@parse_request_args(request, ('id',))
-@log_request
-def delete_account(acc_id):
+@log_request(request)
+def delete_account():
     """Delete existing account."""
+    (acc_id,), _ = parse_request_args(request, ('id',))
     return celery_app.send_task(
         'app.handlers.account.delete_account',
         kwargs={'user_id': current_user.id, 'acc_id': acc_id}

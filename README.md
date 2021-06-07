@@ -51,6 +51,8 @@ May need later:
 * REDIS_REPLICATION_MODE
 
 TODO
+* make a wrapper for calling tasks
+
 * accounts front
 * shared access to accounts
 

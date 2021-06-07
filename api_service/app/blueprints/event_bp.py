@@ -12,8 +12,7 @@ bp = Blueprint('event_bp', __name__)
 
 @bp.post("/create_event")
 @jwt_required()
-@parse_request_args(request)
-@log_request
+@log_request(request)
 def create_event(user_id, acc_id,
                  event_time, diff, total, description, confirmed):
     """Request to create new event."""
@@ -22,8 +21,7 @@ def create_event(user_id, acc_id,
 
 @bp.post("/get_events")
 @jwt_required()
-@parse_request_args(request)
-@log_request
+@log_request(request)
 def get_events(acc_ids,
                start_time, end_time,
                with_lables, not_with_lables):
@@ -33,8 +31,7 @@ def get_events(acc_ids,
 
 @bp.post("/confirm_event")
 @jwt_required()
-@parse_request_args(request)
-@log_request
+@log_request(request)
 def confirm_event(self, event_id):
     """Confirm event."""
     pass
@@ -42,8 +39,7 @@ def confirm_event(self, event_id):
 
 @bp.post("/edit_event")
 @jwt_required()
-@parse_request_args(request)
-@log_request
+@log_request(request)
 def edit_event(event_id,
                event_time, diff, total, description):
     """Request to edit event."""
@@ -52,8 +48,7 @@ def edit_event(event_id,
 
 @bp.post("/delete_event")
 @jwt_required()
-@parse_request_args(request)
-@log_request
+@log_request(request)
 def delete_event(event_id):
     """Delete existing event."""
     pass

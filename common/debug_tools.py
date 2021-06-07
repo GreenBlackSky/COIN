@@ -52,17 +52,20 @@ def log_method(method):
     return _wrapper
 
 
-def log_request(method):
+def log_request(request_proxy):
     """Request decorator."""
-    @wraps(method)
-    def _wrapper(*args, **kargs):
-        name = method.__name__
-        logging.debug(f">>> {name} {args} {kargs} request")
-        try:
-            ret = method(*args, **kargs)
-            logging.debug(f"<<< {name} {ret}")
-            return ret
-        except Exception as e:
-            logging.debug(f"<!< {name} {str(e)}")
-            return {'status': 'error'}, 500
-    return _wrapper
+    def _decorator(method):
+        @wraps(method)
+        def _wrapper():
+            name = method.__name__
+            request_data = request_proxy.get_json()
+            logging.debug(f">>> {name} {request_data} request")
+            try:
+                ret = method()
+                logging.debug(f"<<< {name} {ret}")
+                return ret
+            except Exception as e:
+                logging.debug(f"<!< {name} {str(e)}")
+                return {'status': 'error'}, 500
+        return _wrapper
+    return _decorator

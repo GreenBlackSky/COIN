@@ -16,7 +16,7 @@ bp = Blueprint('test_bp', __name__)
 
 @bp.route("/test_login", methods=['POST'])
 @jwt_required()
-@log_request
+@log_request(request)
 def test_login():
     """Test method for logged in user."""
     return {
@@ -27,7 +27,7 @@ def test_login():
 
 @bp.route("/get_events", methods=['POST'])
 @jwt_required()
-@log_request
+@log_request(request)
 def test_get_events():
     """Mock method for getting events."""
     sleep(1)
@@ -35,7 +35,7 @@ def test_get_events():
 
 
 @bp.route("/clear_users", methods=['POST'])
-@log_request
+@log_request(request)
 def clear():
     """Clear all users from db and clear cache."""
     user_count = session.query(UserModel).delete()
