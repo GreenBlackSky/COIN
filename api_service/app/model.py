@@ -21,8 +21,4 @@ Base.prepare(engine, reflect=True)
 
 UserModel = Base.classes.users
 
-AccountModel = Base.classes.accounts
-EventModel = Base.classes.events
-LabelModel = Base.classes.labels
-
 session = Session(engine)

@@ -12,15 +12,15 @@ from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, jwt_required, \
     current_user
 
+from common.celery_holder import celery_app
+from common.constants import MAIN_ACCOUNT_NAME
 from common.debug_tools import log_request, log_function
 from common.schemas import UserSchema
-from common.constants import MAIN_ACCOUNT_NAME
 
 from .. import jwt
 from ..request_helpers import parse_request_args
 from ..model import session, UserModel
 
-from .account_bp import create_account
 from . import account_bp
 
 
@@ -78,7 +78,10 @@ def create_user(name, password):
     )
     session.add(user)
     session.commit()
-    account = account_bp.create_account(user.id, MAIN_ACCOUNT_NAME)
+    celery_app.send_task(
+        'app.handlers.account.create_account',
+        kwargs={'user_id': user.id, 'name': MAIN_ACCOUNT_NAME}
+    ).get()
     # self.db_service.create_starting_labels(account.id)
     # self.db_service.create_starting_templates(account.id)
     return {

@@ -7,7 +7,7 @@ import requests
 class BaseTest(unittest.TestCase):
     """Base test class handles authorization."""
 
-    HOST = "http://localhost:5002/"
+    HOST = "http://localhost:5004/"
 
     def setUp(self):
         """Set test values."""

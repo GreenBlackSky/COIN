@@ -4,13 +4,11 @@ Simple budget planner.
 ## Architecture
 * frontend - flutter
 * gateway - flask + gunicorn
-* backend -  python microservices with rabbitMQ
+* backend -  python microservices with celery and rabbitMQ
 * db - postgresql
 * cache - redis
 
-
 All wrapped up in docker containers.
-
 
 ## Deployment
 * dev deployment - docker-compose. Run `docker-compose build; docker-compose up` to deploy.
@@ -18,22 +16,33 @@ All wrapped up in docker containers.
 
 All config values must be stored in `config.env` in project root. It must have folowing values:
 
+* JWT_SECRET_KEY
 * SECRET_KEY
 * FLASK_ENV
 * FLASK_APP
 * FLASK_DEBUG
-* JWT_SECRET_KEY
 
+* RABBITMQ_DEFAULT_USER
+* RABBITMQ_DEFAULT_PASS
+* RABBITMQ_HOST
+* RABBITMQ_PORT
+
+* REDIS_PASSWORD
+* REDIS_HOST
+* REDIS_PORT
+* REDIS_INDEX
+* REDIS_REPLICATION_MODE
+
+For each data base a separate config file is required.
+`api_db_config.env` and `core_db_config.env`, both with the same variables inside:
+
+* POSTGRES_DB
 * POSTGRES_USER
 * POSTGRES_PASSWORD
 * POSTGRES_HOST
 * POSTGRES_PORT
 
-May need later
-
-* RABBITMQ_DEFAULT_USER
-* RABBITMQ_DEFAULT_PASS
-* RABBITMQ_HOST RABBITMQ_PORT
+May need later:
 
 * REDIS_PASSWORD
 * REDIS_HOST
@@ -45,11 +54,11 @@ TODO
 * accounts front
 * shared access to accounts
 
-* events service
+* events back
 * events front
 * events tests
 
-* labels service
+* labels back
 * labels front
 * labels tests
 
@@ -65,12 +74,10 @@ TODO
 * ads front
 * ads tests
 
-* status codes
-* api fabric
-
 * flask tests
 * flutter tests
 
+* status codes
 * expiration tokens
 * balcklist token on logout
 * handle different token problems
@@ -91,6 +98,8 @@ TODO
 * kubernetes
 
 * redis password
-* pg admin
 * redis admin
-* rabbit admin
+* pg admin
+* celery - flower
+
+One step at a time...

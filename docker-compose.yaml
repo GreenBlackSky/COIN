@@ -33,8 +33,19 @@ services:
     - ./rabbitmq/etc/:/etc/rabbitmq/
     - ./rabbitmq/data/:/var/lib/rabbitmq/
     - ./rabbitmq/logs/:/var/log/rabbitmq/
+    ports:
+      - 5002:15672
     env_file:
       - config.env
+
+  # flower:
+  #   image: mher/flower:0.9.5
+  #   ports:
+  #     - 5003:5003
+  #   links:
+  #     - rabbit
+  #   env_file:
+  #     - flower_config.env
 
   api_service:
     build: ./api_service/
@@ -42,7 +53,7 @@ services:
       - ./api_service/app:/app/app
       - ./common:/app/common
     ports:
-      - 5002:5000
+      - 5004:5000
     depends_on:
       - rabbit
       - api_db
@@ -53,20 +64,20 @@ services:
   api_db:
     image: postgres
     ports:  # for debug purpuses
-      - 5003:5432
+      - 5005:5432
     volumes:
       - ./api_db/postgres_data:/var/lib/postgresql/data/
       - ./api_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
       - api_db_config.env    
 
-  cores_service:
+  core_service:
     build: ./core_service/
     volumes:
       - ./core_service/app:/app/app
       - ./common:/app/common
     ports:
-      - 5004:5000
+      - 5006:5000
     depends_on:
       - rabbit
       - api_db
@@ -77,7 +88,7 @@ services:
   core_db:
     image: postgres
     ports:  # for debug purpuses
-      - 5005:5432
+      - 5007:5432
     volumes:
       - ./core_db/postgres_data:/var/lib/postgresql/data/
       - ./core_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/

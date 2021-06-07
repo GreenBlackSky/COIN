@@ -25,7 +25,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=False)
 
     app.config.from_mapping(
-        JWT_SECRET_KEY=os.environ["JWT_SECRET_KEY"],
+        JWT_SECRET_KEY=os.environ['JWT_SECRET_KEY'],
         SECRET_KEY=os.environ['SECRET_KEY'],
         FLASK_ENV=os.environ['FLASK_ENV'],
         FLASK_APP=os.environ['FLASK_APP'],
