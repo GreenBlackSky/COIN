@@ -10,4 +10,4 @@ until nc -z ${POSTGRES_HOST} ${POSTGRES_PORT}; do
     sleep 2
 done
 
-celery -A app worker
+celery -A app worker --loglevel=debug

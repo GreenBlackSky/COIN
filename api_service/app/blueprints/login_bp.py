@@ -5,23 +5,20 @@ This module contains methods to create new user or
 to get access to existing one.
 """
 
-from datetime import datetime
 from hashlib import md5
 
 from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, jwt_required, \
     current_user
 
-from common.celery_holder import celery_app
 from common.constants import MAIN_ACCOUNT_NAME
 from common.debug_tools import log_request, log_function
+from common.interfaces import AccountService
 from common.schemas import UserSchema
 
 from .. import jwt
 from ..request_helpers import parse_request_args
 from ..model import session, UserModel
-
-from . import account_bp
 
 
 bp = Blueprint('login_bp', __name__)
@@ -78,10 +75,7 @@ def create_user():
     )
     session.add(user)
     session.commit()
-    celery_app.send_task(
-        'app.handlers.account.create_account',
-        kwargs={'user_id': user.id, 'name': MAIN_ACCOUNT_NAME}
-    ).get()
+    AccountService.create_account(user_id=user.id, name=MAIN_ACCOUNT_NAME)
     # self.db_service.create_starting_labels(account.id)
     # self.db_service.create_starting_templates(account.id)
     return {

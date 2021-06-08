@@ -5,8 +5,8 @@ from time import sleep
 from flask import Blueprint, request  # do not remove request just yet
 from flask_jwt_extended import jwt_required, current_user
 
-from common.celery_holder import celery_app
 from common.debug_tools import log_request
+from common.interfaces import AccountService
 
 from ..model import session, UserModel
 
@@ -39,9 +39,7 @@ def test_get_events():
 def clear():
     """Clear all users from db and clear cache."""
     user_count = session.query(UserModel).delete()
-    account_count = celery_app.send_task(
-        'app.handlers.account.clear_accounts'
-    ).get()
+    account_count = AccountService.clear_accounts()
     return {
         "users removed": user_count,
         "accounts removed": account_count,

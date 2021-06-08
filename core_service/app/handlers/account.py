@@ -1,6 +1,6 @@
 """Module contains accounts manipulation methods."""
 
-from common.celery_holder import celery_app
+from common.celery_utils import celery_app
 from common.constants import MAX_ACCOUNTS
 from common.debug_tools import log_function
 from common.schemas import AccountSchema

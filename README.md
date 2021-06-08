@@ -10,9 +10,23 @@ Simple budget planner.
 
 All wrapped up in docker containers.
 
+## Services:
+* Web entrypoint is simple service with flutter web app inside
+* API service runs REST api, build with Flask. Also, regulates access and provides all the "login-signup" stuff.
+* CORE service contains the most basic logic - working with accounts (one user can have multiple accounts), events and labels.
+* Templates service runs all the template related logic.
+* Statistics service accumulates statistic data.
+Each service has it's own database. 
+
+## Interesting stuff
+There is `common` module, that is imported in every service. It has some peculiar stuff, like:
+* debug decorators `log_function`, `log_method` and `log_request`, that log input and output of a method
+* `interfaces` module, that containes apis of every microserives in project
+* `CeleryProxyMetaClass` - a metaclass, that allows one seamlessly call methods of services from other services
+
 ## Deployment
-* dev deployment - docker-compose. Run `docker-compose build; docker-compose up` to deploy.
-* production deployment - kubernetes
+* dev deployment - docker-compose. Run `docker-compose -f "docker-compose.yaml" up -d --build` to deploy.
+* production deployment - kubernetes (work in progress)
 
 All config values must be stored in `config.env` in project root. It must have folowing values:
 
@@ -51,8 +65,6 @@ May need later:
 * REDIS_REPLICATION_MODE
 
 TODO
-* make a wrapper for calling tasks
-
 * accounts front
 * shared access to accounts
 
