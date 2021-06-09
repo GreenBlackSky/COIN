@@ -15,7 +15,7 @@ bp = Blueprint('account_bp', __name__)
 @bp.post("/create_account")
 @jwt_required()
 @log_request(request)
-def create_account_view():
+def create_account():
     """Request creating new account."""
     (name,), _ = parse_request_args(request, ('name',))
     return AccountService.create_account(user_id=current_user.id, name=name)

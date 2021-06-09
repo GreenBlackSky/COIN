@@ -4,16 +4,19 @@ from common.debug_tools import log_method
 
 
 @log_method
-def create_event(user_id, acc_id,
-                 event_time, diff, total, description, confirmed):
+def create_event(
+    user_id, acc_id, event_time,
+    diff, total, description, confirmed
+):
     """Request to create new event."""
     pass
 
 
 @log_method
-def get_events(user_id, acc_ids,
-               start_time, end_time,
-               with_lables, not_with_lables):
+def get_events(
+    user_id, acc_ids, start_time,
+    end_time, with_lables, not_with_lables
+):
     """Get all events user has."""
     pass
 
@@ -25,8 +28,10 @@ def confirm_event(user_id, event_id):
 
 
 @log_method
-def edit_event(user_id, event_id,
-               event_time, diff, total, description):
+def edit_event(
+    user_id, event_id, event_time,
+    diff, total, description
+):
     """Request to edit event."""
     pass
 

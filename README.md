@@ -11,8 +11,8 @@ Simple budget planner.
 All wrapped up in docker containers.
 
 ## Services:
-* Web entrypoint is simple service with flutter web app inside
-* API service runs REST api, build with Flask. Also, regulates access and provides all the "login-signup" stuff.
+* Web entrypoint is a simple service with flutter web app inside.
+* API service runs REST api, build with Flask. Also, it regulates access and provides all the "login-signup" stuff.
 * CORE service contains the most basic logic - working with accounts (one user can have multiple accounts), events and labels.
 * Templates service runs all the template related logic.
 * Statistics service accumulates statistic data.
@@ -20,9 +20,10 @@ Each service has it's own database.
 
 ## Interesting stuff
 There is `common` module, that is imported in every service. It has some peculiar stuff, like:
-* debug decorators `log_function`, `log_method` and `log_request`, that log input and output of a method
-* `interfaces` module, that containes apis of every microserives in project
-* `CeleryProxyMetaClass` - a metaclass, that allows one seamlessly call methods of services from other services
+* debug decorators `log_function`, `log_method` and `log_request`, that log input and output of a method.
+* `interfaces` module, that containes apis of every microserives in project.
+* `CeleryProxyMetaClass` - a metaclass, that allows one seamlessly call methods of services from other services.
+* `schemas` contains dataclasses, that describe data models used in app. With the help from `marshmallow` I can serialize data into json and desirialize it back. More interesting is the fact, that I can use `marshmallow` to serialize ORM data, provided by SQLAlchemy.
 
 ## Deployment
 * dev deployment - docker-compose. Run `docker-compose -f "docker-compose.yaml" up -d --build` to deploy.
