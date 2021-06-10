@@ -69,7 +69,6 @@ TODO
 * accounts front
 * shared access to accounts
 
-* events back
 * events front
 * events tests
 

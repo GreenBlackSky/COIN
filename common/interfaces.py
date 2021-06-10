@@ -36,7 +36,7 @@ class EventService(metaclass=CeleryProxyMetaClass):
 
     def create_event(
         self, user_id, acc_id, event_time, diff,
-        total, description, confirmed
+        total, description
     ):
         """Request to create new event."""
         pass
@@ -48,7 +48,7 @@ class EventService(metaclass=CeleryProxyMetaClass):
         """Get all events user has."""
         pass
 
-    def confirm_event(self, user_id, event_id):
+    def confirm_event(self, user_id, event_id, confirm):
         """Confirm event."""
         pass
 

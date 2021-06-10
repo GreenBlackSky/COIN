@@ -31,7 +31,6 @@ class Event:
     account_id: int
     id: int
     event_time: datetime
-    created_at: datetime
     diff: int
     total: int
     description: str

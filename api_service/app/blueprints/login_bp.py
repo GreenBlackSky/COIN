@@ -34,7 +34,7 @@ def _user_identity_lookup(user):
 @log_function
 def _user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    user = session.query(UserModel).get(identity)
+    user = session.get(UserModel, identity)
     if user is None:
         return None
     return user

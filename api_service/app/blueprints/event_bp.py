@@ -17,8 +17,8 @@ bp = Blueprint('event_bp', __name__)
 def create_event():
     """Request to create new event."""
     args = (
-        'user_id', 'acc_id', 'event_time', 'diff',
-        'total', 'description', 'confirmed'
+        'acc_id', 'event_time', 'diff',
+        'total', 'description'
     )
     vals, _ = parse_request_args(request, args)
     return EventService.create_event(
@@ -31,14 +31,14 @@ def create_event():
 @log_request(request)
 def get_events():
     """Get all events user has."""
-    args = (
-        'acc_ids', 'start_time', 'end_time',
-        'with_lables', 'not_with_lables'
+    (acc_ids,), kvals = parse_request_args(
+        request,
+        ('acc_ids',),
+        ('start_time', 'end_time', 'with_lables', 'not_with_lables')
     )
-    vals, _ = parse_request_args(request, args)
-    return EventService.get_events(
-        **{key: val for key, val in zip(args, vals)}
-    )
+    kvals['acc_ids'] = acc_ids
+    kvals['user_id'] = current_user.id
+    return EventService.get_events(**kvals)
 
 
 @bp.post("/confirm_event")
@@ -46,10 +46,13 @@ def get_events():
 @log_request(request)
 def confirm_event():
     """Confirm event."""
-    args = ('event_id',)
-    vals, _ = parse_request_args(request, args)
+    (event_id, confirm), _ = parse_request_args(
+        request, ('event_id', 'confirm')
+    )
     return EventService.confirm_event(
-        **{key: val for key, val in zip(args, vals)}
+        user_id=current_user.id,
+        event_id=event_id,
+        confirm=confirm
     )
 
 
@@ -60,9 +63,9 @@ def edit_event():
     """Request to edit event."""
     args = ('event_id', 'event_time', 'diff', 'total', 'description')
     vals, _ = parse_request_args(request, args)
-    return EventService.edit_event(
-        **{key: val for key, val in zip(args, vals)}
-    )
+    kvals = {key: val for key, val in zip(args, vals)}
+    kvals['user_id'] = current_user.id
+    return EventService.edit_event(**kvals)
 
 
 @bp.post("/delete_event")
@@ -71,7 +74,8 @@ def edit_event():
 def delete_event():
     """Delete existing event."""
     args = ('event_id',)
-    vals, _ = parse_request_args(request, args)
+    (event_id,), _ = parse_request_args(request, args)
     return EventService.delete_event(
-        **{key: val for key, val in zip(args, vals)}
+        user_id=current_user.id,
+        event_id=event_id,
     )

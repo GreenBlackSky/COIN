@@ -8,6 +8,9 @@ from common.schemas import AccountSchema
 from ..model import session, AccountModel
 
 
+account_schema = AccountSchema()
+
+
 @celery_app.task
 @log_function
 def create_account(user_id, name):
@@ -29,7 +32,7 @@ def create_account(user_id, name):
     )
     session.add(account)
     session.commit()
-    return {'status': 'OK', 'account': AccountSchema().dump(account)}
+    return {'status': 'OK', 'account': account_schema.dump(account)}
 
 
 @celery_app.task
@@ -42,10 +45,9 @@ def get_accounts(user_id):
     if accounts.count() == 0:
         return {'status': 'no accounts with given user_id'}
 
-    schema = AccountSchema()
     return {
         'status': 'OK',
-        'accounts': [schema.dump(acc) for acc in accounts.all()]
+        'accounts': [account_schema.dump(acc) for acc in accounts.all()]
     }
 
 
@@ -53,12 +55,12 @@ def get_accounts(user_id):
 @log_function
 def edit_account(user_id, acc_id, name):
     """Request to edit account."""
-    accounts = session.query(AccountModel).filter(
-        AccountModel.user_id == user_id,
-        AccountModel.id == acc_id
-    )
-    if accounts.count() == 0:
+    account = session.get(AccountModel, acc_id)
+    if account is None:
         return {'status': "no such account"}
+
+    if account.user_id != user_id:
+        return {'status': 'accessing account of another user'}
 
     if session.query(AccountModel).filter(
         AccountModel.user_id == user_id,
@@ -67,35 +69,31 @@ def edit_account(user_id, acc_id, name):
     ).count() != 0:
         return {'status': "account already exists"}
 
-    account = session.query(AccountModel).filter(
-        AccountModel.user_id == user_id,
-        AccountModel.id == acc_id
-    ).first()
     account.name = name
     session.commit()
-    return {'status': 'OK', 'account': AccountSchema().dump(account)}
+    return {'status': 'OK', 'account': account_schema.dump(account)}
 
 
 @celery_app.task
 @log_function
 def delete_account(user_id, acc_id):
     """Delete existing account."""
-    account = session.query(AccountModel).filter(
-        AccountModel.user_id == user_id,
-        AccountModel.id == acc_id
-    ).first()
-    if account is None:
-        return {'status': "no such account"}
-
     accounts = session.query(AccountModel).filter(
         AccountModel.user_id == user_id,
     )
     if accounts.count() == 1:
         return {'status': "can't delete the only account"}
 
+    account = session.get(AccountModel, acc_id)
+    if account is None:
+        return {'status': "no such account"}
+
+    if account.user_id != user_id:
+        return {'status': 'accessing account of another user'}
+
     session.delete(account)
     session.commit()
-    return {'status': 'OK', 'account': AccountSchema().dump(account)}
+    return {'status': 'OK', 'account': account_schema.dump(account)}
 
 
 @log_function
