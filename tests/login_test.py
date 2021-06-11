@@ -22,14 +22,14 @@ class LoginTest(BaseTest):
 
     def test_login(self):
         """Test logging in."""
-        session = self.prepare()
+        session, _ = self.prepare(stay_logged_in=False)
         self.check_authorization(session, authorized=False)
         self.login(session)
         self.check_authorization(session)
 
     def test_wrong_password(self):
         """Try logging in with wrong password."""
-        session = self.prepare()
+        session, _ = self.prepare(stay_logged_in=False)
         self.login(
             session,
             password=self._wrong_password,
@@ -46,7 +46,7 @@ class LoginTest(BaseTest):
 
     def test_duplicate_register(self):
         """Try register user two times in a row."""
-        session = self.prepare()
+        session, _ = self.prepare(stay_logged_in=False)
         self.register(
             session,
             result={'status': 'user exists'}
@@ -54,7 +54,7 @@ class LoginTest(BaseTest):
 
     def test_register_while_logged_in(self):
         """Try register user two times in a row."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         self.register(
             session,
             self._user_name_2,
@@ -64,7 +64,7 @@ class LoginTest(BaseTest):
 
     def test_change_name_unauthorized(self):
         """Try editing unser data without authorization."""
-        session = self.prepare()
+        session, _ = self.prepare(stay_logged_in=False)
         response = session.post(
             url=self.HOST+"edit_user",
             json={
@@ -76,10 +76,7 @@ class LoginTest(BaseTest):
 
     def test_change_name(self):
         """Test changing name."""
-        session, user = self.prepare(
-            stay_logged_in=True,
-            get_user=True
-        )
+        session, user = self.prepare()
         response = session.post(
             url=self.HOST+"edit_user",
             json={
@@ -98,7 +95,7 @@ class LoginTest(BaseTest):
 
     def test_change_name_into_duplicate(self):
         """Try change name into one, that is already exists."""
-        session = self.prepare()
+        session, _ = self.prepare(stay_logged_in=False)
         self.register(session, name=self._user_name_2)
         response = session.post(
             url=self.HOST+"edit_user",
@@ -115,7 +112,7 @@ class LoginTest(BaseTest):
 
     def test_change_password(self):
         """Test changing password."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         response = session.post(
             url=self.HOST+"edit_user",
             json={
@@ -140,7 +137,7 @@ class LoginTest(BaseTest):
 
     def test_change_password_with_wrong_passwod(self):
         """Test changing password with wrong current password."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         response = session.post(
             url=self.HOST+"edit_user",
             json={

@@ -99,6 +99,6 @@ def delete_account(user_id, acc_id):
 @log_function
 @celery_app.task
 def clear_accounts():
-    """Clear all accounts from db and clear cache."""
+    """Clear all accounts from db."""
     account_count = session.query(AccountModel).delete()
     return account_count

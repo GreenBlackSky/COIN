@@ -6,7 +6,7 @@ from flask import Blueprint, request  # do not remove request just yet
 from flask_jwt_extended import jwt_required, current_user
 
 from common.debug_tools import log_request
-from common.interfaces import AccountService
+from common.interfaces import AccountService, EventService
 
 from ..model import session, UserModel
 
@@ -40,6 +40,7 @@ def clear():
     """Clear all users from db and clear cache."""
     user_count = session.query(UserModel).delete()
     account_count = AccountService.clear_accounts()
+    events_count = EventService.clear_events()
     return {
         "users removed": user_count,
         "accounts removed": account_count,

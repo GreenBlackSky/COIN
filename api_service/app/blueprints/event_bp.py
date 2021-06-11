@@ -21,9 +21,9 @@ def create_event():
         'total', 'description'
     )
     vals, _ = parse_request_args(request, args)
-    return EventService.create_event(
-        **{key: val for key, val in zip(args, vals)}
-    )
+    kvals = {key: val for key, val in zip(args, vals)}
+    kvals['acc_ids'] = current_user.id
+    return EventService.create_event(**kvals)
 
 
 @bp.post("/get_events")

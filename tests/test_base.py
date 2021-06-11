@@ -14,16 +14,14 @@ class BaseTest(unittest.TestCase):
         self._user_password = "pass1"
         self._user_name = "name1"
 
-    def prepare(self, stay_logged_in=False, get_user=False):
+    def prepare(self, stay_logged_in=True):
         """Clesr users and create new one."""
         self.clear_users()
         session = requests.Session()
         user = self.register(session)
         if not stay_logged_in:
             self.logout(session)
-        if get_user:
-            return session, user
-        return session
+        return session, user
 
     def register(self, session, name=None, password=None, result=None):
         """Create new account."""

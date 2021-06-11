@@ -132,10 +132,7 @@ class AccountTest(BaseTest):
 
     def test_get_accounts_unathorized(self):
         """Try get account without authorization."""
-        self.clear_users()
-        session = requests.Session()
-        self.register(session)
-        self.logout(session)
+        session, _ = self.prepare(stay_logged_in=False)
         response = session.post(url=self.HOST+"get_accounts")
         self.assertEqual(response.status_code, 401, "Wrong response code")
         self.assertDictEqual(
@@ -149,10 +146,7 @@ class AccountTest(BaseTest):
 
     def test_create_account_unathorized(self):
         """Try get account without authorization."""
-        self.clear_users()
-        session = requests.Session()
-        self.register(session)
-        self.logout(session)
+        session, _ = self.prepare(stay_logged_in=False)
         response = session.post(
             url=self.HOST+'create_account',
             json={'name': 'account2'}
@@ -213,18 +207,18 @@ class AccountTest(BaseTest):
 
     def test_main_account_created(self):
         """Check if main account was created with user."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         self._assert_accounts(session, ["Main Account"])
 
     def test_create_new_account(self):
         """Test creation of new accounts."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         self._create_account(session, "new account")
         self._assert_accounts(session, ['Main Account', 'new account'])
 
     def test_create_max_accounts(self):
         """Test create more than maximum number of accounts."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         for i in range(99):
             self._create_account(session, f'account {i}')
         self._assert_accounts(
@@ -235,7 +229,7 @@ class AccountTest(BaseTest):
 
     def test_create_duplicate_account(self):
         """Test creating of account with duplicate."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         self._create_account(session, "new account")
         self._assert_accounts(session, ['Main Account', 'new account'])
         self._create_account(session, "new account", "account already exists")
@@ -243,7 +237,7 @@ class AccountTest(BaseTest):
 
     def test_rename_account(self):
         """Test basic remaning account."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         response = session.post(url=self.HOST+"get_accounts")
         acc_id = response.json()['accounts'][0]['id']
         self._rename_account(session, acc_id, "New account")
@@ -251,7 +245,7 @@ class AccountTest(BaseTest):
 
     def test_rename_non_existant_account(self):
         """Test renaming account with wrong id."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         response = session.post(url=self.HOST+"get_accounts")
         acc_id = response.json()['accounts'][0]['id']
         self._rename_account(
@@ -264,7 +258,7 @@ class AccountTest(BaseTest):
 
     def test_rename_account_into_duplicate(self):
         """Test renaming account with name, that is already taken."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         account = self._create_account(session, "new account")
         self._rename_account(
             session,
@@ -276,21 +270,21 @@ class AccountTest(BaseTest):
 
     def test_remove_one_account(self):
         """Test basic account deleting."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         account = self._create_account(session, "new account")
         self._delete_account(session, account['id'])
         self._assert_accounts(session, ["Main Account"])
 
     def test_remove_non_existant_account(self):
         """Test deleting non-existant account."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         account = self._create_account(session, "new account")
         self._delete_account(session, account['id'] + 1, "no such account")
         self._assert_accounts(session, ["Main Account", "new account"])
 
     def test_remove_only_account(self):
         """Test deleting the only account."""
-        session = self.prepare(stay_logged_in=True)
+        session, _ = self.prepare()
         response = session.post(url=self.HOST+"get_accounts")
         acc_id = response.json()['accounts'][0]['id']
         self._delete_account(session, acc_id, "can't delete the only account")

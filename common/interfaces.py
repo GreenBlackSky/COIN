@@ -62,3 +62,7 @@ class EventService(metaclass=CeleryProxyMetaClass):
     def delete_event(self, user_id, event_id):
         """Delete existing event."""
         pass
+
+    def clear_events(self):
+        """Delete existing event."""
+        pass
