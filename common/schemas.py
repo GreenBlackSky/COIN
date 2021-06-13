@@ -3,7 +3,12 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from marshmallow import fields
 from marshmallow_dataclass import class_schema
+
+
+fields.DateTime.SERIALIZATION_FUNCS['iso'] = lambda arg: arg.timestamp()
+fields.DateTime.DESERIALIZATION_FUNCS['iso'] = datetime.fromtimestamp
 
 
 @dataclass

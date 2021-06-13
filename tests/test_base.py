@@ -46,8 +46,7 @@ class BaseTest(unittest.TestCase):
             session.headers.update(
                 {'Authorization': "Bearer " + response.json()['access_token']}
             )
-        if 'user' in response.json():
-            return response.json()['user']
+        return response.json().get('user')
 
     def check_authorization(self, session=None, authorized=True):
         """Try access protected resource."""

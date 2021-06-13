@@ -8,7 +8,6 @@ CREATE TABLE events (
     account_id INT REFERENCES accounts,
     id SERIAL PRIMARY KEY,
     event_time TIMESTAMP NOT NULL,
-    created_at TIMESTAMP NOT NULL,
     diff INT NOT NULL,
     total FLOAT NOT NULL,
     description VARCHAR(200) NOT NULL,

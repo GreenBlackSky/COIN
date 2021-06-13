@@ -34,10 +34,10 @@ def get_accounts():
 @log_request(request)
 def edit_account():
     """Request to edit account."""
-    (acc_id, name), _ = parse_request_args(request, ('id', 'name'))
+    (account_id, name), _ = parse_request_args(request, ('id', 'name'))
     return AccountService.edit_account(
         user_id=current_user.id,
-        acc_id=acc_id,
+        account_id=account_id,
         name=name
     )
 
@@ -47,8 +47,8 @@ def edit_account():
 @log_request(request)
 def delete_account():
     """Delete existing account."""
-    (acc_id,), _ = parse_request_args(request, ('id',))
+    (account_id,), _ = parse_request_args(request, ('id',))
     return AccountService.delete_account(
         user_id=current_user.id,
-        acc_id=acc_id
+        account_id=account_id
     )

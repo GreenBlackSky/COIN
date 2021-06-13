@@ -17,13 +17,28 @@ bp = Blueprint('event_bp', __name__)
 def create_event():
     """Request to create new event."""
     args = (
-        'acc_id', 'event_time', 'diff',
-        'total', 'description'
+        'account_id', 'event_time', 'diff',
+        'description', 'confirmed'
     )
     vals, _ = parse_request_args(request, args)
     kvals = {key: val for key, val in zip(args, vals)}
-    kvals['acc_ids'] = current_user.id
+    kvals['user_id'] = current_user.id
     return EventService.create_event(**kvals)
+
+
+@bp.post("/get_events")
+@jwt_required()
+@log_request(request)
+def get_first_event():
+    """Get one event by given filter."""
+    (account_id,), kvals = parse_request_args(
+        request,
+        ('account_id',),
+        ('before', 'after')
+    )
+    kvals['account_id'] = account_id
+    kvals['user_id'] = current_user.id
+    return EventService.get_first_event(**kvals)
 
 
 @bp.post("/get_events")
@@ -31,12 +46,12 @@ def create_event():
 @log_request(request)
 def get_events():
     """Get all events user has."""
-    (acc_ids,), kvals = parse_request_args(
+    (account_id,), kvals = parse_request_args(
         request,
-        ('acc_ids',),
+        ('account_id',),
         ('start_time', 'end_time', 'with_lables', 'not_with_lables')
     )
-    kvals['acc_ids'] = acc_ids
+    kvals['account_id'] = account_id
     kvals['user_id'] = current_user.id
     return EventService.get_events(**kvals)
 

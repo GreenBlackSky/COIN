@@ -53,9 +53,9 @@ def get_accounts(user_id):
 
 @celery_app.task
 @log_function
-def edit_account(user_id, acc_id, name):
+def edit_account(user_id, account_id, name):
     """Request to edit account."""
-    account = session.get(AccountModel, acc_id)
+    account = session.get(AccountModel, account_id)
     if account is None:
         return {'status': "no such account"}
 
@@ -65,7 +65,7 @@ def edit_account(user_id, acc_id, name):
     if session.query(AccountModel).filter(
         AccountModel.user_id == user_id,
         AccountModel.name == name,
-        AccountModel.id != acc_id
+        AccountModel.id != account_id
     ).count() != 0:
         return {'status': "account already exists"}
 
@@ -76,7 +76,7 @@ def edit_account(user_id, acc_id, name):
 
 @celery_app.task
 @log_function
-def delete_account(user_id, acc_id):
+def delete_account(user_id, account_id):
     """Delete existing account."""
     accounts = session.query(AccountModel).filter(
         AccountModel.user_id == user_id,
@@ -84,7 +84,7 @@ def delete_account(user_id, acc_id):
     if accounts.count() == 1:
         return {'status': "can't delete the only account"}
 
-    account = session.get(AccountModel, acc_id)
+    account = session.get(AccountModel, account_id)
     if account is None:
         return {'status': "no such account"}
 

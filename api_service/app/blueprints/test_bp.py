@@ -38,10 +38,11 @@ def test_get_events():
 @log_request(request)
 def clear():
     """Clear all users from db and clear cache."""
-    user_count = session.query(UserModel).delete()
-    account_count = AccountService.clear_accounts()
     events_count = EventService.clear_events()
+    account_count = AccountService.clear_accounts()
+    user_count = session.query(UserModel).delete()
     return {
-        "users removed": user_count,
+        "events removed": events_count,
         "accounts removed": account_count,
+        "users removed": user_count,
     }

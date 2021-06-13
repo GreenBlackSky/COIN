@@ -16,11 +16,11 @@ class AccountService(metaclass=CeleryProxyMetaClass):
         """Get account from db by id."""
         pass
 
-    def edit_account(self, user_id, acc_id, name):
+    def edit_account(self, user_id, account_id, name):
         """Request to edit account."""
         pass
 
-    def delete_account(self, user_id, acc_id):
+    def delete_account(self, user_id, account_id):
         """Delete existing account."""
         pass
 
@@ -35,10 +35,14 @@ class EventService(metaclass=CeleryProxyMetaClass):
     service_path = "app.handlers.event"
 
     def create_event(
-        self, user_id, acc_id, event_time, diff,
-        total, description
+        self, user_id, account_id, event_time,
+        diff, description, confirmed
     ):
         """Request to create new event."""
+        pass
+
+    def get_first_event(self, user_id, account_id, before, after):
+        """Get first event by filter."""
         pass
 
     def get_events(

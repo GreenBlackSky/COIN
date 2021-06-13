@@ -24,6 +24,7 @@ There is `common` module, that is imported in every service. It has some peculia
 * `interfaces` module, that containes apis of every microserives in project.
 * `CeleryProxyMetaClass` - a metaclass, that allows one seamlessly call methods of services from other services.
 * `schemas` contains dataclasses, that describe data models used in app. With the help from `marshmallow` I can serialize data into json and desirialize it back. More interesting is the fact, that I can use `marshmallow` to serialize ORM data, provided by SQLAlchemy.
+* I decided that I want to work with timstamps, instead of strings of dates in any format. So I had to replace datetime.SERIALIZATION_FUNCS and datetime.DESERIALIZATION_FUNCS in order to serialize DateTime into timestamp and desirialize it back.
 
 ## Deployment
 * dev deployment - docker-compose. Run `docker-compose -f "docker-compose.yaml" up -d --build` to deploy.

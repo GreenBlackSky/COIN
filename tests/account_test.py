@@ -42,12 +42,12 @@ class AccountTest(BaseTest):
 
     def _rename_account(
         self, session: requests.Session,
-        acc_id: int, name: str,
+        account_id: int, name: str,
         result="OK"
     ):
         response = session.post(
             url=self.HOST+"edit_account",
-            json={'id': acc_id, 'name': name}
+            json={'id': account_id, 'name': name}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         json_data = response.json()
@@ -62,7 +62,7 @@ class AccountTest(BaseTest):
                 "Wrong accounts type"
             )
             self.assertDictContainsSubset(
-                {'id': acc_id, 'name': name},
+                {'id': account_id, 'name': name},
                 json_data['account']
             )
         else:
@@ -74,12 +74,12 @@ class AccountTest(BaseTest):
 
     def _delete_account(
         self, session: requests.Session,
-        acc_id: int,
+        account_id: int,
         result="OK"
     ):
         response = session.post(
             url=self.HOST+"delete_account",
-            json={'id': acc_id}
+            json={'id': account_id}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         json_data = response.json()
@@ -94,7 +94,7 @@ class AccountTest(BaseTest):
                 "Wrong accounts type"
             )
             self.assertDictContainsSubset(
-                {'id': acc_id},
+                {'id': account_id},
                 json_data['account']
             )
         else:
@@ -167,11 +167,11 @@ class AccountTest(BaseTest):
         session = requests.Session()
         self.register(session)
         response = session.post(url=self.HOST+"get_accounts")
-        acc_id = response.json()['accounts'][0]['id']
+        account_id = response.json()['accounts'][0]['id']
         self.logout(session)
         response = session.post(
             url=self.HOST+'edit_account',
-            json={'id': acc_id, 'name': 'New Account'}
+            json={'id': account_id, 'name': 'New Account'}
         )
         self.assertEqual(response.status_code, 401, "Wrong response code")
         self.assertDictEqual(
@@ -189,11 +189,11 @@ class AccountTest(BaseTest):
         session = requests.Session()
         self.register(session)
         response = session.post(url=self.HOST+"get_accounts")
-        acc_id = response.json()['accounts'][0]['id']
+        account_id = response.json()['accounts'][0]['id']
         self.logout(session)
         response = session.post(
             url=self.HOST+'delete_account',
-            json={'id': acc_id}
+            json={'id': account_id}
         )
         self.assertEqual(response.status_code, 401, "Wrong response code")
         self.assertDictEqual(
@@ -239,18 +239,18 @@ class AccountTest(BaseTest):
         """Test basic remaning account."""
         session, _ = self.prepare()
         response = session.post(url=self.HOST+"get_accounts")
-        acc_id = response.json()['accounts'][0]['id']
-        self._rename_account(session, acc_id, "New account")
+        account_id = response.json()['accounts'][0]['id']
+        self._rename_account(session, account_id, "New account")
         self._assert_accounts(session, ['New account'])
 
     def test_rename_non_existant_account(self):
         """Test renaming account with wrong id."""
         session, _ = self.prepare()
         response = session.post(url=self.HOST+"get_accounts")
-        acc_id = response.json()['accounts'][0]['id']
+        account_id = response.json()['accounts'][0]['id']
         self._rename_account(
             session,
-            acc_id + 1,
+            account_id + 1,
             "New Account",
             result="no such account"
         )
@@ -286,8 +286,8 @@ class AccountTest(BaseTest):
         """Test deleting the only account."""
         session, _ = self.prepare()
         response = session.post(url=self.HOST+"get_accounts")
-        acc_id = response.json()['accounts'][0]['id']
-        self._delete_account(session, acc_id, "can't delete the only account")
+        account_id = response.json()['accounts'][0]['id']
+        self._delete_account(session, account_id, "can't delete the only account")
         self._assert_accounts(session, ["Main Account"])
 
     # def test_create_with_incorrect_args(self):
