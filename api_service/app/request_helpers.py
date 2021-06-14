@@ -1,9 +1,15 @@
 """Some helper methods."""
 
-from functools import wraps
+from typing import Iterable
+from common.debug_tools import log_function
 
 
-def parse_request_args(request_proxy, arg_names=None, kargs_names=None):
+@log_function
+def parse_request_args(
+    request_proxy,
+    arg_names: Iterable = None,
+    kargs_names: dict = None
+):
     """Parse arguments from json part of request."""
     request_data = request_proxy.get_json()
     if (

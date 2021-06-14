@@ -26,7 +26,7 @@ def create_event():
     return EventService.create_event(**kvals)
 
 
-@bp.post("/get_events")
+@bp.post("/get_first_event")
 @jwt_required()
 @log_request(request)
 def get_first_event():
@@ -34,7 +34,7 @@ def get_first_event():
     (account_id,), kvals = parse_request_args(
         request,
         ('account_id',),
-        ('before', 'after')
+        {'before': None, 'after': None}
     )
     kvals['account_id'] = account_id
     kvals['user_id'] = current_user.id
@@ -48,8 +48,12 @@ def get_events():
     """Get all events user has."""
     (account_id,), kvals = parse_request_args(
         request,
-        ('account_id',),
-        ('start_time', 'end_time', 'with_lables', 'not_with_lables')
+        ('account_id',), {
+            'start_time': None,
+            'end_time': None,
+            'with_lables': None,
+            'not_with_lables': None
+        }
     )
     kvals['account_id'] = account_id
     kvals['user_id'] = current_user.id

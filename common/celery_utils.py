@@ -1,9 +1,11 @@
 """Create and configurate celery."""
 
 import os
-from functools import partial, wraps
+from functools import partial
 
 from celery import Celery
+
+from common.debug_tools import log_function
 
 
 celery_app = Celery(
@@ -29,19 +31,41 @@ class CeleryProxyMetaClass(type):
     Transforms api mock methods into remote service calls.
     In order to use it, class must have service_path attribute.
     Also, args must be passed explicitly.
+    Implemetation class, that inherits from interface, must implement every
+    interface method.
+    Due to stateless oriented design, use only static methods.
     """
 
+    # TODO check signature
     def __new__(cls, name, bases, dct):
         """Create new type with remove service calls."""
-        service_path = dct['service_path']
-        for attr_name in dct:
-            if (
-                not attr_name.startswith('__') and
-                not attr_name == "service_path"
-            ):
-
-                dct[attr_name] = partial(
-                    _call_celery_task,
-                    '.'.join((service_path, attr_name))
-                )
+        if not bases:
+            # first generation is interface, replace it's methods with caslls
+            for attr_name in dct:
+                if not attr_name.startswith('__'):
+                    dct[attr_name] = partial(
+                        _call_celery_task,
+                        '.'.join((name, attr_name))
+                    )
+        elif len(bases) == 1:
+            # second generation is implementation,
+            # check if all public methods are implemented
+            # and register them as tasks
+            (base,) = bases
+            base_methods = {
+                method_name for method_name in dir(base)
+                if not method_name.startswith('_')
+            }
+            child_methods = {
+                method_name for method_name in dct
+                if not (method_name.startswith('_'))
+            }
+            if base_methods != child_methods:
+                raise Exception("Implementation does not fit interface")
+            for method_name in child_methods:
+                method = log_function(dct[method_name])
+                task_name = '.'.join((base.__name__, method_name))
+                dct[method_name] = celery_app.task(name=task_name)(method)
+        else:
+            raise Exception("Third generation! Honestly, idk what to do")
         return super().__new__(cls, name, bases, dct)
