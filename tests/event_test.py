@@ -8,13 +8,13 @@ from tests.test_base import BaseTest
 class EventTest(BaseTest):
     """Accounts stuff tests."""
 
-    def _create_event(self, session, account):
+    def _create_event(self, session, account, confirmed=False):
         event_data = {
             'account_id': account['id'],
             'event_time': datetime.now().timestamp(),
             'diff': 10,
             'description': "TEST",
-            'confirmed': True
+            'confirmed': confirmed
         }
         response = session.post(
             url=self.HOST+"create_event",
@@ -37,6 +37,16 @@ class EventTest(BaseTest):
         response = session.post(
             url=self.HOST+"get_first_event",
             json={'account_id': account_id}
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+        self.assertIn('event', response.json(), "No event in response")
+        return response.json()['event']
+
+    def _delete_event(self, session, event_id):
+        response = session.post(
+            url=self.HOST+"delete_event",
+            json={'event_id': event_id}
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
@@ -98,23 +108,36 @@ class EventTest(BaseTest):
         created_event = self._create_event(session, account)
         event = self._get_first_event(session, account['id'])
         self.assertDictEqual(event, created_event, "Problems with event data")
-        response = session.post(
-            url=self.HOST+"delete_event",
-            json={'event_id': event['id']}
-        )
-        self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
-        self.assertIn('event', response.json(), "No event in response")
-        self.assertDictEqual(
-            event,
-            response.json()['event'],
-            "Problems with event data"
-        )
+        deleted_event = self._delete_event(session, event['id'])
+        self.assertDictEqual(event, deleted_event, "Problems with event data")
         none_event = self._get_first_event(session, account['id'])
         self.assertEqual(none_event, {}, "None none event")
 
-    # def test_confirm_event():
-    #     pass
+    def test_confirm_event(self):
+        """Test confirming events."""
+        session, _ = self.prepare()
+        response = session.post(url=self.HOST+"get_accounts")
+        (account,) = response.json()['accounts']
+        created_event = self._create_event(session, account)
+        response = session.post(
+            url=self.HOST+"confirm_event",
+            json={'event_id': created_event['id'], 'confirm': True}
+        )
+        confirmed_event = self._get_first_event(session, account['id'])
+        self.assertTrue(confirmed_event['confirmed'])
+
+    def test_unconfirm_event(self):
+        """Test confirming events."""
+        session, _ = self.prepare()
+        response = session.post(url=self.HOST+"get_accounts")
+        (account,) = response.json()['accounts']
+        created_event = self._create_event(session, account, True)
+        response = session.post(
+            url=self.HOST+"confirm_event",
+            json={'event_id': created_event['id'], 'confirm': False}
+        )
+        confirmed_event = self._get_first_event(session, account['id'])
+        self.assertFalse(confirmed_event['confirmed'])
 
     # def test_edit_event():
     #     pass
@@ -146,7 +169,10 @@ class EventTest(BaseTest):
     # def test_confirm_non_existent_event():
     #     pass
 
-    # def test_edit_non_event():
+    # def test_edit_non_existent_event():
+    #     pass
+
+    # def test_confiem_non_existent_event():
     #     pass
 
     # def test_create_event_with_duplicate_description():
