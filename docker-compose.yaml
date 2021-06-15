@@ -4,9 +4,7 @@ services:
   web_entrypoint:
     build: ./web_entrypoint/
     ports:
-      - 5001:5000
-    volumes:
-      - ./web_entrypoint/src/build/web:/app
+      - 5001:4040
   
     # cache_app:
     #   build: ./cache_app/
