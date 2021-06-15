@@ -80,7 +80,7 @@ def confirm_event():
 @log_request(request)
 def edit_event():
     """Request to edit event."""
-    args = ('event_id', 'event_time', 'diff', 'total', 'description')
+    args = ('event_id', 'event_time', 'diff', 'description')
     vals, _ = parse_request_args(request, args)
     kvals = {key: val for key, val in zip(args, vals)}
     kvals['user_id'] = current_user.id

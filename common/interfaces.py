@@ -52,10 +52,7 @@ class EventService(metaclass=CeleryProxyMetaClass):
         """Confirm event."""
         pass
 
-    def edit_event(
-        user_id, event_id, event_time,
-        diff, total, description
-    ):
+    def edit_event(user_id, event_id, event_time, diff, description):
         """Request to edit event."""
         pass
 

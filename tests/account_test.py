@@ -287,7 +287,11 @@ class AccountTest(BaseTest):
         session, _ = self.prepare()
         response = session.post(url=self.HOST+"get_accounts")
         account_id = response.json()['accounts'][0]['id']
-        self._delete_account(session, account_id, "can't delete the only account")
+        self._delete_account(
+            session,
+            account_id,
+            "can't delete the only account"
+        )
         self._assert_accounts(session, ["Main Account"])
 
     # def test_create_with_incorrect_args(self):

@@ -43,8 +43,9 @@ class CeleryProxyMetaClass(type):
             # first generation is interface, replace it's methods with caslls
             for attr_name in dct:
                 if not attr_name.startswith('__'):
-                    dct[attr_name] = log_function(
-                        partial(_call_celery_task, '.'.join((name, attr_name)))
+                    dct[attr_name] = partial(
+                        log_function(_call_celery_task),
+                        '.'.join((name, attr_name))
                     )
         elif len(bases) == 1:
             # second generation is implementation,

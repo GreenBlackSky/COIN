@@ -119,10 +119,14 @@ class EventTest(BaseTest):
         response = session.post(url=self.HOST+"get_accounts")
         (account,) = response.json()['accounts']
         created_event = self._create_event(session, account)
+
         response = session.post(
             url=self.HOST+"confirm_event",
             json={'event_id': created_event['id'], 'confirm': True}
         )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+
         confirmed_event = self._get_first_event(session, account['id'])
         self.assertTrue(confirmed_event['confirmed'])
 
@@ -132,15 +136,45 @@ class EventTest(BaseTest):
         response = session.post(url=self.HOST+"get_accounts")
         (account,) = response.json()['accounts']
         created_event = self._create_event(session, account, True)
+
         response = session.post(
             url=self.HOST+"confirm_event",
             json={'event_id': created_event['id'], 'confirm': False}
         )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+
         confirmed_event = self._get_first_event(session, account['id'])
         self.assertFalse(confirmed_event['confirmed'])
 
-    # def test_edit_event():
-    #     pass
+    def test_edit_event(self):
+        """Test editing fields of event."""
+        session, _ = self.prepare()
+        response = session.post(url=self.HOST+"get_accounts")
+        (account,) = response.json()['accounts']
+        created_event = self._create_event(session, account, True)
+
+        edited_time = datetime.now().timestamp() + 100
+        response = session.post(
+            url=self.HOST+"edit_event",
+            json={
+                'event_id': created_event['id'],
+                'event_time': edited_time,
+                'diff': 20,
+                'description': "EDITED"
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+
+        edited_event = self._get_first_event(session, account['id'])
+        self.assertEqual(edited_event['event_time'], edited_time, "Wrong time")
+        self.assertEqual(edited_event['diff'], 20, "Wrong diff")
+        self.assertEqual(
+            edited_event['description'],
+            'EDITED',
+            "Wrong description"
+        )
 
     # def test_total_changes_on_create(self):
     #     pass

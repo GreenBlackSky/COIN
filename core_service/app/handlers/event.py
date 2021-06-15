@@ -123,10 +123,7 @@ class EventHandler(EventService):
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def edit_event(
-        user_id, event_id, event_time,
-        diff, total, description
-    ):
+    def edit_event(user_id, event_id, event_time, diff, description):
         """Edit existing event."""
         event = session.get(EventModel, event_id)
         if event is None:
@@ -136,7 +133,6 @@ class EventHandler(EventService):
 
         event.event_time = datetime.fromtimestamp(event_time)
         event.diff = diff
-        event.total = total
         event.description = description
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
