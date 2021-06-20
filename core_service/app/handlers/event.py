@@ -55,7 +55,7 @@ class EventHandler(EventService):
         if previous_event is None:
             total = 0
         else:
-            total = previous_event['total'] + diff
+            total = previous_event.total + diff
 
         event = EventModel(
             user_id=user_id,

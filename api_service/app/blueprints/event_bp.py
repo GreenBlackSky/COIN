@@ -49,8 +49,8 @@ def get_events():
     (account_id,), kvals = parse_request_args(
         request,
         ('account_id',), {
-            'start_time': None,
-            'end_time': None,
+            'after': None,
+            'before': None,
             'with_lables': None,
             'not_with_lables': None
         }

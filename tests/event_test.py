@@ -9,10 +9,12 @@ from tests.test_base import BaseTest
 class EventTest(BaseTest):
     """Accounts stuff tests."""
 
-    def _create_event(self, account, confirmed=False):
+    def _create_event(self, account, event_time=None, confirmed=False):
+        if event_time is None:
+            event_time = datetime.now().timestamp()
         event_data = {
             'account_id': account['id'],
-            'event_time': datetime.now().timestamp(),
+            'event_time': event_time,
             'diff': 10,
             'description': "TEST",
             'confirmed': confirmed
@@ -53,6 +55,14 @@ class EventTest(BaseTest):
         self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
         self.assertIn('event', response.json(), "No event in response")
         return response.json()['event']
+
+    def _confirm_event(self, event_id, confirm):
+        response = self.session.post(
+            url=self.HOST+"confirm_event",
+            json={'event_id': event_id, 'confirm': confirm}
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
 
     def test_create_event_unauthorized(self):
         """Try create event without authorization."""
@@ -116,14 +126,7 @@ class EventTest(BaseTest):
         self.register()
         account = self.get_first_account()
         created_event = self._create_event(account)
-
-        response = self.session.post(
-            url=self.HOST+"confirm_event",
-            json={'event_id': created_event['id'], 'confirm': True}
-        )
-        self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
-
+        self._confirm_event(created_event['id'], True)
         confirmed_event = self._get_first_event(account['id'])
         self.assertTrue(confirmed_event['confirmed'])
 
@@ -132,14 +135,7 @@ class EventTest(BaseTest):
         self.register()
         account = self.get_first_account()
         created_event = self._create_event(account, True)
-
-        response = self.session.post(
-            url=self.HOST+"confirm_event",
-            json={'event_id': created_event['id'], 'confirm': False}
-        )
-        self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
-
+        self._confirm_event(created_event['id'], False)
         confirmed_event = self._get_first_event(account['id'])
         self.assertFalse(confirmed_event['confirmed'])
 
@@ -147,7 +143,7 @@ class EventTest(BaseTest):
         """Test editing fields of event."""
         self.register()
         account = self.get_first_account()
-        created_event = self._create_event(account, True)
+        created_event = self._create_event(account, confirmed=True)
 
         edited_time = datetime.now().timestamp() + 100
         response = self.session.post(
@@ -180,8 +176,44 @@ class EventTest(BaseTest):
     # def test_total_changes_on_delete(self):
     #     pass
 
-    # def test_get_events():
-    #     pass
+    def test_get_all_events(self):
+        """Test geting events."""
+        self.register()
+        account = self.get_first_account()
+        current_time = datetime.now().timestamp()
+        event_times = [current_time + i*100 for i in range(6)]
+        events = [
+            self._create_event(account, event_time=event_time)
+            for event_time in event_times
+        ]
+        response = self.session.post(
+            url=self.HOST+"get_events",
+            json={'account_id': account['id']}
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+        self.assertIn('events', response.json(), "No event in response")
+        self.assertIsInstance(
+            response.json()['events'],
+            list,
+            "Events list is not a list"
+        )
+        self.assertEqual(
+            len(response.json()['events']),
+            6,
+            "Wrong number of events"
+        )
+        events_by_id = {event['id']: event for event in events}
+        got_events_by_id = {
+            event['id']: event
+            for event in response.json()['events']
+        }
+        for event_id in events_by_id:
+            self.assertDictEqual(
+                events_by_id[event_id],
+                got_events_by_id[event_id],
+                "Wrong event data"
+            )
 
     # def test_get_first_event():
     #     pass

@@ -25,15 +25,6 @@ def test_login():
     }
 
 
-@bp.route("/get_events", methods=['POST'])
-@jwt_required()
-@log_request(request)
-def test_get_events():
-    """Mock method for getting events."""
-    sleep(1)
-    return {'status': "OK"}
-
-
 @bp.route("/clear_users", methods=['POST'])
 @log_request(request)
 def clear():
