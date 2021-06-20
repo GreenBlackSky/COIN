@@ -1,10 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
-
+import 'package:coin_client/common.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-import 'common.dart';
 import 'session.dart';
 import 'storage.dart';
 
@@ -15,18 +11,10 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           leading: new Container(),
-          title: TextButton(
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.all(16.0),
-              primary: Colors.white,
-              textStyle: const TextStyle(fontSize: 20),
-            ),
-            onPressed: _mainWdget.openAccountsPanel,
-            child: Text(storage.accounts[storage.account]),
-          ),
+          title: Text(storage.accounts[storage.account]),
           actions: <Widget>[buildPopUpMenu(context)]),
       body: Center(
-        child: _mainWdget,
+        child: buildForm(_mainWdget),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -64,37 +52,29 @@ class MainScreen extends StatelessWidget {
 class MainWidget extends StatefulWidget {
   @override
   _MainState createState() => _MainState();
-  void openAccountsPanel() {
-    log("A PANEL");
-  }
 }
 
 class _MainState extends State<MainWidget> {
-  void _sendRequest() {
-    session.post('test_login').then(_processResponse).catchError((err) {
-      displayError(context, "Connection error ${err.toString()}");
-    });
-  }
-
-  void _processResponse(http.Response response) {
-    if (response.statusCode != 200) {
-      displayError(context, "Problem with connection.");
-    } else {
-      Map<String, dynamic> responseBody = jsonDecode(response.body);
-      displayError(context, responseBody['status']);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // TODO build events
-    return Form(
-        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-      Text(
-        "No events yet",
-        style: Theme.of(context).textTheme.headline2,
-      ),
-      buildButton("Try", _sendRequest),
-    ]));
+    var now = DateTime.now();
+    var month = now.month;
+    var daysInMonth = DateTime(now.year, now.month + 1, 0)
+        .difference(DateTime(now.year, now.month, 0))
+        .inDays;
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      itemCount: daysInMonth,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          height: 50,
+          color: Colors.lightBlue,
+          child: Align(
+              child: Text('$month/$index'), alignment: Alignment.centerRight),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
+    );
   }
 }

@@ -2,7 +2,8 @@ import "dart:convert";
 import 'package:http/http.dart' as http;
 
 class Session {
-  String host = 'http://api_service:5000/';
+  // String host = 'http://api_service:5004/';
+  String host = 'http://localhost:5004/';
 
   Map<String, String> _baseHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',
