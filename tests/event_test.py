@@ -218,11 +218,89 @@ class EventTest(BaseTest):
     # def test_get_first_event():
     #     pass
 
-    # def test_filter_events_after():
-    #     pass
+    def test_filter_events_after(self):
+        """Test geting events after certian time."""
+        self.register()
+        account = self.get_first_account()
+        current_time = datetime.now().timestamp()
+        event_times = [current_time + i*100 for i in range(6)]
+        events = [
+            self._create_event(account, event_time=event_time)
+            for event_time in event_times
+        ]
+        response = self.session.post(
+            url=self.HOST+"get_events",
+            json={
+                'account_id': account['id'],
+                'after': event_times[1] + 50
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+        self.assertIn('events', response.json(), "No event in response")
+        self.assertIsInstance(
+            response.json()['events'],
+            list,
+            "Events list is not a list"
+        )
+        self.assertEqual(
+            len(response.json()['events']),
+            4,
+            "Wrong number of events"
+        )
+        events_by_id = {event['id']: event for event in events[2:]}
+        got_events_by_id = {
+            event['id']: event
+            for event in response.json()['events']
+        }
+        for event_id in events_by_id:
+            self.assertDictEqual(
+                events_by_id[event_id],
+                got_events_by_id[event_id],
+                "Wrong event data"
+            )
 
-    # def test_filter_events_before():
-    #     pass
+    def test_filter_events_before(self):
+        """Test geting events before certain time."""
+        self.register()
+        account = self.get_first_account()
+        current_time = datetime.now().timestamp()
+        event_times = [current_time + i*100 for i in range(6)]
+        events = [
+            self._create_event(account, event_time=event_time)
+            for event_time in event_times
+        ]
+        response = self.session.post(
+            url=self.HOST+"get_events",
+            json={
+                'account_id': account['id'],
+                'before': event_times[3] + 50
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+        self.assertIn('events', response.json(), "No event in response")
+        self.assertIsInstance(
+            response.json()['events'],
+            list,
+            "Events list is not a list"
+        )
+        self.assertEqual(
+            len(response.json()['events']),
+            4,
+            "Wrong number of events"
+        )
+        events_by_id = {event['id']: event for event in events[:4]}
+        got_events_by_id = {
+            event['id']: event
+            for event in response.json()['events']
+        }
+        for event_id in events_by_id:
+            self.assertDictEqual(
+                events_by_id[event_id],
+                got_events_by_id[event_id],
+                "Wrong event data"
+            )
 
     # def test_delete_non_existant_event():
     #     pass
