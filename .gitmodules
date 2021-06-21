@@ -1,3 +1,0 @@
-[submodule "web_entrypoint/src"]
-	path = web_entrypoint/src
-	url = git@github.com:GreenBlackSky/coin_web_client.git

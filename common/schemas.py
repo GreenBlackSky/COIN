@@ -37,7 +37,6 @@ class Event:
     id: int
     event_time: datetime
     diff: int
-    total: int
     description: str
     confirmed: bool
 

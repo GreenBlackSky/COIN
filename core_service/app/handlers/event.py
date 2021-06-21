@@ -52,17 +52,12 @@ class EventHandler(EventService):
 
         event_time = datetime.fromtimestamp(event_time)
         previous_event = _event_query(account_id, before=event_time).first()
-        if previous_event is None:
-            total = 0
-        else:
-            total = previous_event.total + diff
 
         event = EventModel(
             user_id=user_id,
             account_id=account_id,
             event_time=event_time,
             diff=diff,
-            total=total,
             description=description,
             confirmed=confirmed,
         )

@@ -20,7 +20,8 @@ engine = create_engine(connection_string)
 Base.prepare(engine, reflect=True)
 
 AccountModel = Base.classes.accounts
+PointModel = Base.classes.points
 EventModel = Base.classes.events
-LabelModel = Base.classes.labels
+# LabelModel = Base.classes.labels
 
 session = Session(engine)
