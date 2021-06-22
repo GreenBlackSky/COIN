@@ -35,6 +35,7 @@ class AccountHandler(AccountService):
             name=name,
         )
         session.add(account)
+        # TODO create first savepoint
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 
@@ -87,6 +88,7 @@ class AccountHandler(AccountService):
             return {'status': 'accessing account of another user'}
 
         session.delete(account)
+        # TODO delete all savepoints
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 

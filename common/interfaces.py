@@ -60,6 +60,10 @@ class EventService(metaclass=CeleryProxyMetaClass):
         """Delete existing event."""
         pass
 
+    def get_balance(user_id, account_id, timestamp):
+        """Get balance on account at certain time."""
+        pass
+
     def clear_events():
         """Delete existing event."""
         pass

@@ -20,7 +20,7 @@ engine = create_engine(connection_string)
 Base.prepare(engine, reflect=True)
 
 AccountModel = Base.classes.accounts
-PointModel = Base.classes.points
+SavePointModel = Base.classes.save_points
 EventModel = Base.classes.events
 # LabelModel = Base.classes.labels
 

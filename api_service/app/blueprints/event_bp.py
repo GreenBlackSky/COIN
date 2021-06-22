@@ -92,9 +92,19 @@ def edit_event():
 @log_request(request)
 def delete_event():
     """Delete existing event."""
-    args = ('event_id',)
-    (event_id,), _ = parse_request_args(request, args)
+    (event_id,), _ = parse_request_args(request, ('event_id',))
     return EventService.delete_event(
         user_id=current_user.id,
         event_id=event_id,
     )
+
+
+@bp.post("/get_balance")
+@jwt_required()
+@log_request(request)
+def get_balance():
+    """Get balance on certain account at certain time."""
+    (account_id, timestamp), _ = parse_request_args(
+        request, ('account_id', 'timestamp')
+    )
+    return EventService.get_balance(current_user.id, account_id, timestamp)

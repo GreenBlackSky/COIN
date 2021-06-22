@@ -12,7 +12,7 @@ CREATE TABLE events (
     description VARCHAR(200) NOT NULL,
     confirmed BOOLEAN NOT NULL
 );
-CREATE TABLE points (
+CREATE TABLE save_points (
     id SERIAL PRIMARY KEY,
     date TIMESTAMP NOT NULL,
     total FLOAT NOT NULL

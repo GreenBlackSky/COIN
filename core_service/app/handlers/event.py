@@ -50,18 +50,16 @@ class EventHandler(EventService):
         ):
             return {'status': 'no such account'}
 
-        event_time = datetime.fromtimestamp(event_time)
-        previous_event = _event_query(account_id, before=event_time).first()
-
         event = EventModel(
             user_id=user_id,
             account_id=account_id,
-            event_time=event_time,
+            event_time=datetime.fromtimestamp(event_time),
             diff=diff,
             description=description,
             confirmed=confirmed,
         )
         session.add(event)
+        # TODO edit or create savepoints
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -115,6 +113,7 @@ class EventHandler(EventService):
         if event.user_id != user_id:
             return {'status': 'accessing another users events'}
         event.confirmed = confirm
+        # TODO edit savepoints
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -129,6 +128,7 @@ class EventHandler(EventService):
         event.event_time = datetime.fromtimestamp(event_time)
         event.diff = diff
         event.description = description
+        # TODO edit savepoits
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -141,8 +141,13 @@ class EventHandler(EventService):
             return {'status': 'accessing another users events'}
 
         session.delete(event)
+        # TODO edit savepoits
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
+
+    # def get_balance(user_id, account_id, timestamp):
+    #     TODO
+    #     return {'status': 'OK', 'balance': balance}
 
     def clear_events():
         """Clear all events from db."""
