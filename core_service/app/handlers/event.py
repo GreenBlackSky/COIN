@@ -60,7 +60,7 @@ class EventHandler(EventService):
             # confirmed=confirmed,
         )
         session.add(event)
-        savepoint.save_change(session, account_id, event_time, diff)
+        # savepoint.save_change(session, account_id, event_time, diff)
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -128,7 +128,7 @@ class EventHandler(EventService):
         event.event_time = datetime.fromtimestamp(event_time)
         event.diff = diff
         event.description = description
-        savepoint.save_change(session, event.account_id, event_time, diff)
+        # savepoint.save_change(session, event.account_id, event_time, diff)
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -141,9 +141,9 @@ class EventHandler(EventService):
             return {'status': 'accessing another users events'}
 
         session.delete(event)
-        savepoint.save_change(
-            session, event.account_id, event.event_time, event.diff
-        )
+        # savepoint.save_change(
+        #     session, event.account_id, event.event_time, event.diff
+        # )
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
