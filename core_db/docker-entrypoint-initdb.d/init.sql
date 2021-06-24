@@ -10,7 +10,7 @@ CREATE TABLE events (
     event_time TIMESTAMP NOT NULL,
     diff INT NOT NULL,
     description VARCHAR(200) NOT NULL,
-    confirmed BOOLEAN NOT NULL
+    -- confirmed BOOLEAN NOT NULL
 );
 CREATE TABLE save_points (
     id SERIAL PRIMARY KEY,

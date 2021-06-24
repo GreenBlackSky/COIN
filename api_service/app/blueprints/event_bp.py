@@ -18,7 +18,7 @@ def create_event():
     """Request to create new event."""
     args = (
         'account_id', 'event_time', 'diff',
-        'description', 'confirmed'
+        'description',  # 'confirmed'
     )
     vals, _ = parse_request_args(request, args)
     kvals = {key: val for key, val in zip(args, vals)}
@@ -60,19 +60,19 @@ def get_events():
     return EventService.get_events(**kvals)
 
 
-@bp.post("/confirm_event")
-@jwt_required()
-@log_request(request)
-def confirm_event():
-    """Confirm event."""
-    (event_id, confirm), _ = parse_request_args(
-        request, ('event_id', 'confirm')
-    )
-    return EventService.confirm_event(
-        user_id=current_user.id,
-        event_id=event_id,
-        confirm=confirm
-    )
+# @bp.post("/confirm_event")
+# @jwt_required()
+# @log_request(request)
+# def confirm_event():
+#     """Confirm event."""
+#     (event_id, confirm), _ = parse_request_args(
+#         request, ('event_id', 'confirm')
+#     )
+#     return EventService.confirm_event(
+#         user_id=current_user.id,
+#         event_id=event_id,
+#         confirm=confirm
+#     )
 
 
 @bp.post("/edit_event")

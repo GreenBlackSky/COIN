@@ -8,6 +8,7 @@ from common.schemas import EventSchema
 
 from ..model import session, EventModel
 from .account import AccountHandler
+import savepoint
 
 event_schema = EventSchema()
 
@@ -38,7 +39,7 @@ class EventHandler(EventService):
 
     def create_event(
         user_id, account_id, event_time,
-        diff, description, confirmed
+        diff, description  # , confirmed
     ):
         """Create new event."""
         accounts_response = AccountHandler.get_accounts(user_id)
@@ -56,10 +57,10 @@ class EventHandler(EventService):
             event_time=datetime.fromtimestamp(event_time),
             diff=diff,
             description=description,
-            confirmed=confirmed,
+            # confirmed=confirmed,
         )
         session.add(event)
-        # TODO edit or create savepoints
+        savepoint.save_change(session, account_id, event_time, diff)
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -105,17 +106,16 @@ class EventHandler(EventService):
             'events': [event_schema.dump(event) for event in query.all()]
         }
 
-    def confirm_event(user_id, event_id, confirm):
-        """Confirm event."""
-        event = session.get(EventModel, event_id)
-        if event is None:
-            return {'status': 'no such event'}
-        if event.user_id != user_id:
-            return {'status': 'accessing another users events'}
-        event.confirmed = confirm
-        # TODO edit savepoints
-        session.commit()
-        return {'status': 'OK', 'event': event_schema.dump(event)}
+    # def confirm_event(user_id, event_id, confirm):
+    #     """Confirm event."""
+    #     event = session.get(EventModel, event_id)
+    #     if event is None:
+    #         return {'status': 'no such event'}
+    #     if event.user_id != user_id:
+    #         return {'status': 'accessing another users events'}
+    #     event.confirmed = confirm
+    #     session.commit()
+    #     return {'status': 'OK', 'event': event_schema.dump(event)}
 
     def edit_event(user_id, event_id, event_time, diff, description):
         """Edit existing event."""
@@ -128,7 +128,7 @@ class EventHandler(EventService):
         event.event_time = datetime.fromtimestamp(event_time)
         event.diff = diff
         event.description = description
-        # TODO edit savepoits
+        savepoint.save_change(session, event.account_id, event_time, diff)
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -141,13 +141,22 @@ class EventHandler(EventService):
             return {'status': 'accessing another users events'}
 
         session.delete(event)
-        # TODO edit savepoits
+        savepoint.save_change(
+            session, event.account_id, event.event_time, event.diff
+        )
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    # def get_balance(user_id, account_id, timestamp):
-    #     TODO
-    #     return {'status': 'OK', 'balance': balance}
+    def get_balance(user_id, account_id, timestamp):
+        """Get balance on given account in given point in time."""
+        balance, savepoint_time = savepoint.get_closest_savepoint(
+            session, account_id, timestamp
+        )
+        query = _event_query(
+            account_id, after=savepoint_time, before=timestamp
+        )
+        diff_sum = sum(diff for (diff,) in query.values("diff"))
+        return {'status': 'OK', 'balance': balance + diff_sum}
 
     def clear_events():
         """Clear all events from db."""

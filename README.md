@@ -2,11 +2,14 @@
 Simple budget planner.
 
 ## Architecture
-* frontend - flutter
-* gateway - flask + gunicorn
-* backend -  python microservices with celery and rabbitMQ
-* db - postgresql
-* cache - redis
+* Flutter based web-app is build in and being served from docker container.
+* Flask based REST api is served by gunicorn.
+* Flutter and Flask comunicate through localohost port 5004 for now. It would be nice to have more sophisticated routing.
+* Flask jwt is used to authrize users.
+* Also, API-service handles all the user-related logic. Login, register stuff.
+* Services comunicate with each other with the help from celery and rabbitMQ.
+* There is a wrapper that hadles celery tasks and calls.
+* Each service has it's own postgres database.
 
 All wrapped up in docker containers.
 
@@ -19,14 +22,14 @@ All wrapped up in docker containers.
 Each service has it's own database. 
 
 ## Interesting stuff
-* Flutter based web-app is build in and server from docker container
+
 There is `common` module, that is imported in every service. It has some peculiar stuff, like:
 * debug decorators `log_function`, `log_method` and `log_request`, that log input and output of a method.
 * `CeleryProxyMetaClass` - a metaclass, that allows one seamlessly call methods of services from other services. Use it first in interface, and then inherit implementaion class from that. It looks kinda wierd - using methods as static, without instatiating classes. Unfortunatly, there is no need for instances due to stateless architecture, and making methods actually static is more trouble that it's worth. 
 * `interfaces` module, that containes apis of every microserives in project.
 * `schemas` contains dataclasses, that describe data models used in app. With the help from `marshmallow` I can serialize data into json and desirialize it back. More interesting is the fact, that I can use `marshmallow` to serialize ORM data, provided by SQLAlchemy.
 * I decided that I want to work with timstamps, instead of strings of dates in any format. So I had to replace datetime.SERIALIZATION_FUNCS and datetime.DESERIALIZATION_FUNCS in order to serialize DateTime into timestamp and desirialize it back.
-* I've invented waaaay more tests then I can implement, maybe I should've been a QA...
+* I've came up with waaaay more tests then I can implement, maybe I should've been born QA...
 
 ## Deployment
 * dev deployment - docker-compose. Run `docker-compose -f "docker-compose.yaml" up -d --build` to deploy.
@@ -69,6 +72,10 @@ TODO
 * events front
 * events tests
 
+* savepoints back
+* savepoints tests
+* savepoints front
+
 * labels back
 * labels front
 * labels tests
@@ -76,6 +83,10 @@ TODO
 * templates service
 * templates front
 * templates tests
+
+* confirmed/uncomfirmed events back
+* confirmed/uncomfirmed events front
+* confirmed/uncomfirmed events tests
 
 * statistics service
 * statistics front

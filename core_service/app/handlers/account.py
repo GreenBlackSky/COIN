@@ -5,6 +5,7 @@ from common.interfaces import AccountService
 from common.schemas import AccountSchema
 
 from ..model import session, AccountModel
+from savepoint import clear_savepoints
 
 
 account_schema = AccountSchema()
@@ -35,7 +36,6 @@ class AccountHandler(AccountService):
             name=name,
         )
         session.add(account)
-        # TODO create first savepoint
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 
@@ -88,7 +88,7 @@ class AccountHandler(AccountService):
             return {'status': 'accessing account of another user'}
 
         session.delete(account)
-        # TODO delete all savepoints
+        clear_savepoints(session, account_id)
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 

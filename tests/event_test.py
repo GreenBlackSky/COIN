@@ -17,7 +17,7 @@ class EventTest(BaseTest):
             'event_time': event_time,
             'diff': 10,
             'description': "TEST",
-            'confirmed': confirmed
+            # 'confirmed': confirmed
         }
         response = self.session.post(
             url=self.HOST+"create_event",
@@ -56,13 +56,15 @@ class EventTest(BaseTest):
         self.assertIn('event', response.json(), "No event in response")
         return response.json()['event']
 
-    def _confirm_event(self, event_id, confirm):
-        response = self.session.post(
-            url=self.HOST+"confirm_event",
-            json={'event_id': event_id, 'confirm': confirm}
-        )
-        self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+    # def _confirm_event(self, event_id, confirm):
+    #     response = self.session.post(
+    #         url=self.HOST+"confirm_event",
+    #         json={'event_id': event_id, 'confirm': confirm}
+    #     )
+    #     self.assertEqual(response.status_code, 200, "Wrong response code")
+    #     self.assertEqual(
+    #           response.json()['status'], 'OK', "Wrong status code"
+    #     )
 
     def test_create_event_unauthorized(self):
         """Try create event without authorization."""
@@ -121,23 +123,23 @@ class EventTest(BaseTest):
         none_event = self._get_first_event(account['id'])
         self.assertEqual(none_event, {}, "None none event")
 
-    def test_confirm_event(self):
-        """Test confirming events."""
-        self.register()
-        account = self.get_first_account()
-        created_event = self._create_event(account)
-        self._confirm_event(created_event['id'], True)
-        confirmed_event = self._get_first_event(account['id'])
-        self.assertTrue(confirmed_event['confirmed'])
+    # def test_confirm_event(self):
+    #     """Test confirming events."""
+    #     self.register()
+    #     account = self.get_first_account()
+    #     created_event = self._create_event(account)
+    #     self._confirm_event(created_event['id'], True)
+    #     confirmed_event = self._get_first_event(account['id'])
+    #     self.assertTrue(confirmed_event['confirmed'])
 
-    def test_unconfirm_event(self):
-        """Test confirming events."""
-        self.register()
-        account = self.get_first_account()
-        created_event = self._create_event(account, True)
-        self._confirm_event(created_event['id'], False)
-        confirmed_event = self._get_first_event(account['id'])
-        self.assertFalse(confirmed_event['confirmed'])
+    # def test_unconfirm_event(self):
+    #     """Test confirming events."""
+    #     self.register()
+    #     account = self.get_first_account()
+    #     created_event = self._create_event(account, True)
+    #     self._confirm_event(created_event['id'], False)
+    #     confirmed_event = self._get_first_event(account['id'])
+    #     self.assertFalse(confirmed_event['confirmed'])
 
     def test_edit_event(self):
         """Test editing fields of event."""
