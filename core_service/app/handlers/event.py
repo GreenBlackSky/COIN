@@ -8,11 +8,12 @@ from common.schemas import EventSchema
 
 from ..model import session, EventModel
 from .account import AccountHandler
-import savepoint
+import savepoint_utils
 
 event_schema = EventSchema()
 
 
+# TODO remove _event_query
 @log_function
 def _event_query(
     account_id,
@@ -51,16 +52,38 @@ class EventHandler(EventService):
         ):
             return {'status': 'no such account'}
 
+        event_time = datetime.fromtimestamp(event_time)
         event = EventModel(
             user_id=user_id,
             account_id=account_id,
-            event_time=datetime.fromtimestamp(event_time),
+            event_time=event_time,
             diff=diff,
             description=description,
             # confirmed=confirmed,
         )
         session.add(event)
-        # savepoint.save_change(session, account_id, event_time, diff)
+        # chack savepoint at the start of the month
+        savepoint = savepoint_utils.get_closest_savepoint(
+            session,
+            account_id,
+            event_time
+        )
+        month_start = savepoint_utils.get_month_start(event_time)
+        if savepoint is None:
+            savepoint = savepoint_utils.create_new_savepoint(
+                session,
+                month_start,
+                0
+            )
+        elif savepoint.datetime < month_start:
+            query = _event_query(account_id, savepoint.datetime, event_time)
+            diff_sum = sum(diff for (diff,) in query.values("diff"))
+            savepoint = savepoint_utils.create_new_savepoint(
+                session,
+                month_start,
+                savepoint.total + diff_sum + diff
+            )
+        # TODO update latter savepoints
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -97,7 +120,11 @@ class EventHandler(EventService):
         if before is not None:
             before = datetime.fromtimestamp(before)
         query = _event_query(
-            account_id, after, before, with_lables, not_with_lables
+            account_id,
+            after,
+            before,
+            with_lables,
+            not_with_lables
         )
         if query.filter(EventModel.user_id != user_id).count():
             return {'status': 'accessing another users events'}
@@ -128,7 +155,7 @@ class EventHandler(EventService):
         event.event_time = datetime.fromtimestamp(event_time)
         event.diff = diff
         event.description = description
-        # savepoint.save_change(session, event.account_id, event_time, diff)
+        # TODO update savepoints
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
@@ -141,22 +168,27 @@ class EventHandler(EventService):
             return {'status': 'accessing another users events'}
 
         session.delete(event)
-        # savepoint.save_change(
-        #     session, event.account_id, event.event_time, event.diff
-        # )
+        # TODO Update savepoints
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
     def get_balance(user_id, account_id, timestamp):
         """Get balance on given account in given point in time."""
-        balance, savepoint_time = savepoint.get_closest_savepoint(
-            session, account_id, timestamp
+        savepoint = savepoint_utils.get_closest_savepoint(
+            session,
+            account_id,
+            timestamp
         )
+        if savepoint is None:
+            return {'status': 'OK', 'balance': 0}
+
         query = _event_query(
-            account_id, after=savepoint_time, before=timestamp
+            account_id,
+            after=savepoint.datetime,
+            before=timestamp
         )
         diff_sum = sum(diff for (diff,) in query.values("diff"))
-        return {'status': 'OK', 'balance': balance + diff_sum}
+        return {'status': 'OK', 'balance': savepoint.total + diff_sum}
 
     def clear_events():
         """Clear all events from db."""

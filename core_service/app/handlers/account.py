@@ -5,7 +5,6 @@ from common.interfaces import AccountService
 from common.schemas import AccountSchema
 
 from ..model import session, AccountModel
-from savepoint import clear_savepoints
 
 
 account_schema = AccountSchema()
@@ -20,9 +19,9 @@ class AccountHandler(AccountService):
 
     def create_account(user_id, name):
         """Create new account."""
-        accounts = session.query(AccountModel).filter(
-            AccountModel.user_id == user_id
-        )
+        accounts = session\
+            .query(AccountModel)\
+            .filter(AccountModel.user_id == user_id)
         if accounts.count() >= MAX_ACCOUNTS:
             return {'status': 'max accounts'}
 
@@ -31,6 +30,7 @@ class AccountHandler(AccountService):
             AccountModel.name == name
         ).first():
             return {'status': "account already exists"}
+
         account = AccountModel(
             user_id=user_id,
             name=name,
@@ -88,7 +88,7 @@ class AccountHandler(AccountService):
             return {'status': 'accessing account of another user'}
 
         session.delete(account)
-        clear_savepoints(session, account_id)
+        # TODO remove savepoints
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 

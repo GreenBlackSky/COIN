@@ -14,7 +14,7 @@ CREATE TABLE events (
 );
 CREATE TABLE save_points (
     id SERIAL PRIMARY KEY,
-    save_point_date TIMESTAMP NOT NULL,
+    datetime TIMESTAMP NOT NULL,
     total FLOAT NOT NULL
 )
 CREATE TABLE labels (
