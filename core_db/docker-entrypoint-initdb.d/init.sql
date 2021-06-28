@@ -9,14 +9,14 @@ CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     event_time TIMESTAMP NOT NULL,
     diff INT NOT NULL,
-    description VARCHAR(200) NOT NULL,
+    description VARCHAR(200) NOT NULL
     -- confirmed BOOLEAN NOT NULL
 );
 CREATE TABLE save_points (
     id SERIAL PRIMARY KEY,
     datetime TIMESTAMP NOT NULL,
     total FLOAT NOT NULL
-)
+);
 CREATE TABLE labels (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
