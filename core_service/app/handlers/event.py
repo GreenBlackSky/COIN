@@ -26,8 +26,8 @@ def _get_or_create_savepoint(
         .order_by(desc(SavePointModel.datetime))\
         .first()
 
-    month_start = datetime.replace(  # month start
-        day=0,
+    month_start = event_time.replace(  # month start
+        day=1,
         hour=0,
         minute=0,
         second=0,

@@ -14,6 +14,7 @@ CREATE TABLE events (
 );
 CREATE TABLE save_points (
     id SERIAL PRIMARY KEY,
+    account_id INT REFERENCES accounts,
     datetime TIMESTAMP NOT NULL,
     total FLOAT NOT NULL
 );
