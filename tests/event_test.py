@@ -9,7 +9,7 @@ from tests.test_base import BaseTest
 class EventTest(BaseTest):
     """Accounts stuff tests."""
 
-    def _create_event(self, account, event_time=None, confirmed=False):
+    def _create_event(self, account, event_time=None, confirmed=False, diff=10):
         if event_time is None:
             event_time = datetime.now().timestamp()
         event_data = {
@@ -169,14 +169,67 @@ class EventTest(BaseTest):
             "Wrong description"
         )
 
-    # def test_total_changes_on_create(self):
-    #     pass
+    def test_balance_with_no_events(self):
+        """Test if balance is 0 when there is no events."""
+        self.register()
+        account = self.get_first_account()
+        response = self.session.post(
+            url=self.HOST+"get_balance",
+            json={
+                'account_id': account['id'],
+                'timestamp': datetime.now().timestamp()
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictEqual(
+            {'status': "OK", 'balance': 0},
+            response.json(),
+            "Wrong answear"
+        )
 
-    # def test_total_changes_on_edit(self):
-    #     pass
+    def test_balance_after_events(self):
+        """Test balance after one event is equal diff of that event."""
+        self.register()
+        account = self.get_first_account()
+        now = datetime.now()
+        created_event = self._create_event(
+            account,
+            event_time=now.timestamp(),
+            diff=10
+        )
+        response = self.session.post(
+            url=self.HOST+"get_balance",
+            json={
+                'account_id': account['id'],
+                'timestamp': now.replace(day=now.day + 1)
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictEqual(
+            {'status': "OK", 'balance': 10},
+            response.json(),
+            "Wrong answear"
+        )
 
-    # def test_total_changes_on_delete(self):
-    #     pass
+    # def test_balance_between_events(self):
+    #     self.register()
+    #     account = self.get_first_account()
+
+    # def test_balance_before_events(self):
+    #     self.register()
+    #     account = self.get_first_account()
+
+    # def test_balance_changes_on_create(self):
+    #     self.register()
+    #     account = self.get_first_account()
+
+    # def test_balance_changes_on_edit(self):
+    #     self.register()
+    #     account = self.get_first_account()
+
+    # def test_balance_changes_on_delete(self):
+    #     self.register()
+    #     account = self.get_first_account()
 
     def test_get_all_events(self):
         """Test geting events."""
