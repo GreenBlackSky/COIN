@@ -1,7 +1,6 @@
 """Accounts stuff tests."""
 
-from common.schemas import Account
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from tests.test_base import BaseTest
 
@@ -9,7 +8,7 @@ from tests.test_base import BaseTest
 class EventTest(BaseTest):
     """Accounts stuff tests."""
 
-    def _create_event(self, account, event_time=None, confirmed=False, diff=10):
+    def _create_event(self, account, event_time=None, confirmed=False):
         if event_time is None:
             event_time = datetime.now().timestamp()
         event_data = {
@@ -55,6 +54,21 @@ class EventTest(BaseTest):
         self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
         self.assertIn('event', response.json(), "No event in response")
         return response.json()['event']
+
+    def _assert_balance(self, account_id, timestamp, result_balance):
+        response = self.session.post(
+            url=self.HOST+"get_balance",
+            json={
+                'account_id': account_id,
+                'timestamp': timestamp
+            }
+        )
+        self.assertEqual(response.status_code, 200, "Wrong response code")
+        self.assertDictEqual(
+            {'status': "OK", 'balance': result_balance},
+            response.json(),
+            "Wrong answear"
+        )
 
     # def _confirm_event(self, event_id, confirm):
     #     response = self.session.post(
@@ -147,7 +161,7 @@ class EventTest(BaseTest):
         account = self.get_first_account()
         created_event = self._create_event(account, confirmed=True)
 
-        edited_time = datetime.now().timestamp() + 100
+        edited_time = datetime.now().timestamp() + timedelta(days=1)
         response = self.session.post(
             url=self.HOST+"edit_event",
             json={
@@ -173,59 +187,111 @@ class EventTest(BaseTest):
         """Test if balance is 0 when there is no events."""
         self.register()
         account = self.get_first_account()
-        response = self.session.post(
-            url=self.HOST+"get_balance",
-            json={
-                'account_id': account['id'],
-                'timestamp': datetime.now().timestamp()
-            }
-        )
-        self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertDictEqual(
-            {'status': "OK", 'balance': 0},
-            response.json(),
-            "Wrong answear"
-        )
+        self._assert_balance(account['id'], datetime.now().timestamp(), 0)
 
     def test_balance_after_events(self):
-        """Test balance after one event is equal diff of that event."""
+        """Check if balance after one event is equal diff of that event."""
         self.register()
         account = self.get_first_account()
         now = datetime.now()
         created_event = self._create_event(
             account,
-            event_time=now.timestamp(),
-            diff=10
+            event_time=now.timestamp()
         )
+        self._assert_balance(
+            account['id'],
+            (now + timedelta(days=1)).timestamp(),
+            created_event['diff']
+        )
+
+    def test_balance_between_events(self):
+        """
+        Check if balance between two events equals the diff of the earlier one.
+        """
+        self.register()
+        account = self.get_first_account()
+        now = datetime.now()
+        created_event_1 = self._create_event(
+            account,
+            event_time=now.timestamp()
+        )
+        created_event_2 = self._create_event(
+            account,
+            event_time=(now + timedelta(days=2)).timestamp()
+        )
+        self._assert_balance(
+            account['id'],
+            (now + timedelta(days=1)).timestamp(),
+            created_event_1['diff']
+        )
+
+    def test_balance_before_events(self):
+        """Check if balance before any event is 0."""
+        self.register()
+        account = self.get_first_account()
+        now = datetime.now()
+        for i in range(10):
+            self._create_event(
+                account,
+                event_time=(now + timedelta(days=i+1)).timestamp()
+            )
+        self._assert_balance(account['id'], now.timestamp(), 0)
+
+    def test_balance_changes_on_create(self):
+        """Test changing balance upon creating new events."""
+        self.register()
+        account = self.get_first_account()
+        now = datetime.now()
+        created_event_1 = self._create_event(
+            account,
+            event_time=now.timestamp()
+        )
+        self._assert_balance(
+            account['id'],
+            (now + timedelta(days=2)).timestamp(),
+            created_event_1['diff']
+        )
+        created_event_2 = self._create_event(
+            account,
+            (now + timedelta(days=1)).timestamp()
+        )
+        self._assert_balance(
+            account['id'],
+            (now + timedelta(days=2)).timestamp(),
+            created_event_1['diff'] + created_event_2['diff']
+        )
+
+    def test_balance_changes_on_edit(self):
+        """Test changing balance upon editing existing events."""
+        self.register()
+        account = self.get_first_account()
+        now = datetime.now()
+        created_event = self._create_event(
+            account,
+            event_time=now.timestamp()
+        )
+        self._assert_balance(
+            account['id'],
+            (now + timedelta(days=1)).timestamp(),
+            created_event['diff']
+        )
+        eidted_total = 20
         response = self.session.post(
-            url=self.HOST+"get_balance",
+            url=self.HOST+"edit_event",
             json={
-                'account_id': account['id'],
-                'timestamp': now.replace(day=now.day + 1)
+                'event_id': created_event['id'],
+                'event_time': now,
+                'diff': eidted_total,
+                'description': "EDITED"
             }
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertDictEqual(
-            {'status': "OK", 'balance': 10},
-            response.json(),
-            "Wrong answear"
+        self.assertEqual(response.json()['status'], 'OK', "Wrong status code")
+        self._assert_balance(
+            account['id'],
+            (now + timedelta(days=1)).timestamp(),
+            eidted_total
         )
-
-    # def test_balance_between_events(self):
-    #     self.register()
-    #     account = self.get_first_account()
-
-    # def test_balance_before_events(self):
-    #     self.register()
-    #     account = self.get_first_account()
-
-    # def test_balance_changes_on_create(self):
-    #     self.register()
-    #     account = self.get_first_account()
-
-    # def test_balance_changes_on_edit(self):
-    #     self.register()
-    #     account = self.get_first_account()
 
     # def test_balance_changes_on_delete(self):
     #     self.register()

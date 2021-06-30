@@ -107,4 +107,8 @@ def get_balance():
     (account_id, timestamp), _ = parse_request_args(
         request, ('account_id', 'timestamp')
     )
-    return EventService.get_balance(current_user.id, account_id, timestamp)
+    return EventService.get_balance(
+        user_id=current_user.id,
+        account_id=account_id,
+        timestamp=timestamp
+    )
