@@ -1,48 +1,56 @@
 """Interfaces of services."""
 
-from .celery_utils import CeleryProxyMetaClass
+from abc import ABC, abstractmethod
 
 
-class AccountService(metaclass=CeleryProxyMetaClass):
+class AccountService(ABC):
     """Account service interface."""
 
-    def create_account(user_id, name):
+    @abstractmethod
+    def create_account(self, user_id, name):
         """Create new account."""
         pass
 
-    def get_accounts(user_id):
+    @abstractmethod
+    def get_accounts(self, user_id):
         """Get account from db by id."""
         pass
 
-    def edit_account(user_id, account_id, name):
+    @abstractmethod
+    def edit_account(self, user_id, account_id, name):
         """Request to edit account."""
         pass
 
-    def delete_account(user_id, account_id):
+    @abstractmethod
+    def delete_account(self, user_id, account_id):
         """Delete existing account."""
         pass
 
-    def clear_accounts():
+    @abstractmethod
+    def clear_accounts(self):
         """Clear all accounts from db and clear cache."""
         pass
 
 
-class EventService(metaclass=CeleryProxyMetaClass):
+class EventService(ABC):
     """Event service interface."""
 
+    @abstractmethod
     def create_event(
-        user_id, account_id, event_time,
+        self, user_id, account_id, event_time,
         diff, description  # , confirmed
     ):
         """Request to create new event."""
         pass
 
-    def get_first_event(user_id, account_id, before, after):
+    @abstractmethod
+    def get_first_event(self, user_id, account_id, before, after):
         """Get first event by filter."""
         pass
 
+    @abstractmethod
     def get_events(
-        user_id, acc_ids, start_time,
+        self, user_id, acc_ids, start_time,
         end_time, with_lables, not_with_lables
     ):
         """Get all events user has."""
@@ -52,18 +60,22 @@ class EventService(metaclass=CeleryProxyMetaClass):
     #     """Confirm event."""
     #     pass
 
-    def edit_event(user_id, event_id, event_time, diff, description):
+    @abstractmethod
+    def edit_event(self, user_id, event_id, event_time, diff, description):
         """Request to edit event."""
         pass
 
-    def delete_event(user_id, event_id):
+    @abstractmethod
+    def delete_event(self, user_id, event_id):
         """Delete existing event."""
         pass
 
-    def get_balance(user_id, account_id, timestamp):
+    @abstractmethod
+    def get_balance(self, user_id, account_id, timestamp):
         """Get balance on account at certain time."""
         pass
 
-    def clear_events():
+    @abstractmethod
+    def clear_events(self):
         """Delete existing event."""
         pass

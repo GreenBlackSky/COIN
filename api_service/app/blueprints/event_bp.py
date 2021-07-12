@@ -1,14 +1,22 @@
 """Flask blueprint, that contains events manipulation methods."""
 
+from celery_abc import CallerMetaBase
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, current_user
 
+from common.celery_utils import celery_app
 from common.debug_tools import log_request
 from common.interfaces import EventService
 
 from ..request_helpers import parse_request_args
 
+
+class EventCaller(EventService, metaclass=CallerMetaBase):
+    pass
+
+
 bp = Blueprint('event_bp', __name__)
+eventService = EventCaller(celery_app)
 
 
 @bp.post("/create_event")
@@ -23,7 +31,7 @@ def create_event():
     vals, _ = parse_request_args(request, args)
     kvals = {key: val for key, val in zip(args, vals)}
     kvals['user_id'] = current_user.id
-    return EventService.create_event(**kvals)
+    return eventService.create_event(**kvals)
 
 
 @bp.post("/get_first_event")
@@ -38,7 +46,7 @@ def get_first_event():
     )
     kvals['account_id'] = account_id
     kvals['user_id'] = current_user.id
-    return EventService.get_first_event(**kvals)
+    return eventService.get_first_event(**kvals)
 
 
 @bp.post("/get_events")
@@ -57,7 +65,7 @@ def get_events():
     )
     kvals['account_id'] = account_id
     kvals['user_id'] = current_user.id
-    return EventService.get_events(**kvals)
+    return eventService.get_events(**kvals)
 
 
 # @bp.post("/confirm_event")
@@ -84,7 +92,7 @@ def edit_event():
     vals, _ = parse_request_args(request, args)
     kvals = {key: val for key, val in zip(args, vals)}
     kvals['user_id'] = current_user.id
-    return EventService.edit_event(**kvals)
+    return eventService.edit_event(**kvals)
 
 
 @bp.post("/delete_event")
@@ -93,7 +101,7 @@ def edit_event():
 def delete_event():
     """Delete existing event."""
     (event_id,), _ = parse_request_args(request, ('event_id',))
-    return EventService.delete_event(
+    return eventService.delete_event(
         user_id=current_user.id,
         event_id=event_id,
     )
@@ -107,7 +115,7 @@ def get_balance():
     (account_id, timestamp), _ = parse_request_args(
         request, ('account_id', 'timestamp')
     )
-    return EventService.get_balance(
+    return eventService.get_balance(
         user_id=current_user.id,
         account_id=account_id,
         timestamp=timestamp

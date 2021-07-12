@@ -1,5 +1,8 @@
 """Module contains accounts manipulation methods."""
 
+from celery_abc import WorkerMetaBase
+
+from common.celery_utils import celery_app
 from common.constants import MAX_ACCOUNTS
 from common.interfaces import AccountService
 from common.schemas import AccountSchema
@@ -10,14 +13,10 @@ from ..model import session, AccountModel
 account_schema = AccountSchema()
 
 
-class AccountHandler(AccountService):
-    """
-    Class contains method for handling account stuff.
+class AccountHandler(AccountService, metaclass=WorkerMetaBase):
+    """Class contains method for handling account stuff."""
 
-    Do no instantiate.
-    """
-
-    def create_account(user_id, name):
+    def create_account(self, user_id, name):
         """Create new account."""
         accounts = session\
             .query(AccountModel)\
@@ -39,7 +38,7 @@ class AccountHandler(AccountService):
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 
-    def get_accounts(user_id):
+    def get_accounts(self, user_id):
         """Get account from db by id."""
         accounts = session.query(AccountModel).filter(
             AccountModel.user_id == user_id
@@ -52,7 +51,7 @@ class AccountHandler(AccountService):
             'accounts': [account_schema.dump(acc) for acc in accounts.all()]
         }
 
-    def edit_account(user_id, account_id, name):
+    def edit_account(self, user_id, account_id, name):
         """Request to edit account."""
         account = session.get(AccountModel, account_id)
         if account is None:
@@ -72,7 +71,7 @@ class AccountHandler(AccountService):
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 
-    def delete_account(user_id, account_id):
+    def delete_account(self, user_id, account_id):
         """Delete existing account."""
         accounts = session.query(AccountModel).filter(
             AccountModel.user_id == user_id,
@@ -92,7 +91,10 @@ class AccountHandler(AccountService):
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 
-    def clear_accounts():
+    def clear_accounts(self):
         """Clear all accounts from db."""
         account_count = session.query(AccountModel).delete()
         return account_count
+
+
+AccountHandler(celery_app)

@@ -7,3 +7,4 @@ marshmallow_dataclass
 psycopg2-binary
 sqlalchemy
 celery
+celery-abc

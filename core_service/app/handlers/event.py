@@ -2,9 +2,11 @@
 
 from datetime import datetime
 
+from celery_abc import WorkerMetaBase
 from sqlalchemy import desc
 from sqlalchemy.orm.session import Session
 
+from common.celery_utils import celery_app
 from common.debug_tools import log_function
 from common.interfaces import EventService
 from common.schemas import EventSchema
@@ -15,64 +17,68 @@ from .account import AccountHandler
 event_schema = EventSchema()
 
 
-@log_function
-def _get_or_create_savepoint(
-    session: Session, account_id, event_time: datetime, diff
-):
-    savepoint = session\
-        .query(SavePointModel)\
-        .filter(SavePointModel.account_id == account_id)\
-        .filter(SavePointModel.datetime <= event_time)\
-        .order_by(desc(SavePointModel.datetime))\
-        .first()
+class EventHandler(EventService, metaclass=WorkerMetaBase):
+    """Class contains method for handling event stuff."""
 
-    month_start = event_time.replace(  # month start
-        day=1,
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0
-    )
-    if savepoint is None:  # earliest savepoint
-        savepoint = SavePointModel(
-            datetime=month_start,
-            total=0
+    @log_function
+    def _get_or_create_savepoint(
+        self,
+        session: Session,
+        account_id,
+        event_time: datetime,
+        diff
+    ):
+        savepoint = session\
+            .query(SavePointModel)\
+            .filter(SavePointModel.account_id == account_id)\
+            .filter(SavePointModel.datetime <= event_time)\
+            .order_by(desc(SavePointModel.datetime))\
+            .first()
+
+        month_start = event_time.replace(  # month start
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
+            microsecond=0
         )
-        session.add(savepoint)
-    elif savepoint.datetime < month_start:  # new savepoint
-        query = session\
-            .query(EventModel)\
-            .filter(EventModel.account_id == account_id)\
-            .filter(EventModel.event_time > savepoint.datetime)\
-            .filter(EventModel.event_time < month_start)
-        diff_sum = sum(diff for (diff,) in query.values("diff"))
-        savepoint = SavePointModel(
-            datetime=month_start,
-            total=savepoint.total + diff_sum
-        )
-        session.add(savepoint)
+        if savepoint is None:  # earliest savepoint
+            savepoint = SavePointModel(
+                datetime=month_start,
+                total=0
+            )
+            session.add(savepoint)
+        elif savepoint.datetime < month_start:  # new savepoint
+            query = session\
+                .query(EventModel)\
+                .filter(EventModel.account_id == account_id)\
+                .filter(EventModel.event_time > savepoint.datetime)\
+                .filter(EventModel.event_time < month_start)
+            diff_sum = sum(diff for (diff,) in query.values("diff"))
+            savepoint = SavePointModel(
+                datetime=month_start,
+                total=savepoint.total + diff_sum
+            )
+            session.add(savepoint)
 
-
-@log_function
-def _update_latter_savepoints(session: Session, account_id, event_time, diff):
-    savepoints = session\
-        .query(SavePointModel)\
-        .filter(SavePointModel.account_id == account_id)\
-        .filter(SavePointModel.datetime > event_time)\
-        .all()
-    for savepoint in savepoints:
-        savepoint.totla += diff
-
-
-class EventHandler(EventService):
-    """
-    Class contains method for handling event stuff.
-
-    Do no instantiate.
-    """
+    @log_function
+    def _update_latter_savepoints(
+        self,
+        session: Session,
+        account_id,
+        event_time,
+        diff
+    ):
+        savepoints = session\
+            .query(SavePointModel)\
+            .filter(SavePointModel.account_id == account_id)\
+            .filter(SavePointModel.datetime > event_time)\
+            .all()
+        for savepoint in savepoints:
+            savepoint.totla += diff
 
     def create_event(
-        user_id, account_id, event_time,
+        self, user_id, account_id, event_time,
         diff, description  # , confirmed
     ):
         """Create new event."""
@@ -95,17 +101,17 @@ class EventHandler(EventService):
             # confirmed=confirmed,
         )
         session.add(event)
-        _get_or_create_savepoint(
+        self._get_or_create_savepoint(
             session,
             account_id,
             event_time,
             diff
         )
-        _update_latter_savepoints(session, account_id, event_time, diff)
+        self._update_latter_savepoints(session, account_id, event_time, diff)
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def get_first_event(user_id, account_id, before=None, after=None):
+    def get_first_event(self, user_id, account_id, before=None, after=None):
         """
         Get first event by given filters.
 
@@ -128,7 +134,7 @@ class EventHandler(EventService):
         }
 
     def get_events(
-        user_id, account_id,
+        self, user_id, account_id,
         after=None, before=None,
         with_lables=None, not_with_lables=None
     ):
@@ -165,7 +171,7 @@ class EventHandler(EventService):
     #     session.commit()
     #     return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def edit_event(user_id, event_id, event_time, diff, description):
+    def edit_event(self, user_id, event_id, event_time, diff, description):
         """Edit existing event."""
         event = session.get(EventModel, event_id)
         if event is None:
@@ -176,17 +182,22 @@ class EventHandler(EventService):
         event.event_time = event_time
         event.diff = diff
         event.description = description
-        _get_or_create_savepoint(
+        self._get_or_create_savepoint(
             session,
             event.account_id,
             event_time,
             diff
         )
-        _update_latter_savepoints(session, event.account_id, event_time, diff)
+        self._update_latter_savepoints(
+            session,
+            event.account_id,
+            event_time,
+            diff
+        )
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def delete_event(user_id, event_id):
+    def delete_event(self, user_id, event_id):
         """Delete existing event."""
         event = session.get(EventModel, event_id)
         if event is None:
@@ -196,7 +207,7 @@ class EventHandler(EventService):
 
         session.delete(event)
         # TODO remove savepoint if event is a last one
-        _update_latter_savepoints(
+        self._update_latter_savepoints(
             session,
             event.account_id,
             event.event_time,
@@ -205,7 +216,7 @@ class EventHandler(EventService):
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def get_balance(user_id, account_id, timestamp):
+    def get_balance(self, user_id, account_id, timestamp):
         """Get balance on given account in given point in time."""
         timepoint = datetime.fromtimestamp(timestamp)
         savepoint = session\
@@ -226,7 +237,10 @@ class EventHandler(EventService):
         diff_sum = sum(diff for (diff,) in query.values("diff"))
         return {'status': 'OK', 'balance': savepoint.total + diff_sum}
 
-    def clear_events():
+    def clear_events(self):
         """Clear all events from db."""
         count = session.query(EventModel).delete()
         return count
+
+
+EventHandler(celery_app)
