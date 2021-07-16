@@ -161,7 +161,7 @@ class EventTest(BaseTest):
         account = self.get_first_account()
         created_event = self._create_event(account, confirmed=True)
 
-        edited_time = datetime.now().timestamp() + timedelta(days=1)
+        edited_time = (datetime.now() + timedelta(days=1)).timestamp()
         response = self.session.post(
             url=self.HOST+"edit_event",
             json={

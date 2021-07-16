@@ -32,13 +32,11 @@ accountService = AccountCaller(celery_app)
 
 
 @jwt.user_identity_loader
-@log_function
 def _user_identity_lookup(user):
     return user.id
 
 
 @jwt.user_lookup_loader
-@log_function
 def _user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     user = session.get(UserModel, identity)

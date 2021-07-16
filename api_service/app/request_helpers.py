@@ -1,10 +1,8 @@
 """Some helper methods."""
 
 from typing import Iterable
-from common.debug_tools import log_function
 
 
-@log_function
 def parse_request_args(
     request_proxy,
     arg_names: Iterable = None,
