@@ -59,7 +59,11 @@ def log_method(method):
 
 
 def log_request(request_proxy, user_proxy=None):
-    """Request decorator."""
+    """
+    Log flask request input and output.
+
+    Must be before any arguments handling.
+    """
     def _decorator(method):
         if __debug__:
             name = method.__name__
@@ -92,10 +96,10 @@ def log_request(request_proxy, user_proxy=None):
                 logging.debug(f"<!< {name} {str(e)} as {user_id}")
 
             @wraps(method)
-            def _wrapper():
+            def _wrapper(*args, **kargs):
                 log_input()
                 try:
-                    ret = method()
+                    ret = method(*args, **kargs)
                     log_output(ret)
                     return ret
                 except Exception as e:

@@ -22,9 +22,9 @@ accountService = AccountCaller(celery_app)
 @bp.post("/create_account")
 @jwt_required()
 @log_request(request, current_user)
-def create_account():
+@parse_request_args(request)
+def create_account(name):
     """Request creating new account."""
-    (name,), _ = parse_request_args(request, ('name',))
     return accountService.create_account(user_id=current_user.id, name=name)
 
 
@@ -39,9 +39,9 @@ def get_accounts():
 @bp.post("/edit_account")
 @jwt_required()
 @log_request(request, current_user)
-def edit_account():
+@parse_request_args(request)
+def edit_account(account_id, name):
     """Request to edit account."""
-    (account_id, name), _ = parse_request_args(request, ('id', 'name'))
     return accountService.edit_account(
         user_id=current_user.id,
         account_id=account_id,
@@ -52,9 +52,9 @@ def edit_account():
 @bp.post("/delete_account")
 @jwt_required()
 @log_request(request, current_user)
-def delete_account():
+@parse_request_args(request)
+def delete_account(account_id):
     """Delete existing account."""
-    (account_id,), _ = parse_request_args(request, ('id',))
     return accountService.delete_account(
         user_id=current_user.id,
         account_id=account_id

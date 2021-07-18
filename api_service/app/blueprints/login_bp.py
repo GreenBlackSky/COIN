@@ -58,14 +58,14 @@ def unauthorized(reason):
 @bp.post("/register")
 @jwt_required(optional=True)
 @log_request(request, current_user)
-def create_user():
+@parse_request_args(request)
+def create_user(name, password):
     """
     Register new user.
 
     Global variable `request` must contain
      `name` and `password` fields.
     """
-    (name, password), _ = parse_request_args(request, ('name', 'password'))
     if current_user:
         return {'status': 'already authorized'}
 
@@ -92,13 +92,13 @@ def create_user():
 
 @bp.post("/login")
 @log_request(request, current_user)
-def login():
+@parse_request_args(request)
+def login(name, password):
     """
     Log in user.
 
     Global variable `request` must contain `name` and `password` fields.
     """
-    (name, password), _ = parse_request_args(request, ('name', 'password'))
     user = session.query(UserModel).filter_by(name=name).first()
     if user is None:
         return {'status': 'no such user'}, 401
@@ -116,12 +116,9 @@ def login():
 @bp.post("/edit_user")
 @jwt_required()
 @log_request(request, current_user)
-def edit_user():
+@parse_request_args(request)
+def edit_user(name, old_pass=None, new_pass=None):
     """Edit user."""
-    (name,), kargs = parse_request_args(
-        request, ('name',), {'old_pass': None, 'new_pass': None}
-    )
-    old_pass, new_pass = kargs['old_pass'], kargs['new_pass']
     if name != current_user.name:
         other_user = session.query(UserModel).filter_by(name=name).first()
         if other_user:

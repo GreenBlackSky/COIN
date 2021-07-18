@@ -37,7 +37,7 @@ class AccountTest(BaseTest):
             result = {'status': 'OK'}
         response = self.session.post(
             url=self.HOST+"edit_account",
-            json={'id': account_id, 'name': name}
+            json={'account_id': account_id, 'name': name}
         )
         self.assertEqual(response.status_code, code, "Wrong response code")
         self.assertDictContainsSubset(
@@ -49,7 +49,7 @@ class AccountTest(BaseTest):
             result = {'status': 'OK'}
         response = self.session.post(
             url=self.HOST+"delete_account",
-            json={'id': account_id}
+            json={'account_id': account_id}
         )
         self.assertEqual(response.status_code, code, "Wrong response code")
         self.assertDictContainsSubset(
