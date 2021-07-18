@@ -132,7 +132,7 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
 
     def get_events(
         self, user_id, account_id,
-        after=None, before=None,
+        start_time=None, end_time=None,
         with_lables=None, not_with_lables=None
     ):
         """
@@ -140,18 +140,18 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
 
         If 0 filters provided, get every event on account.
         """
-        if after is not None:
-            after = datetime.fromtimestamp(after)
-        if before is not None:
-            before = datetime.fromtimestamp(before)
+        if start_time is not None:
+            start_time = datetime.fromtimestamp(start_time)
+        if end_time is not None:
+            end_time = datetime.fromtimestamp(end_time)
         # TODO labels
         query = session\
             .query(EventModel)\
             .filter(EventModel.account_id == account_id)
-        if after:
-            query = query.filter(EventModel.event_time > after)
-        if before:
-            query = query.filter(EventModel.event_time < before)
+        if start_time:
+            query = query.filter(EventModel.event_time > start_time)
+        if end_time:
+            query = query.filter(EventModel.event_time < end_time)
         return {
             'status': 'OK',
             'events': [event_schema.dump(event) for event in query.all()]
