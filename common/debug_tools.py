@@ -67,17 +67,14 @@ def log_request(request_proxy, user_proxy=None):
     def _decorator(method):
         if __debug__:
             name = method.__name__
-            user_id = f"{user_proxy.id} ({user_proxy.name})" \
-                if user_proxy else \
-                'anonymous'
 
-            def log_input():
+            def log_input(print_user):
                 request_data = request_proxy.get_json()
                 if request_data and 'access_token' in request_data:
                     request_data.pop('access_token')
-                logging.debug(f">>> {name} {request_data} as {user_id}")
+                logging.debug(f">>> {name} {request_data} as {print_user}")
 
-            def log_output(ret):
+            def log_output(print_user, ret):
                 if isinstance(ret, dict):
                     print_ret = {
                         k: v for k, v in ret.items()
@@ -90,20 +87,23 @@ def log_request(request_proxy, user_proxy=None):
                     }
                 else:
                     print_ret = ret
-                logging.debug(f"<<< {name} {print_ret} as {user_id}")
+                logging.debug(f"<<< {name} {print_ret} as {print_user}")
 
-            def log_exception(e):
-                logging.debug(f"<!< {name} {str(e)} as {user_id}")
+            def log_exception(print_user, e):
+                logging.debug(f"<!< {name} {str(e)} as {print_user}")
 
             @wraps(method)
             def _wrapper(*args, **kargs):
-                log_input()
+                print_user = f"{user_proxy.id} ({user_proxy.name})" \
+                    if user_proxy else \
+                    'anonymous'
+                log_input(print_user)
                 try:
                     ret = method(*args, **kargs)
-                    log_output(ret)
+                    log_output(print_user, ret)
                     return ret
                 except Exception as e:
-                    log_exception(e)
+                    log_exception(print_user, e)
                     return {'status': 'error'}, 500
             return _wrapper
 
