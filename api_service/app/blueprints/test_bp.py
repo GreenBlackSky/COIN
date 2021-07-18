@@ -28,7 +28,7 @@ eventService = EventCaller(celery_app)
 
 @bp.route("/test_login", methods=['POST'])
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def test_login():
     """Test method for logged in user."""
     return {
@@ -38,7 +38,7 @@ def test_login():
 
 
 @bp.route("/clear_users", methods=['POST'])
-@log_request(request)
+@log_request(request, current_user)
 def clear():
     """Clear all users from db and clear cache."""
     events_count = eventService.clear_events()

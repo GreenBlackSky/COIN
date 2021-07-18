@@ -57,7 +57,7 @@ def unauthorized(reason):
 
 @bp.post("/register")
 @jwt_required(optional=True)
-@log_request(request)
+@log_request(request, current_user)
 def create_user():
     """
     Register new user.
@@ -91,7 +91,7 @@ def create_user():
 
 
 @bp.post("/login")
-@log_request(request)
+@log_request(request, current_user)
 def login():
     """
     Log in user.
@@ -115,7 +115,7 @@ def login():
 
 @bp.post("/edit_user")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def edit_user():
     """Edit user."""
     (name,), kargs = parse_request_args(
@@ -152,7 +152,7 @@ def edit_user():
 
 @bp.post("/logout")
 @jwt_required(request)
-@log_request(request)
+@log_request(request, current_user)
 def logout():
     """Log out user."""
     # for cache control

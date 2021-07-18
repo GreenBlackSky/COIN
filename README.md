@@ -25,7 +25,7 @@ Each service has it's own database.
 
 There is `common` module, that is imported in every service. It has some peculiar stuff, like:
 * debug decorators `log_function`, `log_method` and `log_request`, that log input and output of a method.
-* I use my own package `celery-abc` as wrapper on `celery` to connect microservices.
+* I use my own package `celery-abc` as a wrapper on `celery` to connect microservices: https://github.com/GreenBlackSky/celery-abc
 * `interfaces` module, that containes apis of every microserives in project.
 * `schemas` contains dataclasses, that describe data models used in app. With the help from `marshmallow` I can serialize data into json and desirialize it back. More interesting is the fact, that I can use `marshmallow` to serialize ORM data, provided by SQLAlchemy.
 * I decided that I want to work with timstamps, instead of strings of dates in any format. So I had to replace datetime.SERIALIZATION_FUNCS and datetime.DESERIALIZATION_FUNCS in order to serialize DateTime into timestamp and desirialize it back.

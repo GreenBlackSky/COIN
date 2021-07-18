@@ -12,7 +12,7 @@ bp = Blueprint('label_bp', __name__)
 
 @bp.post("/create_label")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def create_label():
     """Request to create new event."""
     pass
@@ -20,7 +20,7 @@ def create_label():
 
 @bp.post("/get_labels")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def get_labels():
     """Get all labels user has."""
     pass
@@ -28,7 +28,7 @@ def get_labels():
 
 @bp.post("/edit_label")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def edit_label():
     """Request to edit event."""
     pass
@@ -36,7 +36,7 @@ def edit_label():
 
 @bp.post("/delete_label")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def delete_label():
     """Delete existing event."""
     pass

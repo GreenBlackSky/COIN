@@ -58,23 +58,50 @@ def log_method(method):
     return ret
 
 
-def log_request(request_proxy):
+def log_request(request_proxy, user_proxy=None):
     """Request decorator."""
     def _decorator(method):
-        ret = method
         if __debug__:
+            name = method.__name__
+            user_id = f"{user_proxy.id} ({user_proxy.name})" \
+                if user_proxy else \
+                'anonymous'
+
+            def log_input():
+                request_data = request_proxy.get_json()
+                if request_data and 'access_token' in request_data:
+                    request_data.pop('access_token')
+                logging.debug(f">>> {name} {request_data} as {user_id}")
+
+            def log_output(ret):
+                if isinstance(ret, dict):
+                    print_ret = {
+                        k: v for k, v in ret.items()
+                        if k != 'access_token'
+                    }
+                elif isinstance(ret, tuple):
+                    print_ret = {
+                        k: v for k, v in ret[0].items()
+                        if k != 'access_token'
+                    }
+                else:
+                    print_ret = ret
+                logging.debug(f"<<< {name} {print_ret} as {user_id}")
+
+            def log_exception(e):
+                logging.debug(f"<!< {name} {str(e)} as {user_id}")
+
             @wraps(method)
             def _wrapper():
-                name = method.__name__
-                request_data = request_proxy.get_json()
-                logging.debug(f">>> {name} {request_data} request")
+                log_input()
                 try:
                     ret = method()
-                    logging.debug(f"<<< {name} {ret}")
+                    log_output(ret)
                     return ret
                 except Exception as e:
-                    logging.debug(f"<!< {name} {str(e)}")
+                    log_exception(e)
                     return {'status': 'error'}, 500
-            ret = _wrapper
-        return ret
+            return _wrapper
+
+        return method
     return _decorator

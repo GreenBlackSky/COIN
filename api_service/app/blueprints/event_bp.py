@@ -21,7 +21,7 @@ eventService = EventCaller(celery_app)
 
 @bp.post("/create_event")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def create_event():
     """Request to create new event."""
     args = (
@@ -36,7 +36,7 @@ def create_event():
 
 @bp.post("/get_first_event")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def get_first_event():
     """Get one event by given filter."""
     (account_id,), kvals = parse_request_args(
@@ -51,7 +51,7 @@ def get_first_event():
 
 @bp.post("/get_events")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def get_events():
     """Get all events user has."""
     (account_id,), kvals = parse_request_args(
@@ -70,7 +70,7 @@ def get_events():
 
 # @bp.post("/confirm_event")
 # @jwt_required()
-# @log_request(request)
+# @log_request(request, current_user)
 # def confirm_event():
 #     """Confirm event."""
 #     (event_id, confirm), _ = parse_request_args(
@@ -85,7 +85,7 @@ def get_events():
 
 @bp.post("/edit_event")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def edit_event():
     """Request to edit event."""
     args = ('event_id', 'event_time', 'diff', 'description')
@@ -97,7 +97,7 @@ def edit_event():
 
 @bp.post("/delete_event")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def delete_event():
     """Delete existing event."""
     (event_id,), _ = parse_request_args(request, ('event_id',))
@@ -109,7 +109,7 @@ def delete_event():
 
 @bp.post("/get_balance")
 @jwt_required()
-@log_request(request)
+@log_request(request, current_user)
 def get_balance():
     """Get balance on certain account at certain time."""
     (account_id, timestamp), _ = parse_request_args(
