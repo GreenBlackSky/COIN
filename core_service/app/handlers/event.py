@@ -61,7 +61,7 @@ def _get_or_create_savepoint(
 def _update_latter_savepoints(
     session: Session,
     account_id,
-    event_time,
+    event_time: datetime,
     diff
 ):
     savepoints = session\
@@ -176,21 +176,40 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
             return {'status': 'no such event'}
         if event.user_id != user_id:
             return {'status': 'accessing another users events'}
+
         event_time = datetime.fromtimestamp(event_time)
+        old_event_time: datetime = event.event_time
+        old_diff = event.diff
+
         event.event_time = event_time
         event.diff = diff
         event.description = description
-        _get_or_create_savepoint(
-            session,
-            event.account_id,
-            event_time
-        )
-        _update_latter_savepoints(
-            session,
-            event.account_id,
-            event_time,
-            diff
-        )
+
+        if old_event_time != event_time:
+            _update_latter_savepoints(
+                session,
+                event.account_id,
+                old_event_time,
+                -diff
+            )
+            _get_or_create_savepoint(
+                session,
+                event.account_id,
+                event_time
+            )
+            _update_latter_savepoints(
+                session,
+                event.account_id,
+                event_time,
+                diff
+            )
+        elif old_diff != diff:
+            _update_latter_savepoints(
+                session,
+                event.account_id,
+                event_time,
+                diff - old_diff
+            )
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 

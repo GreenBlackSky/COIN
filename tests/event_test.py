@@ -280,7 +280,7 @@ class EventTest(BaseTest):
             url=self.HOST+"edit_event",
             json={
                 'event_id': created_event['id'],
-                'event_time': now,
+                'event_time': now.timestamp(),
                 'diff': eidted_total,
                 'description': "EDITED"
             }

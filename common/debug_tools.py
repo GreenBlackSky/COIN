@@ -72,7 +72,7 @@ def log_request(request_proxy, user_proxy=None):
                 request_data = request_proxy.get_json()
                 if request_data and 'access_token' in request_data:
                     request_data.pop('access_token')
-                logging.debug(f">>> {name} {request_data} as {print_user}")
+                logging.debug(f"{print_user} >>> {name} {request_data}")
 
             def log_output(print_user, ret):
                 if isinstance(ret, dict):
@@ -87,10 +87,10 @@ def log_request(request_proxy, user_proxy=None):
                     }
                 else:
                     print_ret = ret
-                logging.debug(f"<<< {name} {print_ret} as {print_user}")
+                logging.debug(f"{print_user} <<< {name} {print_ret}")
 
             def log_exception(print_user, e):
-                logging.debug(f"<!< {name} {str(e)} as {print_user}")
+                logging.debug(f"{print_user} <!< {name} {str(e)}")
 
             @wraps(method)
             def _wrapper(*args, **kargs):
