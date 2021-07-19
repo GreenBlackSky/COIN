@@ -423,6 +423,18 @@ class EventTest(BaseTest):
                 "Wrong event data"
             )
 
+    # def test_events_at_months_start():
+    #     pass
+
+    # def test_events_in_two_months():
+    #     pass
+
+    # def test_events_with_year_between():
+    #     pass
+
+    # def test_add_event_at_previous_month():
+    #     pass
+
     # def test_delete_non_existant_event():
     #     pass
 
