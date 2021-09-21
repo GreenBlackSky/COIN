@@ -7,7 +7,7 @@ from common.constants import MAX_ACCOUNTS
 from common.interfaces import AccountService
 from common.schemas import AccountSchema
 
-from ..model import session, AccountModel
+from ..model import SavePointModel, session, AccountModel
 
 
 account_schema = AccountSchema()
@@ -86,8 +86,11 @@ class AccountHandler(AccountService, metaclass=WorkerMetaBase):
         if account.user_id != user_id:
             return {'status': 'accessing account of another user'}
 
+        session\
+            .query(SavePointModel)\
+            .filter(SavePointModel.account_id == account.id)\
+            .delete()
         session.delete(account)
-        # TODO remove savepoints
         session.commit()
         return {'status': 'OK', 'account': account_schema.dump(account)}
 

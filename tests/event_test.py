@@ -70,16 +70,6 @@ class EventTest(BaseTest):
             "Wrong answear"
         )
 
-    # def _confirm_event(self, event_id, confirm):
-    #     response = self.session.post(
-    #         url=self.HOST+"confirm_event",
-    #         json={'event_id': event_id, 'confirm': confirm}
-    #     )
-    #     self.assertEqual(response.status_code, 200, "Wrong response code")
-    #     self.assertEqual(
-    #           response.json()['status'], 'OK', "Wrong status code"
-    #     )
-
     def test_create_event_unauthorized(self):
         """Try create event without authorization."""
         self.register()
@@ -154,7 +144,16 @@ class EventTest(BaseTest):
     #     self._confirm_event(created_event['id'], False)
     #     confirmed_event = self._get_first_event(account['id'])
     #     self.assertFalse(confirmed_event['confirmed'])
-
+    
+    # def _confirm_event(self, event_id, confirm):
+    #     response = self.session.post(
+    #         url=self.HOST+"confirm_event",
+    #         json={'event_id': event_id, 'confirm': confirm}
+    #     )
+    #     self.assertEqual(response.status_code, 200, "Wrong response code")
+    #     self.assertEqual(
+    #           response.json()['status'], 'OK', "Wrong status code"
+    #     )
     def test_edit_event(self):
         """Test editing fields of event."""
         self.register()

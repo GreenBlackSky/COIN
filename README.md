@@ -2,18 +2,19 @@
 Simple budget planner.
 
 ## Architecture
-* Flutter based web-app is build in and being served from docker container.
+* App is build in and being served from docker container.
+* Consists of several microservices.
+* Flutter based front end.
 * Flask based REST api is served by gunicorn.
 * Flutter and Flask comunicate through localohost port 5004 for now. It would be nice to have more sophisticated routing.
 * Flask jwt is used to authrize users.
 * Also, API-service handles all the user-related logic. Login, register stuff.
-* Services comunicate with each other with the help from celery and rabbitMQ.
-* There is a wrapper that hadles celery tasks and calls.
+* Services comunicate with each other with the help from celery, rabbitMQ and my custom solution `celery-abc`.
 * Each service has it's own postgres database.
 
 All wrapped up in docker containers.
 
-## Services:
+## Services
 * Web entrypoint is a simple service with flutter web app inside.
 * API service runs REST api, build with Flask. Also, it regulates access and provides all the "login-signup" stuff.
 * CORE service contains the most basic logic - working with accounts (one user can have multiple accounts), events and labels.
@@ -22,7 +23,6 @@ All wrapped up in docker containers.
 Each service has it's own database. 
 
 ## Interesting stuff
-
 There is `common` module, that is imported in every service. It has some peculiar stuff, like:
 * debug decorators `log_function`, `log_method` and `log_request`, that log input and output of a method.
 * I use my own package `celery-abc` as a wrapper on `celery` to connect microservices: https://github.com/GreenBlackSky/celery-abc
@@ -67,59 +67,48 @@ May need later:
 * REDIS_REPLICATION_MODE
 
 TODO
+* flask async
+* sqlAlchemy async
 * accounts front
 * shared access to accounts
-
-* events front
+* events front (graph view)
 * events tests
-
-* savepoints back
-* savepoints tests
-* savepoints front
-
+* tasks pool
+* green black theme
+* calendar view
+* requests validation with marshmallow
 * labels back
 * labels front
 * labels tests
-
 * templates service
 * templates front
 * templates tests
-
 * confirmed/uncomfirmed events back
 * confirmed/uncomfirmed events front
 * confirmed/uncomfirmed events tests
-
 * statistics service
 * statistics front
 * statistics tests
-
+* prediction service
+* global statistics service (prometheus + graphana)
 * ads service
 * ads front
 * ads tests
-
-* flask tests
-* flutter tests
-
 * status codes
 * expiration tokens
 * balcklist token on logout
 * handle different token problems
-
 * color schemes
 * animations
 * cookies
-
 * broadcast date and time
 * log service 
-
 * use actual hashing for password
 * nginx for hosting web app
-
 * auto-build web app
 * fix versions of libs
 * dev mode
 * kubernetes
-
 * redis password
 * redis admin
 * pg admin

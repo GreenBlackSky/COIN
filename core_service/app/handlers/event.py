@@ -49,8 +49,9 @@ def _get_or_create_savepoint(
             .query(EventModel)\
             .filter(EventModel.account_id == account_id)\
             .filter(EventModel.event_time >= savepoint.datetime)\
-            .filter(EventModel.event_time < month_start)
-        diff_sum = sum(diff for (diff,) in query.values("diff"))
+            .filter(EventModel.event_time < month_start)\
+            .with_entities(EventModel.diff)
+        diff_sum = sum(diff for (diff,) in query)
         savepoint = SavePointModel(
             datetime=month_start,
             total=savepoint.total + diff_sum
@@ -78,7 +79,7 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
 
     def create_event(
         self, user_id, account_id, event_time,
-        diff, description  # , confirmed
+        diff, description
     ):
         """Create new event."""
         accounts_response = AccountHandler.get_accounts(user_id)
@@ -96,8 +97,7 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
             account_id=account_id,
             event_time=event_time,
             diff=diff,
-            description=description,
-            # confirmed=confirmed,
+            description=description
         )
         session.add(event)
         _get_or_create_savepoint(
@@ -145,7 +145,6 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
             start_time = datetime.fromtimestamp(start_time)
         if end_time is not None:
             end_time = datetime.fromtimestamp(end_time)
-        # TODO labels
         query = session\
             .query(EventModel)\
             .filter(EventModel.account_id == account_id)
@@ -157,17 +156,6 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
             'status': 'OK',
             'events': [event_schema.dump(event) for event in query.all()]
         }
-
-    # def confirm_event(user_id, event_id, confirm):
-    #     """Confirm event."""
-    #     event = session.get(EventModel, event_id)
-    #     if event is None:
-    #         return {'status': 'no such event'}
-    #     if event.user_id != user_id:
-    #         return {'status': 'accessing another users events'}
-    #     event.confirmed = confirm
-    #     session.commit()
-    #     return {'status': 'OK', 'event': event_schema.dump(event)}
 
     def edit_event(self, user_id, event_id, event_time, diff, description):
         """Edit existing event."""
