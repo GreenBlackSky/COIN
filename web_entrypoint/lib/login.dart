@@ -25,7 +25,9 @@ class _LogInFormState extends State<LogInForm> {
   void _login() {
     if (_formKey.currentState.validate()) {
       Navigator.pushNamed(context, "/loading",
-          arguments: UserArgs(false, this._nameController.value.text,
+          arguments: LoadingArgs(
+              LoadingType.LOGIN,
+              this._nameController.value.text,
               this._passController.value.text));
     }
   }
@@ -33,13 +35,13 @@ class _LogInFormState extends State<LogInForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: this._formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text('Log in', style: Theme.of(context).textTheme.headline4),
-          buildTextField(_nameController, "Name"),
-          buildTextField(_passController, "Password", obscure: true),
+          buildTextField(this._nameController, "Name"),
+          buildTextField(this._passController, "Password", obscure: true),
           ButtonBar(alignment: MainAxisAlignment.spaceEvenly, children: [
             buildButton("Log in", _login),
             buildButton("Don't have an account", () {

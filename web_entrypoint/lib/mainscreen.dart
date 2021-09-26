@@ -44,7 +44,9 @@ class MainScreen extends StatelessWidget {
     }
   }
 
-  void createAccount() {}
+  void createAccount() {
+    // TODO create account
+  }
 
   Widget buildPopUpMenu(BuildContext context) {
     return PopupMenuButton<String>(

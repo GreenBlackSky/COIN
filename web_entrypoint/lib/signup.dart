@@ -26,7 +26,9 @@ class _SignUpFormState extends State<SignUpForm> {
   void _signup() {
     if (_formKey.currentState.validate()) {
       Navigator.pushNamed(context, "/loading",
-          arguments: UserArgs(true, this._nameController.value.text,
+          arguments: LoadingArgs(
+              LoadingType.REGISTER,
+              this._nameController.value.text,
               this._passController1.value.text));
     }
   }
@@ -35,7 +37,7 @@ class _SignUpFormState extends State<SignUpForm> {
     if (value.isEmpty) {
       return "Please enter password";
     }
-    if (value != _passController1.value.text) {
+    if (value != this._passController1.value.text) {
       return "Passwords must be identical";
     }
     return null;
@@ -49,10 +51,11 @@ class _SignUpFormState extends State<SignUpForm> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text('Sign up', style: Theme.of(context).textTheme.headline4),
-          buildTextField(_nameController, "Name"),
-          buildTextField(_passController1, "Password", obscure: true),
-          buildTextField(_passController2, "Repeat password",
-              validator: _validateSecondPassword, obscure: true),
+          buildTextField(this._nameController, "Name"),
+          buildTextField(this._passController1, "Password", obscure: true),
+          buildValidatedTextField(
+              this._passController2, "Repeat password", _validateSecondPassword,
+              obscure: true),
           ButtonBar(alignment: MainAxisAlignment.spaceEvenly, children: [
             buildButton("Sign up", _signup),
             buildButton("Already have an account", () {

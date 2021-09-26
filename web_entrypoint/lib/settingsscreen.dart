@@ -7,6 +7,7 @@ import 'common.dart';
 import 'session.dart';
 import 'storage.dart';
 
+//TODO refactor
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -113,11 +114,12 @@ class _SettingsState extends State<SettingsWidget> {
           Text("Change password:",
               style: Theme.of(context).textTheme.headline6),
           buildTextField(this._controllers["old_pass"], "Current password",
-              validate: false, obscure: true),
+              obscure: true),
           buildTextField(this._controllers["new_pass"], "New password",
-              validate: false, obscure: true),
-          buildTextField(this._controllers["new_pass2"], "Repeat new password",
-              obscure: true, validator: this._validateSecondPassword),
+              obscure: true),
+          buildValidatedTextField(this._controllers["new_pass2"],
+              "Repeat new password", this._validateSecondPassword,
+              obscure: true),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: [

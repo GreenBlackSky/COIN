@@ -29,12 +29,12 @@ class LoadingAnimationPainter extends CustomPainter {
       ..strokeWidth = 5
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round;
-
     Offset center = Offset(size.width / 2, size.height / 2);
-
     canvas.drawCircle(center, this.size, paint);
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
 }

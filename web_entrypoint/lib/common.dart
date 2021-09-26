@@ -11,20 +11,8 @@ Widget buildForm(StatefulWidget widget) {
   );
 }
 
-Widget buildTextField(TextEditingController controller, String hint,
-    {bool obscure = false, bool validate = true, Function validator}) {
-  if (validator == null) {
-    if (validate) {
-      validator = (value) {
-        if (value.isEmpty) {
-          return "Please enter ${hint}";
-        }
-        return null;
-      };
-    } else {
-      validator = (value) => null;
-    }
-  }
+Widget _buildTextFieldImpl(TextEditingController controller, String hint,
+    Function validator, bool obscure) {
   return Padding(
     padding: EdgeInsets.all(8.0),
     child: TextFormField(
@@ -42,6 +30,25 @@ Widget buildTextField(TextEditingController controller, String hint,
       obscureText: obscure,
     ),
   );
+}
+
+Widget buildTextField(TextEditingController controller, String hint,
+    {bool obscure = false}) {
+  return _buildTextFieldImpl(controller, hint, (value) => null, obscure);
+}
+
+Widget buildValidatedTextField(
+    TextEditingController controller, String hint, Function validator,
+    {bool obscure = false}) {
+  if (validator == null) {
+    validator = (value) {
+      if (value.isEmpty) {
+        return "Please enter $hint";
+      }
+      return null;
+    };
+  }
+  return _buildTextFieldImpl(controller, hint, validator, obscure);
 }
 
 Widget buildButton(String text, Function callback) {
@@ -71,10 +78,15 @@ void displayError(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(bar);
 }
 
-class UserArgs {
-  final bool regestration;
+enum LoadingType {
+  REGISTER,
+  LOGIN,
+}
+
+class LoadingArgs {
+  final LoadingType type;
   final String name;
   final String password;
 
-  UserArgs(this.regestration, this.name, this.password);
+  LoadingArgs(this.type, this.name, this.password);
 }
