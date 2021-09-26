@@ -1,7 +1,7 @@
 class DataStorage {
   String name;
   int account = -1;
-  Map<int, String> accounts = {-1: "ERROR!!"};
+  Map<int, String> accounts = {};
   List<int> events = [];
 }
 

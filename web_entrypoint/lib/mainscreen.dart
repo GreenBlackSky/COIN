@@ -11,7 +11,18 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           leading: new Container(),
-          title: Text(storage.accounts[storage.account]),
+          title: new DropdownButton<int>(
+            value: storage.account,
+            items: [
+                  for (MapEntry e in storage.accounts.entries)
+                    DropdownMenuItem<int>(child: Text(e.value), value: e.key)
+                ] +
+                [
+                  DropdownMenuItem<int>(
+                      child: Text("+ Add new account"), value: -1)
+                ],
+            onChanged: this.changeAccount,
+          ),
           actions: <Widget>[buildPopUpMenu(context)]),
       body: Center(
         child: buildForm(_mainWdget),
@@ -24,6 +35,16 @@ class MainScreen extends StatelessWidget {
       ),
     );
   }
+
+  void changeAccount(int accountID) {
+    if (accountID == -1) {
+      this.createAccount();
+    } else {
+      storage.account = accountID;
+    }
+  }
+
+  void createAccount() {}
 
   Widget buildPopUpMenu(BuildContext context) {
     return PopupMenuButton<String>(
