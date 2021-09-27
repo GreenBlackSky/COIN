@@ -1,8 +1,8 @@
 import 'package:coin_client/common.dart';
 import 'package:flutter/material.dart';
 
-import 'session.dart';
-import 'storage.dart';
+import 'accountslist.dart';
+import 'burgermenu.dart';
 
 class MainScreen extends StatelessWidget {
   final MainWidget _mainWdget = new MainWidget();
@@ -11,19 +11,8 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           leading: new Container(),
-          title: new DropdownButton<int>(
-            value: storage.account,
-            items: [
-                  for (MapEntry e in storage.accounts.entries)
-                    DropdownMenuItem<int>(child: Text(e.value), value: e.key)
-                ] +
-                [
-                  DropdownMenuItem<int>(
-                      child: Text("+ Add new account"), value: -1)
-                ],
-            onChanged: this.changeAccount,
-          ),
-          actions: <Widget>[buildPopUpMenu(context)]),
+          title: AccountList(),
+          actions: <Widget>[buildBurgerMenu(context)]),
       body: Center(
         child: buildForm(_mainWdget),
       ),
@@ -33,41 +22,6 @@ class MainScreen extends StatelessWidget {
         },
         child: Icon(Icons.add),
       ),
-    );
-  }
-
-  void changeAccount(int accountID) {
-    if (accountID == -1) {
-      this.createAccount();
-    } else {
-      storage.account = accountID;
-    }
-  }
-
-  void createAccount() {
-    // TODO create account
-  }
-
-  Widget buildPopUpMenu(BuildContext context) {
-    return PopupMenuButton<String>(
-      onSelected: (String value) {
-        switch (value) {
-          case 'Logout':
-            session.post('logout').catchError((_) {});
-            session.clearSession();
-            Navigator.of(context).pushNamed('/login');
-            break;
-          case 'Settings':
-            Navigator.of(context).pushNamed('/settings');
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) {
-        return [
-          PopupMenuItem<String>(value: "Settings", child: Text("Settings")),
-          PopupMenuItem<String>(value: "Logout", child: Text("Logout"))
-        ];
-      },
     );
   }
 }

@@ -26,10 +26,9 @@ class _SignUpFormState extends State<SignUpForm> {
   void _signup() {
     if (_formKey.currentState.validate()) {
       Navigator.pushNamed(context, "/loading",
-          arguments: LoadingArgs(
-              LoadingType.REGISTER,
-              this._nameController.value.text,
-              this._passController1.value.text));
+          arguments: LoadingArgs(LoadingType.REGISTER,
+              name: this._nameController.value.text,
+              password: this._passController1.value.text));
     }
   }
 

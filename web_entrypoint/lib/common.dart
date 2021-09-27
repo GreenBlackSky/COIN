@@ -78,15 +78,12 @@ void displayError(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(bar);
 }
 
-enum LoadingType {
-  REGISTER,
-  LOGIN,
-}
+enum LoadingType { REGISTER, LOGIN, CREATE_ACCOUNT }
 
 class LoadingArgs {
   final LoadingType type;
   final String name;
   final String password;
 
-  LoadingArgs(this.type, this.name, this.password);
+  LoadingArgs(this.type, {this.name = "", this.password = ""});
 }

@@ -25,10 +25,9 @@ class _LogInFormState extends State<LogInForm> {
   void _login() {
     if (_formKey.currentState.validate()) {
       Navigator.pushNamed(context, "/loading",
-          arguments: LoadingArgs(
-              LoadingType.LOGIN,
-              this._nameController.value.text,
-              this._passController.value.text));
+          arguments: LoadingArgs(LoadingType.LOGIN,
+              name: this._nameController.value.text,
+              password: this._passController.value.text));
     }
   }
 

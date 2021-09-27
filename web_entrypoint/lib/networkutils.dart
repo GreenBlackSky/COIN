@@ -37,7 +37,32 @@ Future<http.Response> requestAccounts() async {
   return await session.post('get_accounts');
 }
 
+Future<http.Response> requestCreateAccount(accountName) async {
+  return await session.post(
+      'create_account',
+      jsonEncode(<String, String>{
+        'name': accountName,
+      }));
+}
+
+void processCretingAccountResponse(http.Response response) {
+  if (response.statusCode != 200) {
+    throw Exception("Problem with connection.");
+  }
+  Map<String, dynamic> responseBody = jsonDecode(response.body);
+  if (responseBody['status'] != 'OK') {
+    throw Exception(responseBody['status']);
+  }
+  int accountID = responseBody['account']['id'];
+  String accountName = responseBody['account']['name'];
+  storage.accounts[accountID] = accountName;
+  storage.account = accountID;
+}
+
 void processAccountsResponse(http.Response response) {
+  if (response.statusCode != 200) {
+    throw Exception("Problem with connection.");
+  }
   Map<String, dynamic> responseBody = jsonDecode(response.body);
   if (responseBody['status'] != 'OK') {
     throw Exception(responseBody['status']);
