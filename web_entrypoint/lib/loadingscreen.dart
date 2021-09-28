@@ -64,6 +64,9 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       case LoadingType.CREATE_ACCOUNT:
         this.createAccount();
         break;
+      case LoadingType.DELETE_ACCOUNT:
+        this.deleteAccount();
+        break;
     }
   }
 
@@ -99,7 +102,22 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var response = await requestCreateAccount(
         widget.args.name,
       );
-      processCretingAccountResponse(response);
+      processCreatingAccountResponse(response);
+      await _loadDataFromServerImpl();
+    } catch (e) {
+      displayError(this.context, e.toString());
+      session.clearSession();
+      Navigator.of(this.context).pushReplacementNamed("/main");
+    }
+    Navigator.of(this.context).pushReplacementNamed("/main");
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      var response = await requestDeleteAccount(
+        widget.args.accountID,
+      );
+      processDeletingAccountResponse(response);
       await _loadDataFromServerImpl();
     } catch (e) {
       displayError(this.context, e.toString());
