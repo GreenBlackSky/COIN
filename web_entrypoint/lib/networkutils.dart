@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'session.dart';
 import 'storage.dart';
 
+//TODO refactor
 Future<http.Response> requestRegistration(String name, String password) async {
   return await session.post(
       'register',
@@ -37,7 +38,7 @@ Future<http.Response> requestAccounts() async {
   return await session.post('get_accounts');
 }
 
-Future<http.Response> requestCreateAccount(accountName) async {
+Future<http.Response> requestCreateAccount(String accountName) async {
   return await session.post(
       'create_account',
       jsonEncode(<String, String>{
@@ -57,6 +58,27 @@ void processCreatingAccountResponse(http.Response response) {
   String accountName = responseBody['account']['name'];
   storage.accounts[accountID] = accountName;
   storage.account = accountID;
+}
+
+Future<http.Response> requestRenameAccount(
+    int accountID, String accountName) async {
+  return await session.post(
+      'edit_account',
+      jsonEncode(
+          <String, dynamic>{'name': accountName, 'account_id': accountID}));
+}
+
+void processReneamingAccountResponse(http.Response response) {
+  if (response.statusCode != 200) {
+    throw Exception("Problem with connection.");
+  }
+  Map<String, dynamic> responseBody = jsonDecode(response.body);
+  if (responseBody['status'] != 'OK') {
+    throw Exception(responseBody['status']);
+  }
+  int accountID = responseBody['account']['id'];
+  String accountName = responseBody['account']['name'];
+  storage.accounts[accountID] = accountName;
 }
 
 Future<http.Response> requestDeleteAccount(int accountID) async {

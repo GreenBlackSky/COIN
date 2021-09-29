@@ -78,14 +78,19 @@ void displayError(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(bar);
 }
 
-enum LoadingType { REGISTER, LOGIN, CREATE_ACCOUNT, DELETE_ACCOUNT }
+enum LoadingType {
+  REGISTER,
+  LOGIN,
+  CREATE_ACCOUNT,
+  EDIT_ACCOUNT,
+  DELETE_ACCOUNT
+}
 
 class LoadingArgs {
   final LoadingType type;
   final String name;
   final String password;
-  final int accountID;
+  final int id;
 
-  LoadingArgs(this.type,
-      {this.name = "", this.password = "", this.accountID = -1});
+  LoadingArgs(this.type, {this.name = "", this.password = "", this.id = -1});
 }

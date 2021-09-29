@@ -7,6 +7,7 @@ import 'common.dart';
 import 'session.dart';
 import 'networkutils.dart';
 
+//TODO refactor
 class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -67,6 +68,9 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       case LoadingType.DELETE_ACCOUNT:
         this.deleteAccount();
         break;
+      case LoadingType.EDIT_ACCOUNT:
+        this.renameAccount();
+        break;
     }
   }
 
@@ -112,10 +116,24 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
     Navigator.of(this.context).pushReplacementNamed("/main");
   }
 
+  Future<void> renameAccount() async {
+    try {
+      var response =
+          await requestRenameAccount(widget.args.id, widget.args.name);
+      processReneamingAccountResponse(response);
+      await _loadDataFromServerImpl();
+    } catch (e) {
+      displayError(this.context, e.toString());
+      session.clearSession();
+      Navigator.of(this.context).pushReplacementNamed("/main");
+    }
+    Navigator.of(this.context).pushReplacementNamed("/main");
+  }
+
   Future<void> deleteAccount() async {
     try {
       var response = await requestDeleteAccount(
-        widget.args.accountID,
+        widget.args.id,
       );
       processDeletingAccountResponse(response);
       await _loadDataFromServerImpl();
