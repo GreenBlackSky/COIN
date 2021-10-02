@@ -4,7 +4,17 @@ import 'package:http/http.dart' as http;
 import 'session.dart';
 import 'storage.dart';
 
-//TODO refactor
+Map<String, dynamic> getResponseBody(http.Response response) {
+  if (response.statusCode != 200) {
+    throw Exception("Problem with connection.");
+  }
+  Map<String, dynamic> responseBody = jsonDecode(response.body);
+  if (responseBody['status'] != 'OK') {
+    throw Exception(responseBody['status']);
+  }
+  return responseBody;
+}
+
 Future<http.Response> requestRegistration(String name, String password) async {
   return await session.post(
       'register',
@@ -24,18 +34,20 @@ Future<http.Response> requestLogin(String name, String password) async {
 }
 
 void processAuthorizationResponse(http.Response response) {
-  if (response.statusCode != 200) {
-    throw Exception("Problem with connection.");
-  }
-  Map<String, dynamic> responseBody = jsonDecode(response.body);
-  if (responseBody['status'] != 'OK') {
-    throw Exception(responseBody['status']);
-  }
+  var responseBody = getResponseBody(response);
   storage.name = responseBody['user']['name'];
 }
 
 Future<http.Response> requestAccounts() async {
   return await session.post('get_accounts');
+}
+
+void processAccountsResponse(http.Response response) {
+  var responseBody = getResponseBody(response);
+  storage.account = responseBody['accounts'][0]['id'];
+  for (Map<String, dynamic> accountJson in responseBody['accounts']) {
+    storage.accounts[accountJson['id']] = accountJson['name'];
+  }
 }
 
 Future<http.Response> requestCreateAccount(String accountName) async {
@@ -47,13 +59,7 @@ Future<http.Response> requestCreateAccount(String accountName) async {
 }
 
 void processCreatingAccountResponse(http.Response response) {
-  if (response.statusCode != 200) {
-    throw Exception("Problem with connection.");
-  }
-  Map<String, dynamic> responseBody = jsonDecode(response.body);
-  if (responseBody['status'] != 'OK') {
-    throw Exception(responseBody['status']);
-  }
+  var responseBody = getResponseBody(response);
   int accountID = responseBody['account']['id'];
   String accountName = responseBody['account']['name'];
   storage.accounts[accountID] = accountName;
@@ -69,13 +75,7 @@ Future<http.Response> requestRenameAccount(
 }
 
 void processReneamingAccountResponse(http.Response response) {
-  if (response.statusCode != 200) {
-    throw Exception("Problem with connection.");
-  }
-  Map<String, dynamic> responseBody = jsonDecode(response.body);
-  if (responseBody['status'] != 'OK') {
-    throw Exception(responseBody['status']);
-  }
+  var responseBody = getResponseBody(response);
   int accountID = responseBody['account']['id'];
   String accountName = responseBody['account']['name'];
   storage.accounts[accountID] = accountName;
@@ -90,13 +90,7 @@ Future<http.Response> requestDeleteAccount(int accountID) async {
 }
 
 void processDeletingAccountResponse(http.Response response) {
-  if (response.statusCode != 200) {
-    throw Exception("Problem with connection.");
-  }
-  Map<String, dynamic> responseBody = jsonDecode(response.body);
-  if (responseBody['status'] != 'OK') {
-    throw Exception(responseBody['status']);
-  }
+  var responseBody = getResponseBody(response);
   int accountID = responseBody['account']['id'];
   if (storage.account == accountID) {
     var accounts = List.from(storage.accounts.keys);
@@ -108,20 +102,6 @@ void processDeletingAccountResponse(http.Response response) {
     }
   }
   storage.accounts.remove(accountID);
-}
-
-void processAccountsResponse(http.Response response) {
-  if (response.statusCode != 200) {
-    throw Exception("Problem with connection.");
-  }
-  Map<String, dynamic> responseBody = jsonDecode(response.body);
-  if (responseBody['status'] != 'OK') {
-    throw Exception(responseBody['status']);
-  }
-  storage.account = responseBody['accounts'][0]['id'];
-  for (Map<String, dynamic> accountJson in responseBody['accounts']) {
-    storage.accounts[accountJson['id']] = accountJson['name'];
-  }
 }
 
 Future<http.Response> requestEvents() async {

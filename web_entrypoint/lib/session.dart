@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class Session {
   // String host = 'http://api_service:5004/';
   String host = 'http://localhost:5004/';
-
+//TODO loose headers on error
   Map<String, String> _baseHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',
     'Access-Control-Allow-Origin': '*'
@@ -27,7 +27,7 @@ class Session {
         await http.post(host + url, body: data, headers: this._headers);
     var responseData = jsonDecode(response.body);
     String jwt = responseData['access_token'];
-    if (jwt != null) {
+    if (response.statusCode == 200 && jwt != null) {
       this._headers['Authorization'] = "Bearer " + jwt;
     }
     return response;
