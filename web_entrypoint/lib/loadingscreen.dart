@@ -1,4 +1,5 @@
 import 'package:coin_client/loadinganimation.dart';
+import 'package:coin_client/storage.dart';
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,18 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       case LoadingType.EDIT_ACCOUNT:
         this.renameAccount();
         break;
+      case LoadingType.GET_EVENTS:
+        // TODO: Handle this case.
+        break;
+      case LoadingType.CREACTE_EVENT:
+        // TODO: Handle this case.
+        break;
+      case LoadingType.EDIT_EVENT:
+        // TODO: Handle this case.
+        break;
+      case LoadingType.DELETE_EVENT:
+        // TODO: Handle this case.
+        break;
     }
   }
 
@@ -82,7 +95,6 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       await _loadDataFromServerImpl();
     } catch (e) {
       displayError(this.context, e.toString());
-      session.clearSession();
       Navigator.of(this.context).pushReplacementNamed("/signup");
     }
     Navigator.of(this.context).pushReplacementNamed("/main");
@@ -95,7 +107,6 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       await _loadDataFromServerImpl();
     } catch (e) {
       displayError(this.context, e.toString());
-      session.clearSession();
       Navigator.of(this.context).pushReplacementNamed("/login");
     }
     Navigator.of(this.context).pushReplacementNamed("/main");
@@ -107,10 +118,8 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         widget.args.name,
       );
       processCreatingAccountResponse(response);
-      await _loadDataFromServerImpl();
     } catch (e) {
       displayError(this.context, e.toString());
-      session.clearSession();
       Navigator.of(this.context).pushReplacementNamed("/main");
     }
     Navigator.of(this.context).pushReplacementNamed("/main");
@@ -121,10 +130,8 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var response =
           await requestRenameAccount(widget.args.id, widget.args.name);
       processReneamingAccountResponse(response);
-      await _loadDataFromServerImpl();
     } catch (e) {
       displayError(this.context, e.toString());
-      session.clearSession();
       Navigator.of(this.context).pushReplacementNamed("/main");
     }
     Navigator.of(this.context).pushReplacementNamed("/main");
@@ -136,10 +143,8 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         widget.args.id,
       );
       processDeletingAccountResponse(response);
-      await _loadDataFromServerImpl();
     } catch (e) {
       displayError(this.context, e.toString());
-      session.clearSession();
       Navigator.of(this.context).pushReplacementNamed("/main");
     }
     Navigator.of(this.context).pushReplacementNamed("/main");
@@ -148,7 +153,12 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
   Future<void> _loadDataFromServerImpl() async {
     var accountsResponse = await requestAccounts();
     processAccountsResponse(accountsResponse);
-    // http.Response eventsResponse = await this.requestEvents();
-    // this.processEventsResponse(eventsResponse);
+    int after = storage.currentMonthStart.millisecondsSinceEpoch ~/ 1000;
+    int before = DateTime(storage.currentMonthStart.year,
+                storage.currentMonthStart.month - 10)
+            .millisecondsSinceEpoch ~/
+        1000;
+    var eventsResponse = await requestEvents(after, before);
+    processEventsResponse(eventsResponse);
   }
 }

@@ -104,10 +104,22 @@ void processDeletingAccountResponse(http.Response response) {
   storage.accounts.remove(accountID);
 }
 
-Future<http.Response> requestEvents() async {
-  return await session.post('get_events');
+Future<http.Response> requestEvents(int before, int after,
+    {int label = -1}) async {
+  var body = <String, int>{
+    'account_id': storage.account,
+    'after': before,
+    'before': after
+  };
+  if (label != -1) {
+    body['label'] = label;
+  }
+  return await session.post('get_events', jsonEncode(body));
 }
 
 void processEventsResponse(http.Response response) {
-  storage.events = [];
+  var responseBody = getResponseBody(response);
+  for (Map<String, dynamic> eventJson in responseBody['events']) {
+    storage.events.add(eventJson);
+  }
 }

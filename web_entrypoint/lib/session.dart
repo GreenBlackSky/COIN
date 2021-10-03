@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 class Session {
   // String host = 'http://api_service:5004/';
   String host = 'http://localhost:5004/';
-//TODO loose headers on error
   Map<String, String> _baseHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',
     'Access-Control-Allow-Origin': '*'

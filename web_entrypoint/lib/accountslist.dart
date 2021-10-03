@@ -14,6 +14,7 @@ class _AccountListState extends State<AccountList> {
 //TODO remove Add account button when limit is reached
 //TODO colors
 //TODO refactor
+//TODO try Expanded Text on button
   Null Function(int) changeAccountMethod(BuildContext context) {
     return (int accountID) {
       if (accountID == -1) {
@@ -75,7 +76,8 @@ class _AccountListState extends State<AccountList> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
                 title: const Text('Rename account'),
-                content: buildTextField(controller, "New name"),
+                content:
+                    buildTextField(controller, storage.accounts[accountID]),
                 actions: <Widget>[
                   TextButton(
                     child: const Text('Rename'),
