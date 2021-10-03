@@ -11,8 +11,6 @@ class AccountList extends StatefulWidget {
 }
 
 class _AccountListState extends State<AccountList> {
-  String dropdownValue = 'One';
-//TODO remove delete button on last account
 //TODO remove Add account button when limit is reached
 //TODO colors
 //TODO refactor
@@ -49,22 +47,25 @@ class _AccountListState extends State<AccountList> {
   }
 
   DropdownMenuItem<int> buildAccountButton(int accountID, String accountName) {
+    var buttons = [
+      IconButton(
+          icon: Icon(Icons.edit),
+          color: Colors.black,
+          onPressed: showRenameAccountDialogMethod(accountID)),
+    ];
+    if (storage.accounts.length != 1) {
+      buttons.add(IconButton(
+        icon: Icon(Icons.delete),
+        color: Colors.black,
+        onPressed: deleteAccountMethod(accountID),
+      ));
+    }
+
     return DropdownMenuItem<int>(
         value: accountID,
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          Text(accountName),
-          Row(children: [
-            IconButton(
-                icon: Icon(Icons.edit),
-                color: Colors.black,
-                onPressed: showRenameAccountDialogMethod(accountID)),
-            IconButton(
-              icon: Icon(Icons.delete),
-              color: Colors.black,
-              onPressed: deleteAccountMethod(accountID),
-            )
-          ])
-        ]));
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text(accountName), Row(children: buttons)]));
   }
 
   Future<String> Function() showRenameAccountDialogMethod(int accountID) {
