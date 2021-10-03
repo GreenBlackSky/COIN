@@ -134,7 +134,7 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
     def get_events(
         self, user_id, account_id,
         start_time=None, end_time=None,
-        with_lables=None, not_with_lables=None
+        label=None
     ):
         """
         Get all events user has.

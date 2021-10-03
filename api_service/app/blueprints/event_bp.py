@@ -56,8 +56,7 @@ def get_events(
     account_id,
     after=None,
     before=None,
-    with_labels=None,
-    not_with_labels=None
+    label=None,
 ):
     """Get all events user has."""
     return eventService.get_events(
@@ -65,8 +64,7 @@ def get_events(
         account_id,
         after,
         before,
-        with_labels,
-        not_with_labels
+        label
     )
 
 

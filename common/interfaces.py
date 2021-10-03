@@ -51,7 +51,7 @@ class EventService(ABC):
     @abstractmethod
     def get_events(
         self, user_id, account_id, start_time,
-        end_time, with_lables, not_with_lables
+        end_time, label
     ):
         """Get all events user has."""
         pass
