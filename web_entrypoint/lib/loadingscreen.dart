@@ -153,12 +153,12 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
   Future<void> _loadDataFromServerImpl() async {
     var accountsResponse = await requestAccounts();
     processAccountsResponse(accountsResponse);
-    int after = storage.currentMonthStart.millisecondsSinceEpoch ~/ 1000;
-    int before = DateTime(storage.currentMonthStart.year,
-                storage.currentMonthStart.month - 10)
+    int start_time = storage.currentMonthStart.millisecondsSinceEpoch ~/ 1000;
+    int end_time = DateTime(storage.currentMonthStart.year,
+                storage.currentMonthStart.month - 1)
             .millisecondsSinceEpoch ~/
         1000;
-    var eventsResponse = await requestEvents(after, before);
+    var eventsResponse = await requestEvents(start_time, end_time);
     processEventsResponse(eventsResponse);
   }
 }

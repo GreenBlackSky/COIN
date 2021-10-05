@@ -38,13 +38,13 @@ def create_event(account_id, event_time, diff, description):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def get_first_event(account_id, before=None, after=None):
+def get_first_event(account_id, start_time=None, end_time=None):
     """Get one event by given filter."""
     return eventService.get_first_event(
         current_user.id,
         account_id,
-        before,
-        after
+        start_time,
+        end_time
     )
 
 
@@ -54,16 +54,16 @@ def get_first_event(account_id, before=None, after=None):
 @parse_request_args(request)
 def get_events(
     account_id,
-    after=None,
-    before=None,
+    start_time=None,
+    end_time=None,
     label=None,
 ):
     """Get all events user has."""
     return eventService.get_events(
         current_user.id,
         account_id,
-        after,
-        before,
+        start_time,
+        end_time,
         label
     )
 

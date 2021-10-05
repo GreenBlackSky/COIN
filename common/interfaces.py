@@ -44,7 +44,7 @@ class EventService(ABC):
         pass
 
     @abstractmethod
-    def get_first_event(self, user_id, account_id, before, after):
+    def get_first_event(self, user_id, account_id, start_time, end_time):
         """Get first event by filter."""
         pass
 

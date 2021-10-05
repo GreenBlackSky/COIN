@@ -104,12 +104,12 @@ void processDeletingAccountResponse(http.Response response) {
   storage.accounts.remove(accountID);
 }
 
-Future<http.Response> requestEvents(int before, int after,
+Future<http.Response> requestEvents(int start_time, int end_time,
     {int label = -1}) async {
   var body = <String, int>{
     'account_id': storage.account,
-    'after': before,
-    'before': after
+    'start_time': start_time,
+    'end_time': end_time
   };
   if (label != -1) {
     body['label'] = label;

@@ -109,23 +109,29 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def get_first_event(self, user_id, account_id, before=None, after=None):
+    def get_first_event(
+        self,
+        user_id,
+        account_id,
+        start_time=None,
+        end_time=None
+    ):
         """
         Get first event by given filters.
 
         If 0 filters provided, get some event on account.
         """
-        if after is not None:
-            after = datetime.fromtimestamp(after)
-        if before is not None:
-            before = datetime.fromtimestamp(before)
+        if start_time is not None:
+            start_time = datetime.fromtimestamp(start_time)
+        if end_time is not None:
+            end_time = datetime.fromtimestamp(end_time)
         query = session\
             .query(EventModel)\
             .filter(EventModel.account_id == account_id)
-        if after:
-            query = query.filter(EventModel.event_time > after)
-        if before:
-            query = query.filter(EventModel.event_time < before)
+        if start_time:
+            query = query.filter(EventModel.event_time > start_time)
+        if end_time:
+            query = query.filter(EventModel.event_time < end_time)
         return {
             'status': 'OK',
             'event': event_schema.dump(query.first())

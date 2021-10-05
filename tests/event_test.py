@@ -352,7 +352,7 @@ class EventTest(BaseTest):
             url=self.HOST+"get_events",
             json={
                 'account_id': account['id'],
-                'after': event_times[1] + 50
+                'start_time': event_times[1] + 50
             }
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
@@ -394,7 +394,7 @@ class EventTest(BaseTest):
             url=self.HOST+"get_events",
             json={
                 'account_id': account['id'],
-                'before': event_times[3] + 50
+                'end_time': event_times[3] + 50
             }
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
