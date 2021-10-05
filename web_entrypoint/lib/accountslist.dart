@@ -48,14 +48,15 @@ class _AccountListState extends State<AccountList> {
   }
 
   DropdownMenuItem<int> buildAccountButton(int accountID, String accountName) {
-    var buttons = [
+    List<Widget> widgets = [
+      Text(accountName),
       IconButton(
           icon: Icon(Icons.edit),
           color: Colors.black,
           onPressed: showRenameAccountDialogMethod(accountID)),
     ];
     if (storage.accounts.length != 1) {
-      buttons.add(IconButton(
+      widgets.add(IconButton(
         icon: Icon(Icons.delete),
         color: Colors.black,
         onPressed: deleteAccountMethod(accountID),
@@ -63,17 +64,14 @@ class _AccountListState extends State<AccountList> {
     }
 
     return DropdownMenuItem<int>(
-        value: accountID,
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(accountName), Row(children: buttons)]));
+        value: accountID, child: Row(children: widgets));
   }
 
   Future<String> Function() showRenameAccountDialogMethod(int accountID) {
     return () {
       var controller = TextEditingController();
       return showDialog<String>(
-          context: context,
+          context: this.context,
           builder: (BuildContext context) => AlertDialog(
                 title: const Text('Rename account'),
                 content:
@@ -101,7 +99,7 @@ class _AccountListState extends State<AccountList> {
   Future<String> showCreateAccountDialog() {
     var controller = TextEditingController();
     return showDialog<String>(
-        context: context,
+        context: this.context,
         builder: (BuildContext context) => AlertDialog(
               title: const Text('Create new account'),
               content: buildTextField(controller, "New account name"),

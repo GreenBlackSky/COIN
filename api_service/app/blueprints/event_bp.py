@@ -34,6 +34,7 @@ def create_event(account_id, event_time, diff, description):
     )
 
 
+# TODO remove get_first_event
 @bp.post("/get_first_event")
 @jwt_required()
 @log_request(request, current_user)

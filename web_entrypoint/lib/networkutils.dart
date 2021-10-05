@@ -4,8 +4,11 @@ import 'package:http/http.dart' as http;
 import 'session.dart';
 import 'storage.dart';
 
+//TODO remove all non-consistent logic
 Map<String, dynamic> getResponseBody(http.Response response) {
-  if (response.statusCode != 200) {
+  if (response.statusCode != 200 &&
+      response.statusCode != 401 &&
+      response.statusCode != 412) {
     throw Exception("Problem with connection.");
   }
   Map<String, dynamic> responseBody = jsonDecode(response.body);
@@ -104,12 +107,12 @@ void processDeletingAccountResponse(http.Response response) {
   storage.accounts.remove(accountID);
 }
 
-Future<http.Response> requestEvents(int start_time, int end_time,
+Future<http.Response> requestEvents(int startTime, int endTime,
     {int label = -1}) async {
   var body = <String, int>{
     'account_id': storage.account,
-    'start_time': start_time,
-    'end_time': end_time
+    'start_time': startTime,
+    'end_time': endTime
   };
   if (label != -1) {
     body['label'] = label;
@@ -117,9 +120,34 @@ Future<http.Response> requestEvents(int start_time, int end_time,
   return await session.post('get_events', jsonEncode(body));
 }
 
+Future<http.Response> requestAllEvents() async {
+  return await session.post(
+      'get_events', jsonEncode(<String, int>{'account_id': storage.account}));
+}
+
 void processEventsResponse(http.Response response) {
   var responseBody = getResponseBody(response);
   for (Map<String, dynamic> eventJson in responseBody['events']) {
     storage.events.add(eventJson);
   }
+}
+
+Future<http.Response> requestCreateEvent(
+    DateTime eventTime, int diff, String description,
+    {int label = -1}) async {
+  var body = <String, dynamic>{
+    'account_id': storage.account,
+    'event_time': eventTime.millisecondsSinceEpoch ~/ 1000,
+    'diff': diff,
+    'description': description
+  };
+  if (label != -1) {
+    body['label'] = label;
+  }
+  return await session.post('create_event', jsonEncode(body));
+}
+
+void processCreatingEventResponse(http.Response response) {
+  var responseBody = getResponseBody(response);
+  storage.events.add(responseBody['event']);
 }

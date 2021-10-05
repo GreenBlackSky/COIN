@@ -1,15 +1,23 @@
+import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
-//TODO show events
 Widget buildEventsList() {
   return ListView.separated(
     padding: const EdgeInsets.all(8),
-    itemCount: 10,
+    itemCount: storage.events.length,
     itemBuilder: (BuildContext context, int index) {
+      var event = storage.events[index];
       return Container(
         height: 50,
         color: Colors.lightBlue,
-        child: Align(child: Text("A"), alignment: Alignment.centerRight),
+        child: Align(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(event['description']),
+                  Text(event['diff'].toString())
+                ]),
+            alignment: Alignment.centerRight),
       );
     },
     separatorBuilder: (BuildContext context, int index) => const Divider(),

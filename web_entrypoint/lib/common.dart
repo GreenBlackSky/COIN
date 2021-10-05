@@ -85,7 +85,7 @@ enum LoadingType {
   EDIT_ACCOUNT,
   DELETE_ACCOUNT,
   GET_EVENTS,
-  CREACTE_EVENT,
+  CREATE_EVENT,
   EDIT_EVENT,
   DELETE_EVENT
 }
@@ -95,6 +95,16 @@ class LoadingArgs {
   final String name;
   final String password;
   final int id;
+  final int diff;
+  final DateTime dateTime;
+  final String description;
 
-  LoadingArgs(this.type, {this.name = "", this.password = "", this.id = -1});
+  LoadingArgs(this.type,
+      {this.name = "",
+      this.password = "",
+      this.id = -1,
+      this.diff = 0,
+      DateTime dateTime,
+      this.description = ''})
+      : this.dateTime = dateTime ?? DateTime.now();
 }

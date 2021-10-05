@@ -5,6 +5,7 @@ import 'common.dart';
 import 'accountslist.dart';
 import 'burgermenu.dart';
 import 'eventslist.dart';
+import 'addNewStuffDialog.dart';
 
 class MainScreen extends StatelessWidget {
   final MainWidget _mainWdget = new MainWidget();
@@ -17,9 +18,7 @@ class MainScreen extends StatelessWidget {
           actions: <Widget>[buildBurgerMenu(context)]),
       body: buildForm(_mainWdget),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //TODO Add event
-        },
+        onPressed: addNewEventDialogMethod(context),
         child: Icon(Icons.add),
       ),
     );
@@ -74,7 +73,9 @@ class _MainState extends State<MainWidget> {
               margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _currentIndex == index ? Colors.blueAccent : Colors.grey,
+                color: this._currentIndex == index
+                    ? Colors.blueAccent
+                    : Colors.grey,
               ),
             );
           }),
