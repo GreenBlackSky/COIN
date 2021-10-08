@@ -47,23 +47,24 @@ class _AccountListState extends State<AccountList> {
   }
 
   DropdownMenuItem<int> buildAccountButton(int accountID, String accountName) {
-    List<Widget> widgets = [
-      Text(accountName),
+    var buttons = [
       IconButton(
           icon: Icon(Icons.edit),
           color: Colors.black,
           onPressed: showRenameAccountDialogMethod(accountID)),
     ];
     if (storage.accounts.length != 1) {
-      widgets.add(IconButton(
+      buttons.add(IconButton(
         icon: Icon(Icons.delete),
         color: Colors.black,
         onPressed: deleteAccountMethod(accountID),
       ));
     }
-
     return DropdownMenuItem<int>(
-        value: accountID, child: Row(children: widgets));
+        value: accountID,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text(accountName), Row(children: buttons)]));
   }
 
   Future<String> Function() showRenameAccountDialogMethod(int accountID) {

@@ -24,6 +24,19 @@ Widget buildEventsList() {
                       padding: EdgeInsets.all(8.0),
                       child: Text(event['description'])),
                   Padding(padding: EdgeInsets.all(8.0), child: Text(date)),
+                  Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(children: [
+                        IconButton(
+                            icon: Icon(Icons.edit),
+                            color: Colors.black,
+                            onPressed: () {}),
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          color: Colors.black,
+                          onPressed: () {},
+                        )
+                      ])),
                 ]),
             alignment: Alignment.centerRight),
       );
