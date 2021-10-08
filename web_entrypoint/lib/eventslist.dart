@@ -7,6 +7,9 @@ Widget buildEventsList() {
     itemCount: storage.events.length,
     itemBuilder: (BuildContext context, int index) {
       var event = storage.events[index];
+      String date =
+          DateTime.fromMillisecondsSinceEpoch(event["event_time"] * 1000)
+              .toIso8601String();
       return Container(
         height: 50,
         color: Colors.lightBlue,
@@ -14,8 +17,13 @@ Widget buildEventsList() {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(event['description']),
-                  Text(event['diff'].toString())
+                  Padding(padding: EdgeInsets.all(8.0), child: Text(date)),
+                  Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(event['description'])),
+                  Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(event['diff'].toString()))
                 ]),
             alignment: Alignment.centerRight),
       );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DateField extends StatefulWidget {
+  DateTime selectedDate = DateTime.now();
   @override
   _DateFieldState createState() {
     return _DateFieldState();
@@ -8,7 +9,6 @@ class DateField extends StatefulWidget {
 }
 
 class _DateFieldState extends State<DateField> {
-  DateTime selectedDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,20 +18,20 @@ class _DateFieldState extends State<DateField> {
             _selectDate(context);
           },
           child: Text(
-              "${this.selectedDate.day}/${this.selectedDate.month}/${this.selectedDate.year}"),
+              "${widget.selectedDate.day}/${widget.selectedDate.month}/${widget.selectedDate.year}"),
         ));
   }
 
   void _selectDate(BuildContext context) async {
     final DateTime selected = await showDatePicker(
       context: context,
-      initialDate: this.selectedDate,
+      initialDate: widget.selectedDate,
       firstDate: DateTime(2010),
       lastDate: DateTime(2025),
     );
-    if (selected != null && selected != this.selectedDate)
+    if (selected != null && selected != widget.selectedDate)
       setState(() {
-        this.selectedDate = selected;
+        widget.selectedDate = selected;
       });
   }
 }

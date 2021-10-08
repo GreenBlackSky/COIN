@@ -24,7 +24,7 @@ void Function() addNewEventDialogMethod(BuildContext context) {
                   Navigator.pushNamed(context, "/loading",
                       arguments: LoadingArgs(LoadingType.CREATE_EVENT,
                           diff: int.parse(diffController.value.text),
-                          dateTime: DateTime.now(),
+                          dateTime: dateField.selectedDate,
                           description: descriptionController.value.text));
                 }),
                 buildButton("Cancel", () {
