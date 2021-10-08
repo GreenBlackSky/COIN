@@ -12,7 +12,6 @@ class AccountList extends StatefulWidget {
 
 class _AccountListState extends State<AccountList> {
 //TODO remove Add account button when limit is reached
-//TODO colors
 //TODO refactor
 //TODO try Expanded Text on button
   Null Function(int) changeAccountMethod(BuildContext context) {

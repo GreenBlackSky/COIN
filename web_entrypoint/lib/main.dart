@@ -7,6 +7,7 @@ import 'loadingscreen.dart';
 
 void main() => runApp(App());
 
+//TODO theme
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

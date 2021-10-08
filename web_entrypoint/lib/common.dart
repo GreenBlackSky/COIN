@@ -88,6 +88,10 @@ void displayError(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(bar);
 }
 
+String dateToString(DateTime date) {
+  return "${date.day}/${date.month}/${date.year}";
+}
+
 enum LoadingType {
   REGISTER,
   LOGIN,

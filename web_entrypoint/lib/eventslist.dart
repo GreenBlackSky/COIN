@@ -1,15 +1,16 @@
+import 'package:coin_client/common.dart';
 import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
+//TODO edit/delete buttons
 Widget buildEventsList() {
   return ListView.separated(
     padding: const EdgeInsets.all(8),
     itemCount: storage.events.length,
     itemBuilder: (BuildContext context, int index) {
       var event = storage.events[index];
-      String date =
-          DateTime.fromMillisecondsSinceEpoch(event["event_time"] * 1000)
-              .toIso8601String();
+      String date = dateToString(
+          DateTime.fromMillisecondsSinceEpoch(event["event_time"] * 1000));
       return Container(
         height: 50,
         color: Colors.lightBlue,

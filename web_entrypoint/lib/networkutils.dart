@@ -5,6 +5,7 @@ import 'session.dart';
 import 'storage.dart';
 
 //TODO remove all non-consistent logic
+//TODO sort events
 Map<String, dynamic> getResponseBody(http.Response response) {
   if (response.statusCode != 200 &&
       response.statusCode != 401 &&

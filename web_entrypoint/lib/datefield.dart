@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'common.dart';
+
 class DateField extends StatefulWidget {
   DateTime selectedDate = DateTime.now();
   @override
@@ -14,12 +16,12 @@ class _DateFieldState extends State<DateField> {
     return Padding(
         padding: EdgeInsets.all(8.0),
         child: ElevatedButton(
-          onPressed: () {
-            _selectDate(context);
-          },
-          child: Text(
-              "${widget.selectedDate.day}/${widget.selectedDate.month}/${widget.selectedDate.year}"),
-        ));
+            onPressed: () {
+              _selectDate(context);
+            },
+            child: Text(
+              dateToString(widget.selectedDate),
+            )));
   }
 
   void _selectDate(BuildContext context) async {
