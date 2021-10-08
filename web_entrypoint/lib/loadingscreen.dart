@@ -180,6 +180,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
     //         .millisecondsSinceEpoch ~/
     //     1000;
     var eventsResponse = await requestAllEvents();
+    // TODO load only significant events
     processEventsResponse(eventsResponse);
   }
 }

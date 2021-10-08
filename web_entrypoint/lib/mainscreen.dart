@@ -33,12 +33,12 @@ class MainWidget extends StatefulWidget {
 class _MainState extends State<MainWidget> {
   int _currentIndex = 0;
   List<Widget> cardList = [
-    Center(child: Text("graph")),
-    Center(child: Text("pie chart")),
+    Center(child: Text("graph")), //TODO graph
+    Center(child: Text("pie chart")), //TODO pie chart
     Center(child: buildEventsList()),
-    Center(child: Text("month view")),
-    Center(child: Text("templates list")),
-    Center(child: Text("categories list")),
+    Center(child: Text("month view")), //TODO month view
+    Center(child: Text("templates list")), //TODO templates list
+    Center(child: Text("categories list")), //TODO categories list
   ];
 
   List<T> map<T>(List list, Function handler) {

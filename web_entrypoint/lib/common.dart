@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Widget buildForm(StatefulWidget widget) {
   return Center(
@@ -12,10 +13,11 @@ Widget buildForm(StatefulWidget widget) {
 }
 
 Widget _buildTextFieldImpl(TextEditingController controller, String hint,
-    Function validator, bool obscure) {
+    Function validator, bool obscure, List formatters) {
   return Padding(
     padding: EdgeInsets.all(8.0),
     child: TextFormField(
+      inputFormatters: formatters,
       controller: controller,
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
@@ -32,9 +34,16 @@ Widget _buildTextFieldImpl(TextEditingController controller, String hint,
   );
 }
 
+Widget buildIntField(TextEditingController controller, String hint,
+    {bool obscure = false}) {
+  return _buildTextFieldImpl(controller, hint, (value) => null, obscure,
+      <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]);
+}
+
 Widget buildTextField(TextEditingController controller, String hint,
     {bool obscure = false}) {
-  return _buildTextFieldImpl(controller, hint, (value) => null, obscure);
+  return _buildTextFieldImpl(
+      controller, hint, (value) => null, obscure, <TextInputFormatter>[]);
 }
 
 Widget buildValidatedTextField(
@@ -48,7 +57,8 @@ Widget buildValidatedTextField(
       return null;
     };
   }
-  return _buildTextFieldImpl(controller, hint, validator, obscure);
+  return _buildTextFieldImpl(
+      controller, hint, validator, obscure, <TextInputFormatter>[]);
 }
 
 Widget buildButton(String text, Function callback) {
