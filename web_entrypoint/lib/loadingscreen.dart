@@ -119,7 +119,10 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var response = await requestCreateAccount(
         widget.args.name,
       );
-      processCreatingAccountResponse(response);
+      var responseBody = getResponseBody(response);
+      var allAccountsResponse = await requestAccounts();
+      processAccountsResponse(allAccountsResponse);
+      setActiveAccountAfterCreate(responseBody);
     } catch (e) {
       displayError(this.context, e.toString());
       Navigator.of(this.context).pushReplacementNamed("/main");
@@ -132,7 +135,10 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
     try {
       var response =
           await requestRenameAccount(widget.args.id, widget.args.name);
-      processReneamingAccountResponse(response);
+      var responseBody = getResponseBody(response);
+      var allAccountsResponse = await requestAccounts();
+      processAccountsResponse(allAccountsResponse);
+      setActiveAccountAfterRename(responseBody);
     } catch (e) {
       displayError(this.context, e.toString());
       Navigator.of(this.context).pushReplacementNamed("/main");
@@ -146,7 +152,10 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var response = await requestDeleteAccount(
         widget.args.id,
       );
-      processDeletingAccountResponse(response);
+      var responseBody = getResponseBody(response);
+      var allAccountsResponse = await requestAccounts();
+      processAccountsResponse(allAccountsResponse);
+      setActiveAccountAfterDelete(responseBody);
     } catch (e) {
       displayError(this.context, e.toString());
       Navigator.of(this.context).pushReplacementNamed("/main");
@@ -162,7 +171,9 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         widget.args.diff,
         widget.args.description,
       );
-      processCreatingEventResponse(response);
+      getResponseBody(response);
+      response = await requestAllEvents();
+      processEventsResponse(response);
     } catch (e) {
       displayError(this.context, e.toString());
       Navigator.of(this.context).pushReplacementNamed("/main");

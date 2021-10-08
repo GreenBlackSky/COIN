@@ -5,7 +5,6 @@ import 'session.dart';
 import 'storage.dart';
 
 //TODO remove all non-consistent logic
-//TODO sort events
 Map<String, dynamic> getResponseBody(http.Response response) {
   if (response.statusCode != 200 &&
       response.statusCode != 401 &&
@@ -62,8 +61,7 @@ Future<http.Response> requestCreateAccount(String accountName) async {
       }));
 }
 
-void processCreatingAccountResponse(http.Response response) {
-  var responseBody = getResponseBody(response);
+void setActiveAccountAfterCreate(Map<String, dynamic> responseBody) {
   int accountID = responseBody['account']['id'];
   String accountName = responseBody['account']['name'];
   storage.accounts[accountID] = accountName;
@@ -78,11 +76,9 @@ Future<http.Response> requestRenameAccount(
           <String, dynamic>{'name': accountName, 'account_id': accountID}));
 }
 
-void processReneamingAccountResponse(http.Response response) {
-  var responseBody = getResponseBody(response);
+void setActiveAccountAfterRename(Map<String, dynamic> responseBody) {
   int accountID = responseBody['account']['id'];
-  String accountName = responseBody['account']['name'];
-  storage.accounts[accountID] = accountName;
+  storage.account = accountID;
 }
 
 Future<http.Response> requestDeleteAccount(int accountID) async {
@@ -93,8 +89,7 @@ Future<http.Response> requestDeleteAccount(int accountID) async {
       }));
 }
 
-void processDeletingAccountResponse(http.Response response) {
-  var responseBody = getResponseBody(response);
+void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
   int accountID = responseBody['account']['id'];
   if (storage.account == accountID) {
     var accounts = List.from(storage.accounts.keys);
@@ -105,7 +100,6 @@ void processDeletingAccountResponse(http.Response response) {
       storage.account = accounts[index - 1];
     }
   }
-  storage.accounts.remove(accountID);
 }
 
 Future<http.Response> requestEvents(int startTime, int endTime,
@@ -131,6 +125,13 @@ void processEventsResponse(http.Response response) {
   for (Map<String, dynamic> eventJson in responseBody['events']) {
     storage.events.add(eventJson);
   }
+  storage.events.sort((event1, event2) {
+    return event1['event_time'] - event2['event_time'];
+  });
+  for (var event in storage.events) {
+    event['event_time'] =
+        DateTime.fromMillisecondsSinceEpoch(event["event_time"] * 1000);
+  }
 }
 
 Future<http.Response> requestCreateEvent(
@@ -146,9 +147,4 @@ Future<http.Response> requestCreateEvent(
     body['label'] = label;
   }
   return await session.post('create_event', jsonEncode(body));
-}
-
-void processCreatingEventResponse(http.Response response) {
-  var responseBody = getResponseBody(response);
-  storage.events.add(responseBody['event']);
 }
