@@ -80,9 +80,10 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         break;
       case LoadingType.EDIT_EVENT:
         // TODO: Handle this case.
+        // this.editEvent();
         break;
       case LoadingType.DELETE_EVENT:
-        // TODO: Handle this case.
+        this.deleteEvent();
         break;
     }
   }
@@ -170,6 +171,36 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         widget.args.dateTime,
         widget.args.diff,
         widget.args.description,
+      );
+      getResponseBody(response);
+      response = await requestAllEvents();
+      processEventsResponse(response);
+    } catch (e) {
+      displayError(this.context, e.toString());
+      Navigator.of(this.context).pushReplacementNamed("/main");
+      return;
+    }
+    Navigator.of(this.context).pushReplacementNamed("/main");
+  }
+
+  // Future<void> editEvent() async {
+  //   try {
+  //     var response = await requestEditEvent(widget.args.id, widget.args.name);
+  //     getResponseBody(response);
+  //     response = await requestAllEvents();
+  //     processEventsResponse(response);
+  //   } catch (e) {
+  //     displayError(this.context, e.toString());
+  //     Navigator.of(this.context).pushReplacementNamed("/main");
+  //     return;
+  //   }
+  //   Navigator.of(this.context).pushReplacementNamed("/main");
+  // }
+
+  Future<void> deleteEvent() async {
+    try {
+      var response = await requestDeleteEvent(
+        widget.args.id,
       );
       getResponseBody(response);
       response = await requestAllEvents();

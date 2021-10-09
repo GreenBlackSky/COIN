@@ -144,3 +144,11 @@ Future<http.Response> requestCreateEvent(
   }
   return await session.post('create_event', jsonEncode(body));
 }
+
+Future<http.Response> requestDeleteEvent(int eventID) async {
+  return await session.post(
+      'delete_event',
+      jsonEncode(<String, dynamic>{
+        'event_id': eventID,
+      }));
+}

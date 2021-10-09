@@ -35,7 +35,7 @@ class _MainState extends State<MainWidget> {
   List<Widget> cardList = [
     Center(child: Text("graph")), //TODO graph
     Center(child: Text("pie chart")), //TODO pie chart
-    Center(child: buildEventsList()),
+    Center(child: EventList()),
     Center(child: Text("month view")), //TODO month view
     Center(child: Text("templates list")), //TODO templates list
     Center(child: Text("categories list")), //TODO categories list

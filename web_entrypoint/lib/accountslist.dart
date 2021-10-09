@@ -27,6 +27,7 @@ class _AccountListState extends State<AccountList> {
   }
 
   Null Function() deleteAccountMethod(int accountID) {
+    //TODO confirmation
     return () {
       Navigator.pushNamed(context, "/loading",
           arguments: LoadingArgs(LoadingType.DELETE_ACCOUNT, id: accountID));
