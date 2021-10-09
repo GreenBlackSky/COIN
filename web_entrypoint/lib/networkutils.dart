@@ -121,16 +121,13 @@ Future<http.Response> requestAllEvents() async {
 
 void processEventsResponse(http.Response response) {
   var responseBody = getResponseBody(response);
+  storage.events.clear();
   for (Map<String, dynamic> eventJson in responseBody['events']) {
     storage.events.add(eventJson);
   }
   storage.events.sort((event1, event2) {
     return event1['event_time'] - event2['event_time'];
   });
-  for (var event in storage.events) {
-    event['event_time'] =
-        DateTime.fromMillisecondsSinceEpoch(event["event_time"] * 1000);
-  }
 }
 
 Future<http.Response> requestCreateEvent(

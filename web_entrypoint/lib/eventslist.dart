@@ -9,7 +9,7 @@ Widget buildEventsList() {
     itemCount: storage.events.length,
     itemBuilder: (BuildContext context, int index) {
       var event = storage.events[index];
-      String date = dateToString(event['event_time']);
+      String date = timestampToString(event['event_time']);
       return Container(
         height: 50,
         color: Colors.lightBlue,

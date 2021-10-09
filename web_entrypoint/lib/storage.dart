@@ -4,7 +4,7 @@ class DataStorage {
   DateTime currentMonthStart =
       DateTime(DateTime.now().year, DateTime.now().month).toUtc();
   Map<int, String> accounts = {};
-  List events = [];
+  List events = []; // event_time should be timestamp
 
   void clear() {
     this.name = "";

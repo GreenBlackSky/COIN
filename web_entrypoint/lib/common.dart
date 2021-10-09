@@ -92,6 +92,11 @@ String dateToString(DateTime date) {
   return "${date.day}/${date.month}/${date.year}";
 }
 
+String timestampToString(int timestamp) {
+  var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  return "${date.day}/${date.month}/${date.year}";
+}
+
 enum LoadingType {
   REGISTER,
   LOGIN,
