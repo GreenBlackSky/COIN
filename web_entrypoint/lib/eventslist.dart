@@ -17,11 +17,32 @@ class _EventListState extends State<EventList> {
   //   };
   // }
 
-  Null Function() deleteEventMethod(Map<String, dynamic> event) {
-    //TODO confirmation
+  Future<String> Function() showDeleteEventDialogMethod(
+      Map<String, dynamic> event) {
     return () {
-      Navigator.pushNamed(context, "/loading",
-          arguments: LoadingArgs(LoadingType.DELETE_EVENT, id: event["id"]));
+      return showDialog<String>(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Are you sure you want to delete event?'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Delete event'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/loading",
+                        arguments: LoadingArgs(LoadingType.DELETE_EVENT,
+                            id: event["id"]));
+                  },
+                ),
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context, 'Cancel');
+                  },
+                ),
+              ],
+            );
+          });
     };
   }
 
@@ -58,7 +79,7 @@ class _EventListState extends State<EventList> {
                           IconButton(
                             icon: Icon(Icons.delete),
                             color: Colors.black,
-                            onPressed: this.deleteEventMethod(event),
+                            onPressed: this.showDeleteEventDialogMethod(event),
                           )
                         ])),
                   ]),

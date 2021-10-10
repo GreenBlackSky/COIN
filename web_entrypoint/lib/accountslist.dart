@@ -21,16 +21,10 @@ class _AccountListState extends State<AccountList> {
       } else {
         setState(() {
           storage.account = accountID;
+          Navigator.pushNamed(context, "/loading",
+              arguments: LoadingArgs(LoadingType.GET_EVENTS));
         });
       }
-    };
-  }
-
-  Null Function() deleteAccountMethod(int accountID) {
-    //TODO confirmation
-    return () {
-      Navigator.pushNamed(context, "/loading",
-          arguments: LoadingArgs(LoadingType.DELETE_ACCOUNT, id: accountID));
     };
   }
 
@@ -58,7 +52,7 @@ class _AccountListState extends State<AccountList> {
       buttons.add(IconButton(
         icon: Icon(Icons.delete),
         color: Colors.black,
-        onPressed: deleteAccountMethod(accountID),
+        onPressed: showDeleteAccountDialogMethod(accountID),
       ));
     }
     return DropdownMenuItem<int>(
@@ -66,6 +60,32 @@ class _AccountListState extends State<AccountList> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [Text(accountName), Row(children: buttons)]));
+  }
+
+  Future<String> showCreateAccountDialog() {
+    var controller = TextEditingController();
+    return showDialog<String>(
+        context: this.context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text('Create new account'),
+              content: buildTextField(controller, "New account name"),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Create'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/loading",
+                        arguments: LoadingArgs(LoadingType.CREATE_ACCOUNT,
+                            name: controller.value.text));
+                  },
+                ),
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context, 'Cancel');
+                  },
+                ),
+              ],
+            ));
   }
 
   Future<String> Function() showRenameAccountDialogMethod(int accountID) {
@@ -97,20 +117,20 @@ class _AccountListState extends State<AccountList> {
     };
   }
 
-  Future<String> showCreateAccountDialog() {
-    var controller = TextEditingController();
-    return showDialog<String>(
-        context: this.context,
-        builder: (BuildContext context) => AlertDialog(
-              title: const Text('Create new account'),
-              content: buildTextField(controller, "New account name"),
+  Future<String> Function() showDeleteAccountDialogMethod(int accountID) {
+    return () {
+      return showDialog<String>(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Are you sure you want to delete account?'),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Create'),
+                  child: const Text('Delete account'),
                   onPressed: () {
                     Navigator.pushNamed(context, "/loading",
-                        arguments: LoadingArgs(LoadingType.CREATE_ACCOUNT,
-                            name: controller.value.text));
+                        arguments: LoadingArgs(LoadingType.DELETE_ACCOUNT,
+                            id: accountID));
                   },
                 ),
                 TextButton(
@@ -120,6 +140,8 @@ class _AccountListState extends State<AccountList> {
                   },
                 ),
               ],
-            ));
+            );
+          });
+    };
   }
 }

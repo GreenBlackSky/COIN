@@ -47,6 +47,7 @@ Future<http.Response> requestAccounts() async {
 void processAccountsResponse(http.Response response) {
   var responseBody = getResponseBody(response);
   storage.account = responseBody['accounts'][0]['id'];
+  storage.accounts.clear();
   for (Map<String, dynamic> accountJson in responseBody['accounts']) {
     storage.accounts[accountJson['id']] = accountJson['name'];
   }
@@ -115,6 +116,7 @@ Future<http.Response> requestEvents(int startTime, int endTime,
 }
 
 Future<http.Response> requestAllEvents() async {
+  // TODO load only significant events
   return await session.post(
       'get_events', jsonEncode(<String, int>{'account_id': storage.account}));
 }

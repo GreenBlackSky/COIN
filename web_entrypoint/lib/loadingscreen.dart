@@ -73,7 +73,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         this.renameAccount();
         break;
       case LoadingType.GET_EVENTS:
-        // TODO: Handle this case.
+        this.getEvents();
         break;
       case LoadingType.CREATE_EVENT:
         this.createEvent();
@@ -124,6 +124,8 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var allAccountsResponse = await requestAccounts();
       processAccountsResponse(allAccountsResponse);
       setActiveAccountAfterCreate(responseBody);
+      var eventsResponse = await requestAllEvents();
+      processEventsResponse(eventsResponse);
     } catch (e) {
       displayError(this.context, e.toString());
       Navigator.of(this.context).pushReplacementNamed("/main");
@@ -140,6 +142,8 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var allAccountsResponse = await requestAccounts();
       processAccountsResponse(allAccountsResponse);
       setActiveAccountAfterRename(responseBody);
+      var eventsResponse = await requestAllEvents();
+      processEventsResponse(eventsResponse);
     } catch (e) {
       displayError(this.context, e.toString());
       Navigator.of(this.context).pushReplacementNamed("/main");
@@ -157,6 +161,20 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var allAccountsResponse = await requestAccounts();
       processAccountsResponse(allAccountsResponse);
       setActiveAccountAfterDelete(responseBody);
+      var eventsResponse = await requestAllEvents();
+      processEventsResponse(eventsResponse);
+    } catch (e) {
+      displayError(this.context, e.toString());
+      Navigator.of(this.context).pushReplacementNamed("/main");
+      return;
+    }
+    Navigator.of(this.context).pushReplacementNamed("/main");
+  }
+
+  Future<void> getEvents() async {
+    try {
+      var eventsResponse = await requestAllEvents();
+      processEventsResponse(eventsResponse);
     } catch (e) {
       displayError(this.context, e.toString());
       Navigator.of(this.context).pushReplacementNamed("/main");
@@ -216,13 +234,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
   Future<void> _loadDataFromServerImpl() async {
     var accountsResponse = await requestAccounts();
     processAccountsResponse(accountsResponse);
-    // int start_time = storage.currentMonthStart.millisecondsSinceEpoch ~/ 1000;
-    // int end_time = DateTime(storage.currentMonthStart.year,
-    //             storage.currentMonthStart.month - 1)
-    //         .millisecondsSinceEpoch ~/
-    //     1000;
     var eventsResponse = await requestAllEvents();
-    // TODO load only significant events
     processEventsResponse(eventsResponse);
   }
 }
