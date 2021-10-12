@@ -2,6 +2,9 @@ import 'package:coin_client/common.dart';
 import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
+import 'eventdialog.dart';
+import 'confirmationdialog.dart';
+
 class EventList extends StatefulWidget {
   const EventList({Key key}) : super(key: key);
 
@@ -10,45 +13,10 @@ class EventList extends StatefulWidget {
 }
 
 class _EventListState extends State<EventList> {
-  // Null Function() editEventMethod(Map<String, dynamic> event) {
-  //   return () {
-  //     Navigator.pushNamed(context, "/loading",
-  //         arguments: LoadingArgs(LoadingType.EDIT_EVENT, id: event["id"]));
-  //   };
-  // }
-
-  Future<String> Function() showDeleteEventDialogMethod(
-      Map<String, dynamic> event) {
-    return () {
-      return showDialog<String>(
-          context: this.context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Are you sure you want to delete event?'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Delete event'),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/loading",
-                        arguments: LoadingArgs(LoadingType.DELETE_EVENT,
-                            id: event["id"]));
-                  },
-                ),
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.pop(context, 'Cancel');
-                  },
-                ),
-              ],
-            );
-          });
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      //TODO show only comming events
       padding: const EdgeInsets.all(8),
       itemCount: storage.events.length,
       itemBuilder: (BuildContext context, int index) {
@@ -74,12 +42,21 @@ class _EventListState extends State<EventList> {
                           IconButton(
                               icon: Icon(Icons.edit),
                               color: Colors.black,
-                              // onPressed: this.editEventMethod(event)),
-                              onPressed: () {}),
+                              onPressed: editEventDialogMethod(context, event)),
                           IconButton(
                             icon: Icon(Icons.delete),
                             color: Colors.black,
-                            onPressed: this.showDeleteEventDialogMethod(event),
+                            onPressed: confirmDialogMethod(
+                              context,
+                              "Are you sure you want to delete event?",
+                              "Delete event",
+                              () {
+                                Navigator.pushNamed(context, "/loading",
+                                    arguments: LoadingArgs(
+                                        LoadingType.DELETE_EVENT,
+                                        id: event["id"]));
+                              },
+                            ),
                           )
                         ])),
                   ]),

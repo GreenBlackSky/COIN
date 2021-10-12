@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'storage.dart';
 import 'common.dart';
+import 'confirmationdialog.dart';
 
 class AccountList extends StatefulWidget {
   const AccountList({Key key}) : super(key: key);
@@ -13,7 +14,6 @@ class AccountList extends StatefulWidget {
 class _AccountListState extends State<AccountList> {
 //TODO remove Add account button when limit is reached
 //TODO refactor
-//TODO try Expanded Text on button
   Null Function(int) changeAccountMethod(BuildContext context) {
     return (int accountID) {
       if (accountID == -1) {
@@ -52,7 +52,12 @@ class _AccountListState extends State<AccountList> {
       buttons.add(IconButton(
         icon: Icon(Icons.delete),
         color: Colors.black,
-        onPressed: showDeleteAccountDialogMethod(accountID),
+        onPressed: confirmDialogMethod(context,
+            "Are you sure you want to delete account?", "Delete account", () {
+          Navigator.pushNamed(context, "/loading",
+              arguments:
+                  LoadingArgs(LoadingType.DELETE_ACCOUNT, id: accountID));
+        }),
       ));
     }
     return DropdownMenuItem<int>(
@@ -90,13 +95,12 @@ class _AccountListState extends State<AccountList> {
 
   Future<String> Function() showRenameAccountDialogMethod(int accountID) {
     return () {
-      var controller = TextEditingController();
+      var controller = TextEditingController(text: storage.accounts[accountID]);
       return showDialog<String>(
           context: this.context,
           builder: (BuildContext context) => AlertDialog(
                 title: const Text('Rename account'),
-                content:
-                    buildTextField(controller, storage.accounts[accountID]),
+                content: buildTextField(controller, "New account name"),
                 actions: <Widget>[
                   TextButton(
                     child: const Text('Rename'),
@@ -114,34 +118,6 @@ class _AccountListState extends State<AccountList> {
                   ),
                 ],
               ));
-    };
-  }
-
-  Future<String> Function() showDeleteAccountDialogMethod(int accountID) {
-    return () {
-      return showDialog<String>(
-          context: this.context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Are you sure you want to delete account?'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Delete account'),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/loading",
-                        arguments: LoadingArgs(LoadingType.DELETE_ACCOUNT,
-                            id: accountID));
-                  },
-                ),
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.pop(context, 'Cancel');
-                  },
-                ),
-              ],
-            );
-          });
     };
   }
 }

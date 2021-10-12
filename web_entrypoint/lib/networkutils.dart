@@ -147,6 +147,21 @@ Future<http.Response> requestCreateEvent(
   return await session.post('create_event', jsonEncode(body));
 }
 
+Future<http.Response> requestEditEvent(
+    int eventID, DateTime eventTime, int diff, String description,
+    {int label = -1}) async {
+  var body = <String, dynamic>{
+    'event_id': eventID,
+    'event_time': eventTime.millisecondsSinceEpoch ~/ 1000,
+    'diff': diff,
+    'description': description
+  };
+  if (label != -1) {
+    body['label'] = label;
+  }
+  return await session.post('edit_event', jsonEncode(body));
+}
+
 Future<http.Response> requestDeleteEvent(int eventID) async {
   return await session.post(
       'delete_event',

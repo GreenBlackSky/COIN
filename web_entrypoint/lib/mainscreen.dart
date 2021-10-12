@@ -5,7 +5,7 @@ import 'common.dart';
 import 'accountslist.dart';
 import 'burgermenu.dart';
 import 'eventslist.dart';
-import 'addNewStuffDialog.dart';
+import 'eventdialog.dart';
 
 class MainScreen extends StatelessWidget {
   final MainWidget _mainWdget = new MainWidget();

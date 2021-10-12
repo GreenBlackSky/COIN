@@ -1,11 +1,9 @@
 import 'package:coin_client/loadinganimation.dart';
-import 'package:coin_client/storage.dart';
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 
 import 'common.dart';
-import 'session.dart';
 import 'networkutils.dart';
 
 //TODO refactor
@@ -79,8 +77,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         this.createEvent();
         break;
       case LoadingType.EDIT_EVENT:
-        // TODO: Handle this case.
-        // this.editEvent();
+        this.editEvent();
         break;
       case LoadingType.DELETE_EVENT:
         this.deleteEvent();
@@ -201,19 +198,24 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
     Navigator.of(this.context).pushReplacementNamed("/main");
   }
 
-  // Future<void> editEvent() async {
-  //   try {
-  //     var response = await requestEditEvent(widget.args.id, widget.args.name);
-  //     getResponseBody(response);
-  //     response = await requestAllEvents();
-  //     processEventsResponse(response);
-  //   } catch (e) {
-  //     displayError(this.context, e.toString());
-  //     Navigator.of(this.context).pushReplacementNamed("/main");
-  //     return;
-  //   }
-  //   Navigator.of(this.context).pushReplacementNamed("/main");
-  // }
+  Future<void> editEvent() async {
+    try {
+      var response = await requestEditEvent(
+        widget.args.id,
+        widget.args.dateTime,
+        widget.args.diff,
+        widget.args.description,
+      );
+      getResponseBody(response);
+      response = await requestAllEvents();
+      processEventsResponse(response);
+    } catch (e) {
+      displayError(this.context, e.toString());
+      Navigator.of(this.context).pushReplacementNamed("/main");
+      return;
+    }
+    Navigator.of(this.context).pushReplacementNamed("/main");
+  }
 
   Future<void> deleteEvent() async {
     try {
