@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'storage.dart';
 import 'common.dart';
 import 'confirmationdialog.dart';
+import 'accountsdialog.dart';
 
 class AccountList extends StatefulWidget {
   const AccountList({Key key}) : super(key: key);
@@ -13,11 +14,10 @@ class AccountList extends StatefulWidget {
 
 class _AccountListState extends State<AccountList> {
 //TODO remove Add account button when limit is reached
-//TODO refactor
   Null Function(int) changeAccountMethod(BuildContext context) {
     return (int accountID) {
       if (accountID == -1) {
-        showCreateAccountDialog();
+        showCreateAccountDialog(context);
       } else {
         setState(() {
           storage.account = accountID;
@@ -46,7 +46,9 @@ class _AccountListState extends State<AccountList> {
       IconButton(
           icon: Icon(Icons.edit),
           color: Colors.black,
-          onPressed: showRenameAccountDialogMethod(accountID)),
+          onPressed: () {
+            return showRenameAccountDialog(context, accountID);
+          }),
     ];
     if (storage.accounts.length != 1) {
       buttons.add(IconButton(
@@ -65,59 +67,5 @@ class _AccountListState extends State<AccountList> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [Text(accountName), Row(children: buttons)]));
-  }
-
-  Future<String> showCreateAccountDialog() {
-    var controller = TextEditingController();
-    return showDialog<String>(
-        context: this.context,
-        builder: (BuildContext context) => AlertDialog(
-              title: const Text('Create new account'),
-              content: buildTextField(controller, "New account name"),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Create'),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/loading",
-                        arguments: LoadingArgs(LoadingType.CREATE_ACCOUNT,
-                            name: controller.value.text));
-                  },
-                ),
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.pop(context, 'Cancel');
-                  },
-                ),
-              ],
-            ));
-  }
-
-  Future<String> Function() showRenameAccountDialogMethod(int accountID) {
-    return () {
-      var controller = TextEditingController(text: storage.accounts[accountID]);
-      return showDialog<String>(
-          context: this.context,
-          builder: (BuildContext context) => AlertDialog(
-                title: const Text('Rename account'),
-                content: buildTextField(controller, "New account name"),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('Rename'),
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/loading",
-                          arguments: LoadingArgs(LoadingType.EDIT_ACCOUNT,
-                              name: controller.value.text, id: accountID));
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('Cancel'),
-                    onPressed: () {
-                      Navigator.pop(context, 'Cancel');
-                    },
-                  ),
-                ],
-              ));
-    };
   }
 }
