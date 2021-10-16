@@ -121,7 +121,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var allAccountsResponse = await requestAccounts();
       processAccountsResponse(allAccountsResponse);
       setActiveAccountAfterCreate(responseBody);
-      var eventsResponse = await requestAllEvents();
+      var eventsResponse = await requestCurrentMonthEvents();
       processEventsResponse(eventsResponse);
     } catch (e) {
       displayError(this.context, e.toString());
@@ -139,7 +139,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var allAccountsResponse = await requestAccounts();
       processAccountsResponse(allAccountsResponse);
       setActiveAccountAfterRename(responseBody);
-      var eventsResponse = await requestAllEvents();
+      var eventsResponse = await requestCurrentMonthEvents();
       processEventsResponse(eventsResponse);
     } catch (e) {
       displayError(this.context, e.toString());
@@ -158,7 +158,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       var allAccountsResponse = await requestAccounts();
       processAccountsResponse(allAccountsResponse);
       setActiveAccountAfterDelete(responseBody);
-      var eventsResponse = await requestAllEvents();
+      var eventsResponse = await requestCurrentMonthEvents();
       processEventsResponse(eventsResponse);
     } catch (e) {
       displayError(this.context, e.toString());
@@ -170,7 +170,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
 
   Future<void> getEvents() async {
     try {
-      var eventsResponse = await requestAllEvents();
+      var eventsResponse = await requestCurrentMonthEvents();
       processEventsResponse(eventsResponse);
     } catch (e) {
       displayError(this.context, e.toString());
@@ -188,7 +188,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         widget.args.description,
       );
       getResponseBody(response);
-      response = await requestAllEvents();
+      response = await requestCurrentMonthEvents();
       processEventsResponse(response);
     } catch (e) {
       displayError(this.context, e.toString());
@@ -207,7 +207,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         widget.args.description,
       );
       getResponseBody(response);
-      response = await requestAllEvents();
+      response = await requestCurrentMonthEvents();
       processEventsResponse(response);
     } catch (e) {
       displayError(this.context, e.toString());
@@ -223,7 +223,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         widget.args.id,
       );
       getResponseBody(response);
-      response = await requestAllEvents();
+      response = await requestCurrentMonthEvents();
       processEventsResponse(response);
     } catch (e) {
       displayError(this.context, e.toString());
@@ -236,7 +236,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
   Future<void> _loadDataFromServerImpl() async {
     var accountsResponse = await requestAccounts();
     processAccountsResponse(accountsResponse);
-    var eventsResponse = await requestAllEvents();
+    var eventsResponse = await requestCurrentMonthEvents();
     processEventsResponse(eventsResponse);
   }
 }

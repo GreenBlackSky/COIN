@@ -15,7 +15,7 @@ void Function() _eventDialog(
 ) {
   return () {
     var diffController = TextEditingController(text: diff.toString());
-    var dateField = DateField();
+    var dateField = DateField(eventTime);
     var descriptionController = TextEditingController(text: description);
     showDialog(
         context: context,
@@ -52,7 +52,6 @@ void Function() addNewEventDialogMethod(BuildContext context) {
 
 void Function() editEventDialogMethod(
     BuildContext context, Map<String, dynamic> event) {
-  //TODO pass event date
   return _eventDialog(
       context,
       "Edit event",

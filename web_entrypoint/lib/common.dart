@@ -116,6 +116,8 @@ class LoadingArgs {
   final int id;
   final int diff;
   final DateTime dateTime;
+  final DateTime startTime;
+  final DateTime endTime;
   final String description;
 
   LoadingArgs(this.type,
@@ -124,6 +126,10 @@ class LoadingArgs {
       this.id = -1,
       this.diff = 0,
       DateTime dateTime,
+      DateTime startTime,
+      DateTime endTime,
       this.description = ''})
-      : this.dateTime = dateTime ?? DateTime.now();
+      : this.dateTime = dateTime ?? DateTime.now(),
+        this.startTime = startTime ?? DateTime.now(),
+        this.endTime = endTime ?? DateTime.now();
 }

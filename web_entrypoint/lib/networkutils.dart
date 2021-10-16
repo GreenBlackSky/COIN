@@ -102,12 +102,12 @@ void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
   }
 }
 
-Future<http.Response> requestEvents(int startTime, int endTime,
+Future<http.Response> requestEvents(DateTime startTime, DateTime endTime,
     {int label = -1}) async {
   var body = <String, int>{
     'account_id': storage.account,
-    'start_time': startTime,
-    'end_time': endTime
+    'start_time': startTime.millisecondsSinceEpoch ~/ 1000,
+    'end_time': endTime.millisecondsSinceEpoch ~/ 1000
   };
   if (label != -1) {
     body['label'] = label;
@@ -115,10 +115,9 @@ Future<http.Response> requestEvents(int startTime, int endTime,
   return await session.post('get_events', jsonEncode(body));
 }
 
-Future<http.Response> requestAllEvents() async {
-  // TODO load only significant events
-  return await session.post(
-      'get_events', jsonEncode(<String, int>{'account_id': storage.account}));
+Future<http.Response> requestCurrentMonthEvents({int label = -1}) async {
+  return await requestEvents(storage.currentMonthStart, storage.currentMonthEnd,
+      label: label);
 }
 
 void processEventsResponse(http.Response response) {

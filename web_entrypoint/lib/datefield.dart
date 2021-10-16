@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'common.dart';
 
 class DateField extends StatefulWidget {
-  DateTime selectedDate = DateTime.now();
+  DateField(this.selectedDate);
+  DateTime selectedDate;
   @override
   _DateFieldState createState() {
     return _DateFieldState();
