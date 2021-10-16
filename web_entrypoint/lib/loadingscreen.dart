@@ -4,9 +4,8 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 
 import 'common.dart';
-import 'networkutils.dart';
+import 'network.dart';
 
-//TODO refactor
 class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -54,189 +53,54 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
   }
 
   Future<void> loadDataFromServer() async {
-    switch (widget.args.type) {
-      case LoadingType.REGISTER:
-        this.loadDataFromServerOnRegister();
-        break;
-      case LoadingType.LOGIN:
-        this.loadDataFromServerOnLogin();
-        break;
-      case LoadingType.CREATE_ACCOUNT:
-        this.createAccount();
-        break;
-      case LoadingType.DELETE_ACCOUNT:
-        this.deleteAccount();
-        break;
-      case LoadingType.EDIT_ACCOUNT:
-        this.renameAccount();
-        break;
-      case LoadingType.GET_EVENTS:
-        this.getEvents();
-        break;
-      case LoadingType.CREATE_EVENT:
-        this.createEvent();
-        break;
-      case LoadingType.EDIT_EVENT:
-        this.editEvent();
-        break;
-      case LoadingType.DELETE_EVENT:
-        this.deleteEvent();
-        break;
-    }
-  }
-
-  Future<void> loadDataFromServerOnRegister() async {
+    String endpoint = "/main";
+    String errorEndpoint = "/main";
     try {
-      var response =
-          await requestRegistration(widget.args.name, widget.args.password);
-      processAuthorizationResponse(response);
-      await _loadDataFromServerImpl();
+      switch (widget.args.type) {
+        case LoadingType.REGISTER:
+          errorEndpoint = "/signup";
+          loadDataFromServerOnRegister(widget.args.name, widget.args.password);
+          break;
+        case LoadingType.LOGIN:
+          errorEndpoint = "/login";
+          loadDataFromServerOnLogin(widget.args.name, widget.args.password);
+          break;
+        case LoadingType.CREATE_ACCOUNT:
+          createAccount(widget.args.name);
+          break;
+        case LoadingType.EDIT_ACCOUNT:
+          renameAccount(widget.args.id, widget.args.name);
+          break;
+        case LoadingType.DELETE_ACCOUNT:
+          deleteAccount(widget.args.id);
+          break;
+        case LoadingType.GET_EVENTS:
+          getEvents();
+          break;
+        case LoadingType.CREATE_EVENT:
+          createEvent(
+            widget.args.dateTime,
+            widget.args.diff,
+            widget.args.description,
+          );
+          break;
+        case LoadingType.EDIT_EVENT:
+          editEvent(
+            widget.args.id,
+            widget.args.dateTime,
+            widget.args.diff,
+            widget.args.description,
+          );
+          break;
+        case LoadingType.DELETE_EVENT:
+          deleteEvent(widget.args.id);
+          break;
+      }
     } catch (e) {
       displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/signup");
+      Navigator.of(this.context).pushReplacementNamed(errorEndpoint);
       return;
     }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> loadDataFromServerOnLogin() async {
-    try {
-      var response = await requestLogin(widget.args.name, widget.args.password);
-      processAuthorizationResponse(response);
-      await _loadDataFromServerImpl();
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/login");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> createAccount() async {
-    try {
-      var response = await requestCreateAccount(
-        widget.args.name,
-      );
-      var responseBody = getResponseBody(response);
-      var allAccountsResponse = await requestAccounts();
-      processAccountsResponse(allAccountsResponse);
-      setActiveAccountAfterCreate(responseBody);
-      var eventsResponse = await requestCurrentMonthEvents();
-      processEventsResponse(eventsResponse);
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/main");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> renameAccount() async {
-    try {
-      var response =
-          await requestRenameAccount(widget.args.id, widget.args.name);
-      var responseBody = getResponseBody(response);
-      var allAccountsResponse = await requestAccounts();
-      processAccountsResponse(allAccountsResponse);
-      setActiveAccountAfterRename(responseBody);
-      var eventsResponse = await requestCurrentMonthEvents();
-      processEventsResponse(eventsResponse);
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/main");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> deleteAccount() async {
-    try {
-      var response = await requestDeleteAccount(
-        widget.args.id,
-      );
-      var responseBody = getResponseBody(response);
-      var allAccountsResponse = await requestAccounts();
-      processAccountsResponse(allAccountsResponse);
-      setActiveAccountAfterDelete(responseBody);
-      var eventsResponse = await requestCurrentMonthEvents();
-      processEventsResponse(eventsResponse);
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/main");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> getEvents() async {
-    try {
-      var eventsResponse = await requestCurrentMonthEvents();
-      processEventsResponse(eventsResponse);
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/main");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> createEvent() async {
-    try {
-      var response = await requestCreateEvent(
-        widget.args.dateTime,
-        widget.args.diff,
-        widget.args.description,
-      );
-      getResponseBody(response);
-      response = await requestCurrentMonthEvents();
-      processEventsResponse(response);
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/main");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> editEvent() async {
-    try {
-      var response = await requestEditEvent(
-        widget.args.id,
-        widget.args.dateTime,
-        widget.args.diff,
-        widget.args.description,
-      );
-      getResponseBody(response);
-      response = await requestCurrentMonthEvents();
-      processEventsResponse(response);
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/main");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> deleteEvent() async {
-    try {
-      var response = await requestDeleteEvent(
-        widget.args.id,
-      );
-      getResponseBody(response);
-      response = await requestCurrentMonthEvents();
-      processEventsResponse(response);
-    } catch (e) {
-      displayError(this.context, e.toString());
-      Navigator.of(this.context).pushReplacementNamed("/main");
-      return;
-    }
-    Navigator.of(this.context).pushReplacementNamed("/main");
-  }
-
-  Future<void> _loadDataFromServerImpl() async {
-    var accountsResponse = await requestAccounts();
-    processAccountsResponse(accountsResponse);
-    var eventsResponse = await requestCurrentMonthEvents();
-    processEventsResponse(eventsResponse);
+    Navigator.of(this.context).pushReplacementNamed(endpoint);
   }
 }
