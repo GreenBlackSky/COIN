@@ -10,6 +10,8 @@ from common.interfaces import EventService
 
 from ..request_helpers import parse_request_args
 
+# BUG events with account_id = null
+
 
 class EventCaller(EventService, metaclass=CallerMetaBase):
     pass
@@ -34,21 +36,6 @@ def create_event(account_id, event_time, diff, description):
     )
 
 
-# TODO remove get_first_event
-@bp.post("/get_first_event")
-@jwt_required()
-@log_request(request, current_user)
-@parse_request_args(request)
-def get_first_event(account_id, start_time=None, end_time=None):
-    """Get one event by given filter."""
-    return eventService.get_first_event(
-        current_user.id,
-        account_id,
-        start_time,
-        end_time
-    )
-
-
 @bp.post("/get_events")
 @jwt_required()
 @log_request(request, current_user)
@@ -67,21 +54,6 @@ def get_events(
         end_time,
         label
     )
-
-
-# @bp.post("/confirm_event")
-# @jwt_required()
-# @log_request(request, current_user)
-# def confirm_event():
-#     """Confirm event."""
-#     (event_id, confirm), _ = parse_request_args(
-#         request, ('event_id', 'confirm')
-#     )
-#     return EventService.confirm_event(
-#         user_id=current_user.id,
-#         event_id=event_id,
-#         confirm=confirm
-#     )
 
 
 @bp.post("/edit_event")

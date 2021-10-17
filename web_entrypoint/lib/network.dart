@@ -6,17 +6,13 @@ import 'storage.dart';
 Future<void> loadDataFromServerOnRegister(String name, String password) async {
   await requestRegistration(name, password).then(processAuthorizationResponse);
   await requestAccounts().then(processAccountsResponse);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }
 
 Future<void> loadDataFromServerOnLogin(String name, String password) async {
   await requestLogin(name, password).then(processAuthorizationResponse);
   await requestAccounts().then(processAccountsResponse);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }
 
 Future<void> editUser(String name, String password, String newPassword) async {
@@ -30,9 +26,7 @@ Future<void> createAccount(String name) async {
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
   setActiveAccountAfterCreate(responseBody);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }
 
 Future<void> renameAccount(int id, String name) async {
@@ -40,9 +34,7 @@ Future<void> renameAccount(int id, String name) async {
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
   setActiveAccountAfterRename(responseBody);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }
 
 Future<void> deleteAccount(int id) async {
@@ -50,15 +42,15 @@ Future<void> deleteAccount(int id) async {
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
   setActiveAccountAfterDelete(responseBody);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }
 
 Future<void> getEvents() async {
   await requestEvents(
           storage.account, storage.currentMonthStart, storage.currentMonthEnd)
       .then(processEventsResponse);
+  await requestBalance(storage.account, storage.currentMonthStart)
+      .then(processMonthStartBalanceResponse);
 }
 
 Future<void> createEvent(
@@ -66,24 +58,18 @@ Future<void> createEvent(
   var response =
       await requestCreateEvent(storage.account, dateTime, diff, description);
   getResponseBody(response);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }
 
 Future<void> editEvent(
     int id, DateTime dateTime, int diff, String description) async {
   var response = await requestEditEvent(id, dateTime, diff, description);
   getResponseBody(response);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }
 
 Future<void> deleteEvent(int id) async {
   var response = await requestDeleteEvent(id);
   getResponseBody(response);
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
-      .then(processEventsResponse);
+  getEvents();
 }

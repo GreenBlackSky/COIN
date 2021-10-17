@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
+import 'common.dart';
 
 Future<http.Response> requestRegistration(String name, String password) async {
-  return await session.post(
+  return session.post(
       'register',
       jsonEncode(<String, String>{
         'name': name,
@@ -13,7 +14,7 @@ Future<http.Response> requestRegistration(String name, String password) async {
 }
 
 Future<http.Response> requestLogin(String name, String password) async {
-  return await session.post(
+  return session.post(
       'login',
       jsonEncode(<String, String>{
         'name': name,
@@ -23,7 +24,7 @@ Future<http.Response> requestLogin(String name, String password) async {
 
 Future<http.Response> requestEditUser(
     String name, String password, String newPassword) async {
-  return await session.post(
+  return session.post(
       'edit_user',
       jsonEncode(<String, dynamic>{
         'name': name,
@@ -33,11 +34,11 @@ Future<http.Response> requestEditUser(
 }
 
 Future<http.Response> requestAccounts() async {
-  return await session.post('get_accounts');
+  return session.post('get_accounts');
 }
 
 Future<http.Response> requestCreateAccount(String accountName) async {
-  return await session.post(
+  return session.post(
       'create_account',
       jsonEncode(<String, String>{
         'name': accountName,
@@ -46,17 +47,26 @@ Future<http.Response> requestCreateAccount(String accountName) async {
 
 Future<http.Response> requestRenameAccount(
     int accountID, String accountName) async {
-  return await session.post(
+  return session.post(
       'edit_account',
       jsonEncode(
           <String, dynamic>{'name': accountName, 'account_id': accountID}));
 }
 
 Future<http.Response> requestDeleteAccount(int accountID) async {
-  return await session.post(
+  return session.post(
       'delete_account',
       jsonEncode(<String, int>{
         'account_id': accountID,
+      }));
+}
+
+Future<http.Response> requestBalance(int accountID, DateTime dateTime) async {
+  return session.post(
+      'get_balance',
+      jsonEncode(<String, dynamic>{
+        'account_id': accountID,
+        'timestamp': timestampFromDateTime(dateTime)
       }));
 }
 
@@ -65,13 +75,13 @@ Future<http.Response> requestEvents(
     {int label = -1}) async {
   var body = <String, int>{
     'account_id': accountID,
-    'start_time': startTime.millisecondsSinceEpoch ~/ 1000,
-    'end_time': endTime.millisecondsSinceEpoch ~/ 1000
+    'start_time': timestampFromDateTime(startTime),
+    'end_time': timestampFromDateTime(endTime)
   };
   if (label != -1) {
     body['label'] = label;
   }
-  return await session.post('get_events', jsonEncode(body));
+  return session.post('get_events', jsonEncode(body));
 }
 
 Future<http.Response> requestCreateEvent(
@@ -79,14 +89,14 @@ Future<http.Response> requestCreateEvent(
     {int label = -1}) async {
   var body = <String, dynamic>{
     'account_id': accountID,
-    'event_time': eventTime.millisecondsSinceEpoch ~/ 1000,
+    'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
   };
   if (label != -1) {
     body['label'] = label;
   }
-  return await session.post('create_event', jsonEncode(body));
+  return session.post('create_event', jsonEncode(body));
 }
 
 Future<http.Response> requestEditEvent(
@@ -94,18 +104,18 @@ Future<http.Response> requestEditEvent(
     {int label = -1}) async {
   var body = <String, dynamic>{
     'event_id': eventID,
-    'event_time': eventTime.millisecondsSinceEpoch ~/ 1000,
+    'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
   };
   if (label != -1) {
     body['label'] = label;
   }
-  return await session.post('edit_event', jsonEncode(body));
+  return session.post('edit_event', jsonEncode(body));
 }
 
 Future<http.Response> requestDeleteEvent(int eventID) async {
-  return await session.post(
+  return session.post(
       'delete_event',
       jsonEncode(<String, dynamic>{
         'event_id': eventID,

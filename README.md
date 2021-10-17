@@ -69,9 +69,9 @@ May need later:
 TODO
 * flask async
 * sqlAlchemy async
-* accounts front
+* celery_abc async
+* choose month and load data in background [FRONT]
 * shared access to accounts
-* events front (graph view)
 * events tests
 * tasks pool
 * green black theme

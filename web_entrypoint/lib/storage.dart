@@ -10,8 +10,9 @@ class DataStorage {
   int account = -1;
   DateTime currentMonthStart;
   DateTime currentMonthEnd;
+  int monthStartBalance = 0;
   Map<int, String> accounts = {};
-  List events = []; // event_time should be timestamp
+  List events = []; // events in current month, event_time should be timestamp
 
   void clear() {
     this.name = "";

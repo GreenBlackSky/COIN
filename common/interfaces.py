@@ -38,7 +38,7 @@ class EventService(ABC):
     @abstractmethod
     def create_event(
         self, user_id, account_id, event_time,
-        diff, description  # , confirmed
+        diff, description
     ):
         """Request to create new event."""
         pass

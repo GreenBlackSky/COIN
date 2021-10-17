@@ -8,7 +8,7 @@ from tests.test_base import BaseTest
 class EventTest(BaseTest):
     """Accounts stuff tests."""
 
-    def _create_event(self, account, event_time=None, confirmed=False):
+    def _create_event(self, account, event_time=None):
         if event_time is None:
             event_time = datetime.now().timestamp()
         event_data = {
@@ -16,7 +16,6 @@ class EventTest(BaseTest):
             'event_time': event_time,
             'diff': 10,
             'description': "TEST",
-            # 'confirmed': confirmed
         }
         response = self.session.post(
             url=self.HOST+"create_event",
@@ -82,7 +81,6 @@ class EventTest(BaseTest):
                 'event_time': datetime.now().timestamp(),
                 'diff': 10,
                 'description': "TEST",
-                'confirmed': True
             }
         )
         self.assertEqual(response.status_code, 401, "Wrong response code")
@@ -158,7 +156,7 @@ class EventTest(BaseTest):
         """Test editing fields of event."""
         self.register()
         account = self.get_first_account()
-        created_event = self._create_event(account, confirmed=True)
+        created_event = self._create_event(account)
 
         edited_time = (datetime.now() + timedelta(days=1)).timestamp()
         response = self.session.post(

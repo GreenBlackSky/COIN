@@ -59,6 +59,6 @@ void Function() editEventDialogMethod(
       LoadingType.EDIT_EVENT,
       event['id'],
       event["diff"],
-      DateTime.fromMillisecondsSinceEpoch(event["event_time"] * 1000),
+      dateFromTimestamp(event["event_time"]),
       event["description"]);
 }

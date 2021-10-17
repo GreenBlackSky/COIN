@@ -38,7 +38,6 @@ class Event:
     event_time: datetime
     diff: int
     description: str
-    # confirmed: bool
 
 
 @dataclass

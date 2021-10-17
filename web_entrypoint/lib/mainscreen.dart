@@ -6,6 +6,7 @@ import 'accountslist.dart';
 import 'burgermenu.dart';
 import 'eventslist.dart';
 import 'eventdialog.dart';
+import 'graphview.dart';
 
 class MainScreen extends StatelessWidget {
   final MainWidget _mainWdget = new MainWidget();
@@ -32,8 +33,10 @@ class MainWidget extends StatefulWidget {
 
 class _MainState extends State<MainWidget> {
   int _currentIndex = 0;
+  //TODO choose month
+  //TODO total, income and expence
   List<Widget> cardList = [
-    Center(child: Text("graph")), //TODO graph
+    Center(child: GraphView()),
     Center(child: Text("pie chart")), //TODO pie chart
     Center(child: EventList()),
     Center(child: Text("month view")), //TODO month view

@@ -8,6 +8,7 @@ import 'session.dart';
 import 'storage.dart';
 
 //TODO switch themes
+//TODO choose widgets
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
