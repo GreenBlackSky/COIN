@@ -59,39 +59,41 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       switch (widget.args.type) {
         case LoadingType.REGISTER:
           errorEndpoint = "/signup";
-          loadDataFromServerOnRegister(widget.args.name, widget.args.password);
+          await loadDataFromServerOnRegister(
+              widget.args.name, widget.args.password);
           break;
         case LoadingType.LOGIN:
           errorEndpoint = "/login";
-          loadDataFromServerOnLogin(widget.args.name, widget.args.password);
+          await loadDataFromServerOnLogin(
+              widget.args.name, widget.args.password);
           break;
         case LoadingType.EDIT_USER:
           endpoint = widget.args.endpoint;
           errorEndpoint = "/settings";
-          editUser(
+          await editUser(
               widget.args.name, widget.args.password, widget.args.newPassword);
           break;
         case LoadingType.CREATE_ACCOUNT:
-          createAccount(widget.args.name);
+          await createAccount(widget.args.name);
           break;
         case LoadingType.EDIT_ACCOUNT:
-          renameAccount(widget.args.id, widget.args.name);
+          await renameAccount(widget.args.id, widget.args.name);
           break;
         case LoadingType.DELETE_ACCOUNT:
-          deleteAccount(widget.args.id);
+          await deleteAccount(widget.args.id);
           break;
         case LoadingType.GET_EVENTS:
-          getEvents();
+          await getEvents();
           break;
         case LoadingType.CREATE_EVENT:
-          createEvent(
+          await createEvent(
             widget.args.dateTime,
             widget.args.diff,
             widget.args.description,
           );
           break;
         case LoadingType.EDIT_EVENT:
-          editEvent(
+          await editEvent(
             widget.args.id,
             widget.args.dateTime,
             widget.args.diff,
@@ -99,7 +101,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
           );
           break;
         case LoadingType.DELETE_EVENT:
-          deleteEvent(widget.args.id);
+          await deleteEvent(widget.args.id);
           break;
       }
     } catch (e) {
