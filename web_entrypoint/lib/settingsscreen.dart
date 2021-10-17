@@ -7,7 +7,6 @@ import 'common.dart';
 import 'session.dart';
 import 'storage.dart';
 
-//TODO refactor
 //TODO switch themes
 class SettingsScreen extends StatelessWidget {
   @override
@@ -50,52 +49,16 @@ class _SettingsState extends State<SettingsWidget> {
     "new_pass2": TextEditingController(),
   };
   final _formKey = GlobalKey<FormState>();
-  bool _exiting = false;
 
-  // TODO use loading screen
-  void _sendRequest() {
+  void _sendRequest(bool exiting) {
     if (this._formKey.currentState.validate()) {
-      Map<String, String> fields = {};
-      fields['name'] = this._controllers["name"].value.text;
-      if (this._controllers["new_pass"].value.text != '') {
-        fields['new_pass'] = this._controllers["new_pass"].value.text;
-        fields['old_pass'] = this._controllers["old_pass"].value.text;
-      }
-      session
-          .post('edit_user', jsonEncode(fields))
-          .then(this._processResponse)
-          .catchError((err) {
-        displayError(context, "Connection error ${err.toString()}");
-      });
+      Navigator.pushNamed(context, "/loading",
+          arguments: LoadingArgs(LoadingType.EDIT_USER,
+              name: this._controllers["name"].value.text,
+              password: this._controllers["old_pass"].value.text,
+              newPassword: this._controllers["new_pass"].value.text,
+              endpoint: (exiting ? "/main" : "/settings")));
     }
-  }
-
-  void _processResponse(http.Response response) {
-    if (response.statusCode != 200) {
-      displayError(context, "Problem with connection.");
-      return;
-    }
-    Map<String, dynamic> responseBody = jsonDecode(response.body);
-    if (responseBody['status'] == 'incomplete user data') {
-      displayError(context, "Error with the request body.");
-      return;
-    }
-    if (responseBody['status'] == 'invalid pass') {
-      displayError(context, "Invalid password.");
-      return;
-    }
-    if (responseBody['status'] == 'OK') {
-      // TODO show result
-    }
-    if (this._exiting) {
-      this._exiting = false;
-      Navigator.of(context).pushNamed('/main');
-    }
-  }
-
-  void _applyAndExit() {
-    this._exiting = true;
-    _sendRequest();
   }
 
   String _validateSecondPassword(String value) {
@@ -124,8 +87,12 @@ class _SettingsState extends State<SettingsWidget> {
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: [
-              buildButton("Apply", this._sendRequest),
-              buildButton("Apply & return", this._applyAndExit)
+              buildButton("Apply", () {
+                this._sendRequest(false);
+              }),
+              buildButton("Apply & return", () {
+                this._sendRequest(true);
+              })
             ],
           )
         ]));

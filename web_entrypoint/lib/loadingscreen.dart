@@ -65,6 +65,12 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
           errorEndpoint = "/login";
           loadDataFromServerOnLogin(widget.args.name, widget.args.password);
           break;
+        case LoadingType.EDIT_USER:
+          endpoint = widget.args.endpoint;
+          errorEndpoint = "/settings";
+          editUser(
+              widget.args.name, widget.args.password, widget.args.newPassword);
+          break;
         case LoadingType.CREATE_ACCOUNT:
           createAccount(widget.args.name);
           break;

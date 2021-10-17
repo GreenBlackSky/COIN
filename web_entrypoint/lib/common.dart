@@ -100,6 +100,7 @@ String timestampToString(int timestamp) {
 enum LoadingType {
   REGISTER,
   LOGIN,
+  EDIT_USER,
   CREATE_ACCOUNT,
   EDIT_ACCOUNT,
   DELETE_ACCOUNT,
@@ -113,22 +114,26 @@ class LoadingArgs {
   final LoadingType type;
   final String name;
   final String password;
+  final String newPassword;
   final int id;
   final int diff;
   final DateTime dateTime;
   final DateTime startTime;
   final DateTime endTime;
   final String description;
+  final String endpoint;
 
   LoadingArgs(this.type,
       {this.name = "",
       this.password = "",
+      this.newPassword = "",
       this.id = -1,
       this.diff = 0,
       DateTime dateTime,
       DateTime startTime,
       DateTime endTime,
-      this.description = ''})
+      this.description = '',
+      this.endpoint = ''})
       : this.dateTime = dateTime ?? DateTime.now(),
         this.startTime = startTime ?? DateTime.now(),
         this.endTime = endTime ?? DateTime.now();

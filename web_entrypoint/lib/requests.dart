@@ -2,20 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
-import 'storage.dart';
-
-Map<String, dynamic> getResponseBody(http.Response response) {
-  if (response.statusCode != 200 &&
-      response.statusCode != 401 &&
-      response.statusCode != 412) {
-    throw Exception("Problem with connection.");
-  }
-  Map<String, dynamic> responseBody = jsonDecode(response.body);
-  if (responseBody['status'] != 'OK') {
-    throw Exception(responseBody['status']);
-  }
-  return responseBody;
-}
 
 Future<http.Response> requestRegistration(String name, String password) async {
   return await session.post(
@@ -35,22 +21,19 @@ Future<http.Response> requestLogin(String name, String password) async {
       }));
 }
 
-void processAuthorizationResponse(http.Response response) {
-  var responseBody = getResponseBody(response);
-  storage.name = responseBody['user']['name'];
+Future<http.Response> requestEditUser(
+    String name, String password, String newPassword) async {
+  return await session.post(
+      'edit_user',
+      jsonEncode(<String, dynamic>{
+        'name': name,
+        'old_pass': password,
+        'new_pass': newPassword
+      }));
 }
 
 Future<http.Response> requestAccounts() async {
   return await session.post('get_accounts');
-}
-
-void processAccountsResponse(http.Response response) {
-  var responseBody = getResponseBody(response);
-  storage.account = responseBody['accounts'][0]['id'];
-  storage.accounts.clear();
-  for (Map<String, dynamic> accountJson in responseBody['accounts']) {
-    storage.accounts[accountJson['id']] = accountJson['name'];
-  }
 }
 
 Future<http.Response> requestCreateAccount(String accountName) async {
@@ -61,24 +44,12 @@ Future<http.Response> requestCreateAccount(String accountName) async {
       }));
 }
 
-void setActiveAccountAfterCreate(Map<String, dynamic> responseBody) {
-  int accountID = responseBody['account']['id'];
-  String accountName = responseBody['account']['name'];
-  storage.accounts[accountID] = accountName;
-  storage.account = accountID;
-}
-
 Future<http.Response> requestRenameAccount(
     int accountID, String accountName) async {
   return await session.post(
       'edit_account',
       jsonEncode(
           <String, dynamic>{'name': accountName, 'account_id': accountID}));
-}
-
-void setActiveAccountAfterRename(Map<String, dynamic> responseBody) {
-  int accountID = responseBody['account']['id'];
-  storage.account = accountID;
 }
 
 Future<http.Response> requestDeleteAccount(int accountID) async {
@@ -89,23 +60,11 @@ Future<http.Response> requestDeleteAccount(int accountID) async {
       }));
 }
 
-void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
-  int accountID = responseBody['account']['id'];
-  if (storage.account == accountID) {
-    var accounts = List.from(storage.accounts.keys);
-    var index = accounts.indexOf(accountID);
-    if (index == 0) {
-      storage.account = accounts[index + 1];
-    } else {
-      storage.account = accounts[index - 1];
-    }
-  }
-}
-
-Future<http.Response> requestEvents(DateTime startTime, DateTime endTime,
+Future<http.Response> requestEvents(
+    int accountID, DateTime startTime, DateTime endTime,
     {int label = -1}) async {
   var body = <String, int>{
-    'account_id': storage.account,
+    'account_id': accountID,
     'start_time': startTime.millisecondsSinceEpoch ~/ 1000,
     'end_time': endTime.millisecondsSinceEpoch ~/ 1000
   };
@@ -115,27 +74,11 @@ Future<http.Response> requestEvents(DateTime startTime, DateTime endTime,
   return await session.post('get_events', jsonEncode(body));
 }
 
-Future<http.Response> requestCurrentMonthEvents({int label = -1}) async {
-  return await requestEvents(storage.currentMonthStart, storage.currentMonthEnd,
-      label: label);
-}
-
-void processEventsResponse(http.Response response) {
-  var responseBody = getResponseBody(response);
-  storage.events.clear();
-  for (Map<String, dynamic> eventJson in responseBody['events']) {
-    storage.events.add(eventJson);
-  }
-  storage.events.sort((event1, event2) {
-    return event1['event_time'] - event2['event_time'];
-  });
-}
-
 Future<http.Response> requestCreateEvent(
-    DateTime eventTime, int diff, String description,
+    int accountID, DateTime eventTime, int diff, String description,
     {int label = -1}) async {
   var body = <String, dynamic>{
-    'account_id': storage.account,
+    'account_id': accountID,
     'event_time': eventTime.millisecondsSinceEpoch ~/ 1000,
     'diff': diff,
     'description': description
