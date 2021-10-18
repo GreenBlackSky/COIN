@@ -21,17 +21,27 @@ class GraphView extends StatefulWidget {
 class _GraphViewState extends State<GraphView> {
   @override
   Widget build(BuildContext context) {
-    List<ChartData> chartData = [
-      ChartData(x: storage.currentMonthStart, y: storage.monthStartBalance)
-    ];
     int balance = storage.monthStartBalance;
-    for (Map<String, dynamic> event in storage.events) {
-      balance += event['diff'];
-      chartData.add(
-          ChartData(x: dateFromTimestamp(event["event_time"]), y: balance));
+    List<ChartData> chartData = [];
+    int eventIDX = 0;
+    for (DateTime indexDay = storage.currentMonthStart;
+        indexDay.month == storage.currentMonthStart.month;
+        indexDay = indexDay.add(Duration(days: 1))) {
+      int dayStartTimestamp = timestampFromDateTime(indexDay);
+      int dayEndTimestamp =
+          timestampFromDateTime(indexDay.add(Duration(days: 1)));
+      while (eventIDX < storage.events.length &&
+          storage.events[eventIDX]['event_time'] >= dayStartTimestamp &&
+          storage.events[eventIDX]['event_time'] < dayEndTimestamp) {
+        balance += storage.events[eventIDX]['diff'];
+        eventIDX += 1;
+      }
+      chartData
+          .add(ChartData(x: dateFromTimestamp(dayStartTimestamp), y: balance));
     }
-    chartData.add(ChartData(x: storage.currentMonthEnd, y: balance));
-    //TODO crosshair
+    //TODO trackball
+    //TODO link to event on trackball
+    //TODO scale
     return SfCartesianChart(
         primaryXAxis: DateTimeAxis(
             intervalType: DateTimeIntervalType.days,

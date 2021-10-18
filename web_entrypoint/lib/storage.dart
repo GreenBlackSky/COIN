@@ -19,7 +19,7 @@ class DataStorage {
     this.account = -1;
     this.accounts.clear();
     this.currentMonthStart =
-        DateTime(DateTime.now().year, DateTime.now().month).toUtc();
+        DateTime(DateTime.now().year, DateTime.now().month);
     this.events.clear();
   }
 }
