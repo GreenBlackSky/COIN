@@ -17,7 +17,7 @@ All wrapped up in docker containers.
 ## Services
 * Web entrypoint is a simple service with flutter web app inside.
 * API service runs REST api, build with Flask. Also, it regulates access and provides all the "login-signup" stuff.
-* CORE service contains the most basic logic - working with accounts (one user can have multiple accounts), events and labels.
+* CORE service contains the most basic logic - working with accounts (one user can have multiple accounts), events and categories.
 * Templates service runs all the template related logic.
 * Statistics service accumulates statistic data.
 Each service has it's own database. 
@@ -38,80 +38,30 @@ There is `common` module, that is imported in every service. It has some peculia
 
 All config values must be stored in `config.env` in project root. It must have folowing values:
 
-* JWT_SECRET_KEY
-* SECRET_KEY
-* FLASK_ENV
-* FLASK_APP
-* FLASK_DEBUG
+    JWT_SECRET_KEY
+    SECRET_KEY
+    FLASK_ENV
+    FLASK_APP
+    FLASK_DEBUG
 
-* RABBITMQ_DEFAULT_USER
-* RABBITMQ_DEFAULT_PASS
-* RABBITMQ_HOST
-* RABBITMQ_PORT
+    RABBITMQ_DEFAULT_USER
+    RABBITMQ_DEFAULT_PASS
+    RABBITMQ_HOST
+    RABBITMQ_PORT
 
 For each data base a separate config file is required.
 `api_db_config.env` and `core_db_config.env`, both with the same variables inside:
 
-* POSTGRES_DB
-* POSTGRES_USER
-* POSTGRES_PASSWORD
-* POSTGRES_HOST
-* POSTGRES_PORT
+    POSTGRES_DB
+    POSTGRES_USER
+    POSTGRES_PASSWORD
+    POSTGRES_HOST
+    POSTGRES_PORT
 
 May need later:
 
-* REDIS_PASSWORD
-* REDIS_HOST
-* REDIS_PORT
-* REDIS_INDEX
-* REDIS_REPLICATION_MODE
-
-TODO
-* flask async
-* sqlAlchemy async
-* celery_abc async
-* choose month and load data in background [FRONT]
-* shared access to accounts
-* events tests
-* tasks pool
-* green black theme
-* calendar view
-* requests validation with marshmallow
-* labels back
-* labels front
-* labels tests
-* templates service
-* templates front
-* templates tests
-* confirmed/uncomfirmed events back
-* confirmed/uncomfirmed events front
-* confirmed/uncomfirmed events tests
-* statistics service
-* statistics front
-* statistics tests
-* prediction service
-* global statistics service (prometheus + graphana)
-* ads service
-* ads front
-* ads tests
-* status codes
-* expiration tokens
-* balcklist token on logout
-* handle different token problems
-* color schemes
-* animations
-* cookies
-* broadcast date and time
-* log service 
-* use actual hashing for password
-* nginx for hosting web app
-* auto-build web app
-* fix versions of libs
-* dev mode
-* kubernetes
-* redis password
-* redis admin
-* pg admin
-* celery - flower
-
-One step at a time...
+    REDIS_PASSWORD
+    REDIS_HOST
+    REDIS_PORT
+    REDIS_INDEX
+    REDIS_REPLICATION_MODE
