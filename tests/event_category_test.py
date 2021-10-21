@@ -1,12 +1,10 @@
-"""Accounts stuff tests."""
-
-from typing import List
+"""Event categories stuff tests."""
 
 import requests
 from tests.test_base import BaseTest
 
 
-class EventTest(BaseTest):
+class CategoryTest(BaseTest):
     """Accounts stuff tests."""
 
     pass

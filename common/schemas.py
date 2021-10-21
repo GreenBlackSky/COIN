@@ -41,9 +41,11 @@ class Event:
 
 
 @dataclass
-class Label:
+class Category:
     """Category of transaction."""
 
+    user_id: int
+    account_id: int
     id: int
     name: str
     description: str
@@ -67,6 +69,6 @@ class Label:
 
 UserSchema = class_schema(User)
 AccountSchema = class_schema(Account)
-LabelSchema = class_schema(Label)
+CategorySchema = class_schema(Category)
 EventSchema = class_schema(Event)
 # TemplateSchema = class_schema(Template)

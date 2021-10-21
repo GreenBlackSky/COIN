@@ -81,7 +81,6 @@ def create_user(name, password):
     session.add(user)
     session.commit()
     accountService.create_account(user_id=user.id, name=MAIN_ACCOUNT_NAME)
-    # self.db_service.create_starting_labels(account.id)
     # self.db_service.create_starting_templates(account.id)
     return {
         'access_token': create_access_token(identity=user),

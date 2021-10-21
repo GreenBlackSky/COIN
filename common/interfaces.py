@@ -37,8 +37,13 @@ class EventService(ABC):
 
     @abstractmethod
     def create_event(
-        self, user_id, account_id, event_time,
-        diff, description
+        self,
+        user_id,
+        account_id,
+        category_id,
+        event_time,
+        diff,
+        description
     ):
         """Request to create new event."""
         pass
@@ -50,8 +55,12 @@ class EventService(ABC):
 
     @abstractmethod
     def get_events(
-        self, user_id, account_id, start_time,
-        end_time, label
+        self,
+        user_id,
+        account_id,
+        start_time=None,
+        end_time=None,
+        category_id=None
     ):
         """Get all events user has."""
         pass
@@ -60,13 +69,23 @@ class EventService(ABC):
     #     """Confirm event."""
     #     pass
 
+    # TODO make unchanged parametres optional
     @abstractmethod
-    def edit_event(self, user_id, event_id, event_time, diff, description):
+    def edit_event(
+        self,
+        user_id,
+        account_id,
+        event_id,
+        category_id,
+        event_time,
+        diff,
+        description
+    ):
         """Request to edit event."""
         pass
 
     @abstractmethod
-    def delete_event(self, user_id, event_id):
+    def delete_event(self, user_id, account_id, event_id):
         """Delete existing event."""
         pass
 
@@ -78,4 +97,36 @@ class EventService(ABC):
     @abstractmethod
     def clear_events(self):
         """Delete existing event."""
+        pass
+
+
+class CategoryService(ABC):
+    """Event category service interface."""
+
+    @abstractmethod
+    def create_category(self, user_id, account_id, name, description, color):
+        """Request to create new events category."""
+        pass
+
+    @abstractmethod
+    def get_categories(self, user_id, account_id):
+        """Get all categories user has."""
+        pass
+
+    @abstractmethod
+    def edit_category(
+        self,
+        user_id,
+        account_id,
+        category_id,
+        name,
+        description,
+        color
+    ):
+        """Request to edit events category."""
+        pass
+
+    @abstractmethod
+    def delete_category(self, user_id, account_id, category_id):
+        """Delete existing events category."""
         pass

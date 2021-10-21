@@ -25,11 +25,12 @@ eventService = EventCaller(celery_app)
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def create_event(account_id, event_time, diff, description):
+def create_event(account_id, category_id, event_time, diff, description):
     """Request to create new event."""
     return eventService.create_event(
         current_user.id,
         account_id,
+        category_id,
         event_time,
         diff,
         description
@@ -44,7 +45,7 @@ def get_events(
     account_id,
     start_time=None,
     end_time=None,
-    label=None,
+    category_id=None,
 ):
     """Get all events user has."""
     return eventService.get_events(
@@ -52,7 +53,7 @@ def get_events(
         account_id,
         start_time,
         end_time,
-        label
+        category_id
     )
 
 
@@ -60,11 +61,20 @@ def get_events(
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def edit_event(event_id, event_time, diff, description):
+def edit_event(
+    account_id,
+    event_id,
+    category_id,
+    event_time,
+    diff,
+    description
+):
     """Request to edit event."""
     return eventService.edit_event(
         current_user.id,
+        account_id,
         event_id,
+        category_id,
         event_time,
         diff,
         description
@@ -75,9 +85,9 @@ def edit_event(event_id, event_time, diff, description):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def delete_event(event_id):
+def delete_event(account_id, event_id):
     """Delete existing event."""
-    return eventService.delete_event(current_user.id, event_id)
+    return eventService.delete_event(current_user.id, account_id, event_id)
 
 
 @bp.post("/get_balance")
