@@ -307,6 +307,17 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         )
         return {'status': 'OK', 'balance': savepoint.total + diff_sum}
 
+    def get_total_by_category(
+        self,
+        user_id,
+        account_id,
+        category_id,
+        start_time,
+        end_time
+    ):
+        # TODO get_total_by_category
+        pass
+
     def clear_events(self):
         """Clear all events from db."""
         count = session.query(EventModel).delete()
