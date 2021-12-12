@@ -55,6 +55,11 @@ void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
   }
 }
 
+void processCategories(http.Response response) {
+  var responseBody = getResponseBody(response);
+  storage.category = responseBody['categories'][0]['id'];
+}
+
 void processMonthStartBalanceResponse(http.Response response) {
   var responseBody = getResponseBody(response);
   storage.monthStartBalance = responseBody['balance'];

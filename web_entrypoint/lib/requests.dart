@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:coin_client/storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
@@ -61,12 +62,17 @@ Future<http.Response> requestDeleteAccount(int accountID) async {
       }));
 }
 
+Future<http.Response> requestCategories() async {
+  return session.post('get_categories',
+      jsonEncode(<String, dynamic>{'account_id': storage.account}));
+}
+
 Future<http.Response> requestBalance(int accountID, DateTime dateTime) async {
   return session.post(
       'get_balance',
       jsonEncode(<String, dynamic>{
         'account_id': accountID,
-        'category_id': 0,
+        'category_id': storage.category,
         'timestamp': timestampFromDateTime(dateTime),
       }));
 }
@@ -78,7 +84,7 @@ Future<http.Response> requestEvents(
     'account_id': accountID,
     'start_time': timestampFromDateTime(startTime),
     'end_time': timestampFromDateTime(endTime),
-    'category_id': 0
+    'category_id': storage.category
   };
   if (label != -1) {
     body['label'] = label;
@@ -91,7 +97,7 @@ Future<http.Response> requestCreateEvent(
     {int label = -1}) async {
   var body = <String, dynamic>{
     'account_id': accountID,
-    'category_id': 0,
+    'category_id': storage.category,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
@@ -107,7 +113,7 @@ Future<http.Response> requestEditEvent(
     {int label = -1}) async {
   var body = <String, dynamic>{
     'event_id': eventID,
-    'category_id': 0,
+    'category_id': storage.category,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description

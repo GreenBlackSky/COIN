@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from tests.test_base import BaseTest
 
 
+# TODO parametrize
+# TODO fix categories
 class EventTest(BaseTest):
     """Accounts stuff tests."""
 

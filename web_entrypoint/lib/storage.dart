@@ -8,16 +8,19 @@ class DataStorage {
   }
   String name;
   int account = -1;
+  Map<int, String> accounts = {};
+  // TODO categories
+  int category = -1;
   DateTime currentMonthStart;
   DateTime currentMonthEnd;
   int monthStartBalance = 0;
-  Map<int, String> accounts = {};
   List events = []; // events in current month, event_time should be timestamp
 
   void clear() {
     this.name = "";
     this.account = -1;
     this.accounts.clear();
+    this.category = -1;
     this.currentMonthStart =
         DateTime(DateTime.now().year, DateTime.now().month);
     this.events.clear();

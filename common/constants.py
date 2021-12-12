@@ -32,6 +32,13 @@ MAIN_ACCOUNT_NAME = "Main Account"
 
 MAX_ACCOUNTS = 100
 
-STARTING_CATEGORIES = []
+# TODO basic categories
+STARTING_CATEGORIES = [
+    {
+        'name': 'base',
+        'description': 'BASE',
+        'color': '000000'
+    }
+]
 
 STARTING_TEMPLATES = []

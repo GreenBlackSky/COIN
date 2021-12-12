@@ -3,6 +3,7 @@
 from tests.test_base import BaseTest
 
 
+# TODO parametrize
 class LoginTest(BaseTest):
     """Logging in and co tests."""
 

@@ -7,7 +7,7 @@ from common.constants import MAX_ACCOUNTS, STARTING_CATEGORIES
 from common.interfaces import AccountService
 from common.schemas import AccountSchema
 
-from ..model import SavePointModel, session, AccountModel
+from ..model import CategoryModel, SavePointModel, session, AccountModel
 
 
 account_schema = AccountSchema()
@@ -34,9 +34,16 @@ class AccountHandler(AccountService, metaclass=WorkerMetaBase):
             user_id=user_id,
             name=name,
         )
-        # TODO create categories
         session.add(account)
         session.commit()
+
+        categories = [
+            CategoryModel(user_id=user_id, account_id=account.id, **category)
+            for category in STARTING_CATEGORIES
+        ]
+        session.add_all(categories)
+        session.commit()
+
         return {'status': 'OK', 'account': account_schema.dump(account)}
 
     def get_accounts(self, user_id):

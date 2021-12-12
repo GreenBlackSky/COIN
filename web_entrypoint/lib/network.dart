@@ -6,12 +6,14 @@ import 'storage.dart';
 Future<void> loadDataFromServerOnRegister(String name, String password) async {
   await requestRegistration(name, password).then(processAuthorizationResponse);
   await requestAccounts().then(processAccountsResponse);
+  await requestCategories().then(processCategories);
   await getEvents();
 }
 
 Future<void> loadDataFromServerOnLogin(String name, String password) async {
   await requestLogin(name, password).then(processAuthorizationResponse);
   await requestAccounts().then(processAccountsResponse);
+  await requestCategories().then(processCategories);
   await getEvents();
 }
 
@@ -25,6 +27,7 @@ Future<void> createAccount(String name) async {
   );
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
+  await requestCategories().then(processCategories);
   setActiveAccountAfterCreate(responseBody);
   await getEvents();
 }
@@ -41,6 +44,7 @@ Future<void> deleteAccount(int id) async {
   var response = await requestDeleteAccount(id);
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
+  await requestCategories().then(processCategories);
   setActiveAccountAfterDelete(responseBody);
   await getEvents();
 }

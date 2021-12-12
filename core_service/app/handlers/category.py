@@ -51,10 +51,11 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
 
         query = session\
             .query(CategoryModel)\
+            .filter(CategoryModel.user_id == user_id)\
             .filter(CategoryModel.account_id == account_id)
         return {
             'status': 'OK',
-            'events': [
+            'categories': [
                 category_schema.dump(category)
                 for category in query.all()
             ]
