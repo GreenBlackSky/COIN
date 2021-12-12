@@ -3,6 +3,14 @@ CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    account_id INT REFERENCES accounts,
+    user_id INT,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(200),
+    color VARCHAR(6)
+);
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     user_id INT,
@@ -18,14 +26,6 @@ CREATE TABLE save_points (
     account_id INT REFERENCES accounts,
     datetime TIMESTAMP NOT NULL,
     total FLOAT NOT NULL
-);
-CREATE TABLE categories (
-    id SERIAL PRIMARY KEY,
-    account_id INT REFERENCES accounts,
-    user_id INT,
-    name VARCHAR(100) NOT NULL,
-    description VARCHAR(200),
-    color VARCHAR(6)
 );
 -- CREATE TABLE templates (
 --     id SERIAL PRIMARY KEY,

@@ -277,8 +277,9 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def get_balance(self, user_id, account_id, timestamp):
+    def get_balance(self, user_id, account_id, category_id, timestamp):
         """Get balance on given account in given point in time."""
+        # TODO use category id
         accounts_response = AccountHandler.check_account_user(
             account_id,
             user_id

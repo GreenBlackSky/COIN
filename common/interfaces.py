@@ -90,7 +90,7 @@ class EventService(ABC):
         pass
 
     @abstractmethod
-    def get_balance(self, user_id, account_id, timestamp):
+    def get_balance(self, user_id, account_id, category_id, timestamp):
         """Get balance on account at certain time."""
         pass
 

@@ -66,7 +66,8 @@ Future<http.Response> requestBalance(int accountID, DateTime dateTime) async {
       'get_balance',
       jsonEncode(<String, dynamic>{
         'account_id': accountID,
-        'timestamp': timestampFromDateTime(dateTime)
+        'category_id': 0,
+        'timestamp': timestampFromDateTime(dateTime),
       }));
 }
 
@@ -76,7 +77,8 @@ Future<http.Response> requestEvents(
   var body = <String, int>{
     'account_id': accountID,
     'start_time': timestampFromDateTime(startTime),
-    'end_time': timestampFromDateTime(endTime)
+    'end_time': timestampFromDateTime(endTime),
+    'category_id': 0
   };
   if (label != -1) {
     body['label'] = label;
@@ -89,6 +91,7 @@ Future<http.Response> requestCreateEvent(
     {int label = -1}) async {
   var body = <String, dynamic>{
     'account_id': accountID,
+    'category_id': 0,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
@@ -104,6 +107,7 @@ Future<http.Response> requestEditEvent(
     {int label = -1}) async {
   var body = <String, dynamic>{
     'event_id': eventID,
+    'category_id': 0,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description

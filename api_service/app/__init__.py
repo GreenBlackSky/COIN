@@ -40,11 +40,11 @@ def create_app():
         from .blueprints import login_bp
         from .blueprints import account_bp
         from .blueprints import event_bp
-        from .blueprints import event_category_bp
+        from .blueprints import category_bp
         app.register_blueprint(login_bp.bp)
         app.register_blueprint(account_bp.bp)
         app.register_blueprint(event_bp.bp)
-        app.register_blueprint(event_category_bp.bp)
+        app.register_blueprint(category_bp.bp)
 
         if __debug__:
             from .blueprints import test_bp

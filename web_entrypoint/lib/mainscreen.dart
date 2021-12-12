@@ -33,15 +33,16 @@ class MainWidget extends StatefulWidget {
 
 class _MainState extends State<MainWidget> {
   int _currentIndex = 0;
-  //TODO choose month
-  //TODO total, income and expence
+  // TODO choose month
+  // TODO total, income and expence
+  // TODO current balance
   List<Widget> cardList = [
     Center(child: GraphView()),
     Center(child: Text("pie chart")), //TODO pie chart
+    Center(child: Text("categories list")), //TODO categories list
     Center(child: EventList()),
     Center(child: Text("month view")), //TODO month view
     Center(child: Text("templates list")), //TODO templates list
-    Center(child: Text("categories list")), //TODO categories list
   ];
 
   List<T> map<T>(List list, Function handler) {

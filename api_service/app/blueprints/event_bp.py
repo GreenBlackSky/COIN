@@ -94,9 +94,14 @@ def delete_event(account_id, event_id):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def get_balance(account_id, timestamp):
+def get_balance(account_id, category_id, timestamp):
     """Get balance on certain account at certain time."""
-    return eventService.get_balance(current_user.id, account_id, timestamp)
+    return eventService.get_balance(
+        current_user.id,
+        account_id,
+        category_id,
+        timestamp
+    )
 
 
 @bp.post("/get_totals_by_category")
