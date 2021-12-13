@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:coin_client/storage.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
@@ -65,6 +66,40 @@ Future<http.Response> requestDeleteAccount(int accountID) async {
 Future<http.Response> requestCategories() async {
   return session.post('get_categories',
       jsonEncode(<String, dynamic>{'account_id': storage.account}));
+}
+
+Future<http.Response> requestCreateCategory(
+    String name, String description, Color color) async {
+  return session.post(
+      'create_category',
+      jsonEncode(<String, dynamic>{
+        'account_id': storage.account,
+        'name': name,
+        'description': description,
+        'color': color.toString()
+      }));
+}
+
+Future<http.Response> requestEditCategory(
+    int categoryID, String name, String description, Color color) async {
+  return session.post(
+      'edit_category',
+      jsonEncode(<String, dynamic>{
+        'account_id': storage.account,
+        'category_id': categoryID,
+        'name': name,
+        'description': description,
+        'color': color.toString()
+      }));
+}
+
+Future<http.Response> requestDeleteCategory(int categoryID) async {
+  return session.post(
+      'delete_categorys',
+      jsonEncode(<String, dynamic>{
+        'account_id': storage.account,
+        'category_id': categoryID
+      }));
 }
 
 Future<http.Response> requestBalance(int accountID, DateTime dateTime) async {

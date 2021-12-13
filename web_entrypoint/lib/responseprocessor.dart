@@ -58,6 +58,9 @@ void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
 void processCategories(http.Response response) {
   var responseBody = getResponseBody(response);
   storage.category = responseBody['categories'][0]['id'];
+  for (Map<String, dynamic> categoryJson in responseBody['categories']) {
+    storage.categories.add(categoryJson);
+  }
 }
 
 void processMonthStartBalanceResponse(http.Response response) {
