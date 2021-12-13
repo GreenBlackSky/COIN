@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'common.dart';
 import 'accountslist.dart';
+import 'categorylist.dart';
 import 'burgermenu.dart';
 import 'eventslist.dart';
 import 'eventdialog.dart';
@@ -39,7 +40,7 @@ class _MainState extends State<MainWidget> {
   List<Widget> cardList = [
     Center(child: GraphView()),
     Center(child: Text("pie chart")), //TODO pie chart
-    Center(child: Text("categories list")), //TODO categories list
+    Center(child: CategoryList()),
     Center(child: EventList()),
     Center(child: Text("month view")), //TODO month view
     Center(child: Text("templates list")), //TODO templates list

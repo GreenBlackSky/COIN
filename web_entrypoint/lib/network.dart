@@ -49,12 +49,21 @@ Future<void> deleteAccount(int id) async {
   await syncData();
 }
 
-// TODO category requests
-Future<void> createCategory() async {}
+Future<void> createCategory(String name, String color) async {
+  var response = await requestCreateCategory(name, color);
+  getResponseBody(response);
+}
 
-Future<void> editCategory() async {}
+Future<void> editCategory(int categoryID, String name, String color) async {
+  var response = await requestEditCategory(categoryID, name, color);
+  getResponseBody(response);
+}
 
-Future<void> deleteCategory() async {}
+Future<void> deleteCategory(int categoryID) async {
+  var response = await requestDeleteCategory(categoryID);
+  getResponseBody(response);
+  syncData();
+}
 
 Future<void> syncData() async {
   await requestEvents(

@@ -82,6 +82,16 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
         case LoadingType.DELETE_ACCOUNT:
           await deleteAccount(widget.args.id);
           break;
+        case LoadingType.CREATE_CATEGORY:
+          await createCategory(widget.args.name, widget.args.color);
+          break;
+        case LoadingType.EDIT_CATEGORY:
+          await editCategory(
+              widget.args.id, widget.args.name, widget.args.color);
+          break;
+        case LoadingType.DELETE_CATEGORY:
+          await deleteCategory(widget.args.id);
+          break;
         case LoadingType.SYNC_DATA:
           await syncData();
           break;
