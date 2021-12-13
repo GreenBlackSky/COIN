@@ -20,7 +20,7 @@ category_schema = CategorySchema()
 class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
     """Class contains method for handling events categories stuff."""
 
-    def create_category(self, user_id, account_id, name, description, color):
+    def create_category(self, user_id, account_id, name, color):
         """Create new events category."""
         accounts_response = AccountHandler.check_account_user(
             account_id,
@@ -33,7 +33,6 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
             user_id=user_id,
             account_id=account_id,
             name=name,
-            description=description,
             color=color
         )
         session.add(category)
@@ -67,7 +66,6 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
         account_id,
         category_id,
         name,
-        description,
         color
     ):
         """Request to edit events category."""
@@ -87,7 +85,6 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
             return {'status': 'wrong account for category'}
 
         category.name = name
-        category.description = description
         category.color = color
 
         session.commit()

@@ -23,13 +23,12 @@ categoryService = EventCategoryCaller(celery_app)
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def create_category(account_id, name, description, color):
+def create_category(account_id, name, color):
     """Request to create new category."""
     return categoryService.create_category(
         current_user.id,
         account_id,
         name,
-        description,
         color
     )
 
@@ -47,14 +46,13 @@ def get_categories(account_id):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def edit_category(account_id, category_id, name, description, color):
+def edit_category(account_id, category_id, name, color):
     """Request to edit category."""
     return categoryService.edit_category(
         current_user.id,
         account_id,
         category_id,
         name,
-        description,
         color
     )
 

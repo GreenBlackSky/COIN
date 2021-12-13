@@ -8,7 +8,6 @@ CREATE TABLE categories (
     account_id INT REFERENCES accounts,
     user_id INT,
     name VARCHAR(100) NOT NULL,
-    description VARCHAR(200),
     color VARCHAR(6)
 );
 CREATE TABLE events (

@@ -48,7 +48,6 @@ class Category:
     account_id: int
     id: int
     name: str
-    description: str
     color: str
 
 

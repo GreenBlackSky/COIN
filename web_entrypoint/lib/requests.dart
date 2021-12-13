@@ -74,7 +74,6 @@ Future<http.Response> requestCreateCategory(String name, String color) async {
       jsonEncode(<String, dynamic>{
         'account_id': storage.account,
         'name': name,
-        'description': "",
         'color': color
       }));
 }
@@ -87,7 +86,6 @@ Future<http.Response> requestEditCategory(
         'account_id': storage.account,
         'category_id': categoryID,
         'name': name,
-        'description': "",
         'color': color
       }));
 }

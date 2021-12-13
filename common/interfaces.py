@@ -104,7 +104,7 @@ class CategoryService(ABC):
     """Event category service interface."""
 
     @abstractmethod
-    def create_category(self, user_id, account_id, name, description, color):
+    def create_category(self, user_id, account_id, name, color):
         """Request to create new events category."""
         pass
 
@@ -120,7 +120,6 @@ class CategoryService(ABC):
         account_id,
         category_id,
         name,
-        description,
         color
     ):
         """Request to edit events category."""
