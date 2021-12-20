@@ -68,7 +68,7 @@ Future<http.Response> requestCategories() async {
       jsonEncode(<String, dynamic>{'account_id': storage.account}));
 }
 
-Future<http.Response> requestCreateCategory(String name, String color) async {
+Future<http.Response> requestCreateCategory(String name, int color) async {
   return session.post(
       'create_category',
       jsonEncode(<String, dynamic>{
@@ -79,7 +79,7 @@ Future<http.Response> requestCreateCategory(String name, String color) async {
 }
 
 Future<http.Response> requestEditCategory(
-    int categoryID, String name, String color) async {
+    int categoryID, String name, int color) async {
   return session.post(
       'edit_category',
       jsonEncode(<String, dynamic>{

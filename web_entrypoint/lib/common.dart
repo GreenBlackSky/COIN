@@ -133,7 +133,7 @@ class LoadingArgs {
   final DateTime endTime;
   final String description;
   final String endpoint;
-  final String color;
+  final int color;
 
   LoadingArgs(this.type,
       {this.name = "",
@@ -146,7 +146,7 @@ class LoadingArgs {
       DateTime endTime,
       this.description = '',
       this.endpoint = '',
-      this.color = ''})
+      this.color = -1})
       : this.dateTime = dateTime ?? DateTime.now(),
         this.startTime = startTime ?? DateTime.now(),
         this.endTime = endTime ?? DateTime.now();

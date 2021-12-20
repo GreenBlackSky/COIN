@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import 'common.dart';
 
@@ -12,7 +13,7 @@ void Function() _categoryDialog(
     String color) {
   return () {
     var nameController = TextEditingController(text: name);
-    var colorController = TextEditingController(text: color);
+    int chosenColor;
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -21,13 +22,19 @@ void Function() _categoryDialog(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     buildTextField(nameController, "Category name"),
-                    buildTextField(colorController, "Category color")
+                    BlockPicker(
+                        pickerColor: Colors.blue,
+                        onColorChanged: (Color color) {
+                          chosenColor = color.value;
+                        })
                   ]),
               actions: <Widget>[
                 buildButton(buttonText, () {
                   Navigator.pushNamed(context, "/loading",
                       arguments: LoadingArgs(action,
-                          id: categoryID, name: name, color: color));
+                          id: categoryID,
+                          name: nameController.value.text,
+                          color: chosenColor));
                 }),
                 buildButton("Cancel", () {
                   Navigator.pop(context, 'Cancel');

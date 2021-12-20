@@ -8,7 +8,7 @@ CREATE TABLE categories (
     account_id INT REFERENCES accounts,
     user_id INT,
     name VARCHAR(100) NOT NULL,
-    color VARCHAR(6)
+    color INT
 );
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,

@@ -36,7 +36,7 @@ MAX_ACCOUNTS = 100
 STARTING_CATEGORIES = [
     {
         'name': 'base',
-        'color': '000000'
+        'color': 16777215
     }
 ]
 
