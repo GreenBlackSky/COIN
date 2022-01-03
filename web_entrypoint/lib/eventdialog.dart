@@ -23,10 +23,9 @@ class _CategoryComboBox extends State<CategoryComboBox> {
         value: category['id'],
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
         underline: Container(
           height: 2,
-          color: Colors.deepPurpleAccent,
+          color: category['color'],
         ),
         onChanged: (int newValue) {
           widget.selectedCategoryId = newValue;
@@ -48,6 +47,7 @@ void Function() _eventDialog(
     int eventID,
     int diff,
     DateTime eventTime,
+    int accountID,
     String description,
     int categoryID) {
   return () {
@@ -74,6 +74,7 @@ void Function() _eventDialog(
                       arguments: LoadingArgs(action,
                           id: eventID,
                           id2: categoryComboBox.selectedCategoryId,
+                          id3: accountID,
                           diff: int.parse(diffController.value.text),
                           dateTime: dateField.selectedDate,
                           description: descriptionController.value.text));
@@ -95,6 +96,7 @@ void Function() addNewEventDialogMethod(BuildContext context) {
       -1,
       0,
       DateTime.now(),
+      storage.account,
       "",
       storage.categories[0]['id']);
 }
@@ -109,6 +111,7 @@ void Function() editEventDialogMethod(
       event['id'],
       event["diff"],
       dateFromTimestamp(event["event_time"]),
+      event['account_id'],
       event["description"],
-      event['category']);
+      event['category_id']);
 }

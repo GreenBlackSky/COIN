@@ -128,6 +128,7 @@ class LoadingArgs {
   final String newPassword;
   final int id;
   final int id2;
+  final int id3;
   final int diff;
   final DateTime dateTime;
   final DateTime startTime;
@@ -142,6 +143,7 @@ class LoadingArgs {
       this.newPassword = "",
       this.id = -1,
       this.id2 = -1,
+      this.id3 = -1,
       this.diff = 0,
       DateTime dateTime,
       DateTime startTime,

@@ -130,10 +130,11 @@ Future<http.Response> requestCreateEvent(int accountID, DateTime eventTime,
   return session.post('create_event', jsonEncode(body));
 }
 
-Future<http.Response> requestEditEvent(int eventID, DateTime eventTime,
-    int diff, String description, int categoryID) async {
+Future<http.Response> requestEditEvent(int eventID, int accountID,
+    DateTime eventTime, int diff, String description, int categoryID) async {
   var body = <String, dynamic>{
     'event_id': eventID,
+    'account_id': accountID,
     'category_id': categoryID,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
