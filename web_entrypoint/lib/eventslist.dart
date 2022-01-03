@@ -22,9 +22,12 @@ class _EventListState extends State<EventList> {
       itemBuilder: (BuildContext context, int index) {
         var event = storage.events[index];
         String date = timestampToString(event['event_time']);
+        var category = storage.categories.where((element) {
+          return element['id'] == event['category_id'];
+        }).first;
         return Container(
           height: 50,
-          color: Colors.lightBlue,
+          color: category['color'],
           child: Align(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

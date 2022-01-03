@@ -104,55 +104,41 @@ Future<http.Response> requestBalance(int accountID, DateTime dateTime) async {
       'get_balance',
       jsonEncode(<String, dynamic>{
         'account_id': accountID,
-        'category_id': storage.category,
         'timestamp': timestampFromDateTime(dateTime),
       }));
 }
 
 Future<http.Response> requestEvents(
-    int accountID, DateTime startTime, DateTime endTime,
-    {int label = -1}) async {
+    int accountID, DateTime startTime, DateTime endTime) async {
   var body = <String, int>{
     'account_id': accountID,
     'start_time': timestampFromDateTime(startTime),
     'end_time': timestampFromDateTime(endTime),
-    'category_id': storage.category
   };
-  if (label != -1) {
-    body['label'] = label;
-  }
   return session.post('get_events', jsonEncode(body));
 }
 
-Future<http.Response> requestCreateEvent(
-    int accountID, DateTime eventTime, int diff, String description,
-    {int label = -1}) async {
+Future<http.Response> requestCreateEvent(int accountID, DateTime eventTime,
+    int diff, String description, int categoryID) async {
   var body = <String, dynamic>{
     'account_id': accountID,
-    'category_id': storage.category,
+    'category_id': categoryID,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
   };
-  if (label != -1) {
-    body['label'] = label;
-  }
   return session.post('create_event', jsonEncode(body));
 }
 
-Future<http.Response> requestEditEvent(
-    int eventID, DateTime eventTime, int diff, String description,
-    {int label = -1}) async {
+Future<http.Response> requestEditEvent(int eventID, DateTime eventTime,
+    int diff, String description, int categoryID) async {
   var body = <String, dynamic>{
     'event_id': eventID,
-    'category_id': storage.category,
+    'category_id': categoryID,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
   };
-  if (label != -1) {
-    body['label'] = label;
-  }
   return session.post('edit_event', jsonEncode(body));
 }
 

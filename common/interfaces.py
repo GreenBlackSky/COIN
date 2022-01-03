@@ -59,8 +59,7 @@ class EventService(ABC):
         user_id,
         account_id,
         start_time=None,
-        end_time=None,
-        category_id=None
+        end_time=None
     ):
         """Get all events user has."""
         pass
@@ -90,7 +89,7 @@ class EventService(ABC):
         pass
 
     @abstractmethod
-    def get_balance(self, user_id, account_id, category_id, timestamp):
+    def get_balance(self, user_id, account_id, timestamp):
         """Get balance on account at certain time."""
         pass
 

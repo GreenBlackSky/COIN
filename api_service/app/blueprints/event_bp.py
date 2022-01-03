@@ -45,15 +45,13 @@ def get_events(
     account_id,
     start_time=None,
     end_time=None,
-    category_id=None,
 ):
     """Get all events user has."""
     return eventService.get_events(
         current_user.id,
         account_id,
         start_time,
-        end_time,
-        category_id
+        end_time
     )
 
 
@@ -94,12 +92,11 @@ def delete_event(account_id, event_id):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def get_balance(account_id, category_id, timestamp):
+def get_balance(account_id, timestamp):
     """Get balance on certain account at certain time."""
     return eventService.get_balance(
         current_user.id,
         account_id,
-        category_id,
         timestamp
     )
 

@@ -154,7 +154,6 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         account_id,
         start_time=None,
         end_time=None,
-        category_id=None
     ):
         """
         Get all events user has.
@@ -179,8 +178,6 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
             query = query.filter(EventModel.event_time > start_time)
         if end_time:
             query = query.filter(EventModel.event_time < end_time)
-        if category_id is not None:
-            query = query.filter(EventModel.category_id == category_id)
         return {
             'status': 'OK',
             'events': [event_schema.dump(event) for event in query.all()]
@@ -277,9 +274,8 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         session.commit()
         return {'status': 'OK', 'event': event_schema.dump(event)}
 
-    def get_balance(self, user_id, account_id, category_id, timestamp):
+    def get_balance(self, user_id, account_id, timestamp):
         """Get balance on given account in given point in time."""
-        # TODO use category id
         accounts_response = AccountHandler.check_account_user(
             account_id,
             user_id

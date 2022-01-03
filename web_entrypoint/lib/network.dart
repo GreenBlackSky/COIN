@@ -73,16 +73,17 @@ Future<void> syncData() async {
 }
 
 Future<void> createEvent(
-    DateTime dateTime, int diff, String description) async {
-  var response =
-      await requestCreateEvent(storage.account, dateTime, diff, description);
+    DateTime dateTime, int diff, String description, int categoryID) async {
+  var response = await requestCreateEvent(
+      storage.account, dateTime, diff, description, categoryID);
   getResponseBody(response);
   await syncData();
 }
 
-Future<void> editEvent(
-    int id, DateTime dateTime, int diff, String description) async {
-  var response = await requestEditEvent(id, dateTime, diff, description);
+Future<void> editEvent(int id, DateTime dateTime, int diff, String description,
+    int categoryID) async {
+  var response =
+      await requestEditEvent(id, dateTime, diff, description, categoryID);
   getResponseBody(response);
   await syncData();
 }

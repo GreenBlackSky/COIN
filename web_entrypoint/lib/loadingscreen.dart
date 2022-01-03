@@ -100,6 +100,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
             widget.args.dateTime,
             widget.args.diff,
             widget.args.description,
+            widget.args.id2,
           );
           break;
         case LoadingType.EDIT_EVENT:
@@ -108,6 +109,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
             widget.args.dateTime,
             widget.args.diff,
             widget.args.description,
+            widget.args.id2,
           );
           break;
         case LoadingType.DELETE_EVENT:

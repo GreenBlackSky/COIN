@@ -22,8 +22,8 @@ class DataStorage {
     this.accounts.clear();
     this.category = -1;
     this.categories.clear();
-    DateTime now = DateTime.now();
-    this.currentMonthStart = DateTime(now.year, now.month).toUtc();
+    DateTime now = DateTime.now().toUtc();
+    this.currentMonthStart = DateTime(now.year, now.month);
     this.currentMonthEnd = (now.month < 12)
         ? new DateTime(now.year, now.month + 1, 0)
         : new DateTime(now.year + 1, 1, 0);
