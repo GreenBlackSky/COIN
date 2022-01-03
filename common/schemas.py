@@ -48,7 +48,7 @@ class Category:
     account_id: int
     id: int
     name: str
-    color: int
+    color: str
 
 
 # @dataclass

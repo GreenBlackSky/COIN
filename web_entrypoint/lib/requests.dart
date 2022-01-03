@@ -68,25 +68,25 @@ Future<http.Response> requestCategories() async {
       jsonEncode(<String, dynamic>{'account_id': storage.account}));
 }
 
-Future<http.Response> requestCreateCategory(String name, int color) async {
+Future<http.Response> requestCreateCategory(String name, Color color) async {
   return session.post(
       'create_category',
       jsonEncode(<String, dynamic>{
         'account_id': storage.account,
         'name': name,
-        'color': color
+        'color': color.value.toRadixString(16)
       }));
 }
 
 Future<http.Response> requestEditCategory(
-    int categoryID, String name, int color) async {
+    int categoryID, String name, Color color) async {
   return session.post(
       'edit_category',
       jsonEncode(<String, dynamic>{
         'account_id': storage.account,
         'category_id': categoryID,
         'name': name,
-        'color': color
+        'color': color.value.toRadixString(16)
       }));
 }
 

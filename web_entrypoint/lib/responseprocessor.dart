@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'storage.dart';
@@ -57,11 +58,27 @@ void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
 
 void processCategories(http.Response response) {
   var responseBody = getResponseBody(response);
-  storage.category = responseBody['categories'][0]['id'];
+  // storage.category = responseBody['categories'][0]['id'];
+  storage.categories.clear();
   for (Map<String, dynamic> categoryJson in responseBody['categories']) {
+    categoryJson['color'] = Color(int.parse(categoryJson['color'], radix: 16));
     storage.categories.add(categoryJson);
   }
 }
+
+void processEditCategoryResponse(http.Response response) {
+  var responseBody = getResponseBody(response);
+  var newVal = responseBody['category'];
+  newVal['color'] = Color(int.parse(newVal['color'], radix: 16));
+
+  var oldVal = storage.categories.where((element) {
+    return element['id'] == responseBody['category']['id'];
+  }).first;
+  int index = storage.categories.indexOf(oldVal);
+  storage.categories[index] = newVal;
+}
+
+void processRemoveCategoryResponse(http.Response response) {}
 
 void processMonthStartBalanceResponse(http.Response response) {
   var responseBody = getResponseBody(response);

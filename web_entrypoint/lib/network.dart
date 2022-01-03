@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'requests.dart';
 import 'responseprocessor.dart';
 
@@ -37,7 +39,6 @@ Future<void> renameAccount(int id, String name) async {
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
   setActiveAccountAfterRename(responseBody);
-  // await syncData();
 }
 
 Future<void> deleteAccount(int id) async {
@@ -49,19 +50,17 @@ Future<void> deleteAccount(int id) async {
   await syncData();
 }
 
-Future<void> createCategory(String name, int color) async {
-  var response = await requestCreateCategory(name, color);
-  getResponseBody(response);
+Future<void> createCategory(String name, Color color) async {
+  await requestCreateCategory(name, color).then(processCategories);
 }
 
-Future<void> editCategory(int categoryID, String name, int color) async {
-  var response = await requestEditCategory(categoryID, name, color);
-  getResponseBody(response);
+Future<void> editCategory(int categoryID, String name, Color color) async {
+  await requestEditCategory(categoryID, name, color)
+      .then(processEditCategoryResponse);
 }
 
 Future<void> deleteCategory(int categoryID) async {
-  var response = await requestDeleteCategory(categoryID);
-  getResponseBody(response);
+  await requestDeleteCategory(categoryID).then(processRemoveCategoryResponse);
   syncData();
 }
 

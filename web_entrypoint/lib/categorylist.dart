@@ -22,7 +22,7 @@ class _CategoryListState extends State<CategoryList> {
         var category = storage.categories[index];
         return Container(
           height: 50,
-          color: Colors.lightBlue, // TODO category color
+          color: category['color'],
           child: Align(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

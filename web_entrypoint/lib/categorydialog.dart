@@ -4,16 +4,17 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'common.dart';
 
 void Function() _categoryDialog(
+    // TODO use category from storage
     BuildContext context,
     String title,
     String buttonText,
     LoadingType action,
     int categoryID,
     String name,
-    String color) {
+    Color color) {
   return () {
     var nameController = TextEditingController(text: name);
-    int chosenColor;
+    Color chosenColor = color;
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -23,9 +24,9 @@ void Function() _categoryDialog(
                   children: [
                     buildTextField(nameController, "Category name"),
                     BlockPicker(
-                        pickerColor: Colors.blue,
-                        onColorChanged: (Color color) {
-                          chosenColor = color.value;
+                        pickerColor: color,
+                        onColorChanged: (Color newColor) {
+                          chosenColor = newColor;
                         })
                   ]),
               actions: <Widget>[
@@ -46,7 +47,7 @@ void Function() _categoryDialog(
 
 void Function() addNewCategoryDialogMethod(BuildContext context) {
   return _categoryDialog(context, "Add new category", "Create",
-      LoadingType.CREATE_CATEGORY, -1, '', '');
+      LoadingType.CREATE_CATEGORY, -1, '', Colors.orange);
 }
 
 void Function() editCategoryDialogMethod(

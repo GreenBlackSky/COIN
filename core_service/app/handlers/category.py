@@ -37,7 +37,7 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
         )
         session.add(category)
         session.commit()
-        return {'status': 'OK', 'event': category_schema.dump(category)}
+        return {'status': 'OK', 'category': category_schema.dump(category)}
 
     def get_categories(self, user_id, account_id):
         """Get all categories user has."""
@@ -88,7 +88,7 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
         category.color = color
 
         session.commit()
-        return {'status': 'OK', 'event': category_schema.dump(category)}
+        return {'status': 'OK', 'category': category_schema.dump(category)}
 
     def delete_category(self, user_id, account_id, category_id):
         """Delete existing events category."""
@@ -109,7 +109,7 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
 
         session.delete(category)
         session.commit()
-        return {'status': 'OK', 'event': category_schema.dump(category)}
+        return {'status': 'OK', 'category': category_schema.dump(category)}
 
 
 CategoryHandler(celery_app)
