@@ -1,30 +1,25 @@
-import 'package:coin_client/common.dart';
-import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
-import 'eventdialog.dart';
+import 'common.dart';
+import 'storage.dart';
+import 'categorydialog.dart';
 import 'confirmationdialog.dart';
 
-class EventList extends StatefulWidget {
-  const EventList({Key key}) : super(key: key);
+class CategoryList extends StatefulWidget {
+  const CategoryList({Key key}) : super(key: key);
 
   @override
-  State<EventList> createState() => _EventListState();
+  State<CategoryList> createState() => _CategoryListState();
 }
 
-class _EventListState extends State<EventList> {
+class _CategoryListState extends State<CategoryList> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      //TODO show only comming events
       padding: const EdgeInsets.all(8),
-      itemCount: storage.events.length,
+      itemCount: storage.categories.length,
       itemBuilder: (BuildContext context, int index) {
-        var event = storage.events[index];
-        String date = timestampToString(event['event_time']);
-        var category = storage.categories.where((element) {
-          return element['id'] == event['category_id'];
-        }).first;
+        var category = storage.categories[index];
         return Container(
           height: 50,
           color: category['color'],
@@ -34,18 +29,15 @@ class _EventListState extends State<EventList> {
                   children: [
                     Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text(event['diff'].toString())),
-                    Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(event['description'])),
-                    Padding(padding: EdgeInsets.all(8.0), child: Text(date)),
+                        child: Text(category['name'].toString())),
                     Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Row(children: [
                           IconButton(
                               icon: Icon(Icons.edit),
                               color: Colors.black,
-                              onPressed: editEventDialogMethod(context, event)),
+                              onPressed:
+                                  editCategoryDialogMethod(context, category)),
                           IconButton(
                             icon: Icon(Icons.delete),
                             color: Colors.black,
@@ -56,8 +48,8 @@ class _EventListState extends State<EventList> {
                               () {
                                 Navigator.pushNamed(context, "/loading",
                                     arguments: LoadingArgs(
-                                        LoadingType.DELETE_EVENT,
-                                        id: event["id"]));
+                                        LoadingType.DELETE_CATEGORY,
+                                        id: category["id"]));
                               },
                             ),
                           )

@@ -25,11 +25,12 @@ eventService = EventCaller(celery_app)
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def create_event(account_id, event_time, diff, description):
+def create_event(account_id, category_id, event_time, diff, description):
     """Request to create new event."""
     return eventService.create_event(
         current_user.id,
         account_id,
+        category_id,
         event_time,
         diff,
         description
@@ -44,15 +45,13 @@ def get_events(
     account_id,
     start_time=None,
     end_time=None,
-    label=None,
 ):
     """Get all events user has."""
     return eventService.get_events(
         current_user.id,
         account_id,
         start_time,
-        end_time,
-        label
+        end_time
     )
 
 
@@ -60,11 +59,20 @@ def get_events(
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def edit_event(event_id, event_time, diff, description):
+def edit_event(
+    account_id,
+    event_id,
+    category_id,
+    event_time,
+    diff,
+    description
+):
     """Request to edit event."""
     return eventService.edit_event(
         current_user.id,
+        account_id,
         event_id,
+        category_id,
         event_time,
         diff,
         description
@@ -75,9 +83,9 @@ def edit_event(event_id, event_time, diff, description):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def delete_event(event_id):
+def delete_event(account_id, event_id):
     """Delete existing event."""
-    return eventService.delete_event(current_user.id, event_id)
+    return eventService.delete_event(current_user.id, account_id, event_id)
 
 
 @bp.post("/get_balance")
@@ -86,4 +94,30 @@ def delete_event(event_id):
 @parse_request_args(request)
 def get_balance(account_id, timestamp):
     """Get balance on certain account at certain time."""
-    return eventService.get_balance(current_user.id, account_id, timestamp)
+    return eventService.get_balance(
+        current_user.id,
+        account_id,
+        timestamp
+    )
+
+
+@bp.post("/get_totals_by_category")
+@jwt_required()
+@log_request(request, current_user)
+@parse_request_args(request)
+def get_totals_by_category(
+    self,
+    account_id,
+    category_id,
+    start_time,
+    end_time
+):
+    """Get totals on certain account by categories at certain time."""
+    return eventService.get_totals_by_category(
+        self,
+        current_user.id,
+        account_id,
+        category_id,
+        start_time,
+        end_time
+    )

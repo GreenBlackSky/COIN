@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:coin_client/storage.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
@@ -61,56 +63,83 @@ Future<http.Response> requestDeleteAccount(int accountID) async {
       }));
 }
 
+Future<http.Response> requestCategories() async {
+  return session.post('get_categories',
+      jsonEncode(<String, dynamic>{'account_id': storage.account}));
+}
+
+Future<http.Response> requestCreateCategory(String name, Color color) async {
+  return session.post(
+      'create_category',
+      jsonEncode(<String, dynamic>{
+        'account_id': storage.account,
+        'name': name,
+        'color': color.value.toRadixString(16)
+      }));
+}
+
+Future<http.Response> requestEditCategory(
+    int categoryID, String name, Color color) async {
+  return session.post(
+      'edit_category',
+      jsonEncode(<String, dynamic>{
+        'account_id': storage.account,
+        'category_id': categoryID,
+        'name': name,
+        'color': color.value.toRadixString(16)
+      }));
+}
+
+Future<http.Response> requestDeleteCategory(int categoryID) async {
+  return session.post(
+      'delete_categorys',
+      jsonEncode(<String, dynamic>{
+        'account_id': storage.account,
+        'category_id': categoryID
+      }));
+}
+
 Future<http.Response> requestBalance(int accountID, DateTime dateTime) async {
   return session.post(
       'get_balance',
       jsonEncode(<String, dynamic>{
         'account_id': accountID,
-        'timestamp': timestampFromDateTime(dateTime)
+        'timestamp': timestampFromDateTime(dateTime),
       }));
 }
 
 Future<http.Response> requestEvents(
-    int accountID, DateTime startTime, DateTime endTime,
-    {int label = -1}) async {
+    int accountID, DateTime startTime, DateTime endTime) async {
   var body = <String, int>{
     'account_id': accountID,
     'start_time': timestampFromDateTime(startTime),
-    'end_time': timestampFromDateTime(endTime)
+    'end_time': timestampFromDateTime(endTime),
   };
-  if (label != -1) {
-    body['label'] = label;
-  }
   return session.post('get_events', jsonEncode(body));
 }
 
-Future<http.Response> requestCreateEvent(
-    int accountID, DateTime eventTime, int diff, String description,
-    {int label = -1}) async {
+Future<http.Response> requestCreateEvent(int accountID, DateTime eventTime,
+    int diff, String description, int categoryID) async {
   var body = <String, dynamic>{
     'account_id': accountID,
+    'category_id': categoryID,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
   };
-  if (label != -1) {
-    body['label'] = label;
-  }
   return session.post('create_event', jsonEncode(body));
 }
 
-Future<http.Response> requestEditEvent(
-    int eventID, DateTime eventTime, int diff, String description,
-    {int label = -1}) async {
+Future<http.Response> requestEditEvent(int eventID, int accountID,
+    DateTime eventTime, int diff, String description, int categoryID) async {
   var body = <String, dynamic>{
     'event_id': eventID,
+    'account_id': accountID,
+    'category_id': categoryID,
     'event_time': timestampFromDateTime(eventTime),
     'diff': diff,
     'description': description
   };
-  if (label != -1) {
-    body['label'] = label;
-  }
   return session.post('edit_event', jsonEncode(body));
 }
 

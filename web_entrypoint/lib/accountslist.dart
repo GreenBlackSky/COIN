@@ -22,7 +22,7 @@ class _AccountListState extends State<AccountList> {
         setState(() {
           storage.account = accountID;
           Navigator.pushNamed(context, "/loading",
-              arguments: LoadingArgs(LoadingType.GET_EVENTS));
+              arguments: LoadingArgs(LoadingType.SYNC_DATA));
         });
       }
     };

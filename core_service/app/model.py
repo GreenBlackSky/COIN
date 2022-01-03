@@ -22,6 +22,6 @@ Base.prepare(engine, reflect=True)
 AccountModel = Base.classes.accounts
 SavePointModel = Base.classes.save_points
 EventModel = Base.classes.events
-# LabelModel = Base.classes.labels
+CategoryModel = Base.classes.categories
 
 session = Session(engine)

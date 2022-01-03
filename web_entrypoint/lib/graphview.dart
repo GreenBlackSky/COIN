@@ -39,9 +39,10 @@ class _GraphViewState extends State<GraphView> {
       chartData
           .add(ChartData(x: dateFromTimestamp(dayStartTimestamp), y: balance));
     }
-    //TODO trackball
-    //TODO link to event on trackball
-    //TODO scale
+    // TODO trackball
+    // TODO link to event on trackball
+    // TODO scale
+    // TODO total
     return SfCartesianChart(
         primaryXAxis: DateTimeAxis(
             intervalType: DateTimeIntervalType.days,

@@ -1,10 +1,12 @@
-"""Accounts stuff tests."""
+"""Events stuff tests."""
 
 from datetime import datetime, timedelta
 
 from tests.test_base import BaseTest
 
 
+# TODO parametrize
+# TODO fix categories
 class EventTest(BaseTest):
     """Accounts stuff tests."""
 
@@ -142,7 +144,7 @@ class EventTest(BaseTest):
     #     self._confirm_event(created_event['id'], False)
     #     confirmed_event = self._get_first_event(account['id'])
     #     self.assertFalse(confirmed_event['confirmed'])
-    
+
     # def _confirm_event(self, event_id, confirm):
     #     response = self.session.post(
     #         url=self.HOST+"confirm_event",
@@ -162,6 +164,7 @@ class EventTest(BaseTest):
         response = self.session.post(
             url=self.HOST+"edit_event",
             json={
+                'account_id': account['id'],
                 'event_id': created_event['id'],
                 'event_time': edited_time,
                 'diff': 20,
@@ -276,6 +279,7 @@ class EventTest(BaseTest):
         response = self.session.post(
             url=self.HOST+"edit_event",
             json={
+                'account_id': account['id'],
                 'event_id': created_event['id'],
                 'event_time': now.timestamp(),
                 'diff': eidted_total,

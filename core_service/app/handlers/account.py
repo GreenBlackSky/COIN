@@ -3,11 +3,11 @@
 from celery_abc import WorkerMetaBase
 
 from common.celery_utils import celery_app
-from common.constants import MAX_ACCOUNTS
+from common.constants import MAX_ACCOUNTS, STARTING_CATEGORIES
 from common.interfaces import AccountService
 from common.schemas import AccountSchema
 
-from ..model import SavePointModel, session, AccountModel
+from ..model import CategoryModel, SavePointModel, session, AccountModel
 
 
 account_schema = AccountSchema()
@@ -36,6 +36,14 @@ class AccountHandler(AccountService, metaclass=WorkerMetaBase):
         )
         session.add(account)
         session.commit()
+
+        categories = [
+            CategoryModel(user_id=user_id, account_id=account.id, **category)
+            for category in STARTING_CATEGORIES
+        ]
+        session.add_all(categories)
+        session.commit()
+
         return {'status': 'OK', 'account': account_schema.dump(account)}
 
     def get_accounts(self, user_id):
@@ -98,6 +106,18 @@ class AccountHandler(AccountService, metaclass=WorkerMetaBase):
         """Clear all accounts from db."""
         account_count = session.query(AccountModel).delete()
         return account_count
+
+    def check_account_user(self, account_id, user_id):
+        """Check if account belongs to user."""
+        accounts_response = AccountHandler.get_accounts(user_id)
+        if accounts_response['status'] != 'OK':
+            return accounts_response
+        if not any(
+            user_acc['id'] == account_id
+            for user_acc in accounts_response['accounts']
+        ):
+            return {'status': 'no such account'}
+        return {'status': 'OK'}
 
 
 AccountHandler(celery_app)
