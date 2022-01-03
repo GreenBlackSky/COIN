@@ -114,7 +114,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
           );
           break;
         case LoadingType.DELETE_EVENT:
-          await deleteEvent(widget.args.id);
+          await deleteEvent(widget.args.id, widget.args.id2);
           break;
       }
     } catch (e) {

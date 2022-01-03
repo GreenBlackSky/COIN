@@ -1,9 +1,9 @@
-import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
 import '../common_widgets/common.dart';
 import '../common_widgets/datefield.dart';
 import '../common_widgets/text_fields.dart';
+import '../../storage.dart';
 
 class CategoryComboBox extends StatefulWidget {
   CategoryComboBox(this.selectedCategoryId);
@@ -40,7 +40,7 @@ class _CategoryComboBox extends State<CategoryComboBox> {
   }
 }
 
-void Function() _eventDialog(
+void Function() baseEventDialog(
     BuildContext context,
     String title,
     String buttonText,
@@ -86,33 +86,4 @@ void Function() _eventDialog(
               ],
             ));
   };
-}
-
-void Function() addNewEventDialogMethod(BuildContext context) {
-  return _eventDialog(
-      context,
-      "Add new event",
-      "Create",
-      LoadingType.CREATE_EVENT,
-      -1,
-      0,
-      DateTime.now(),
-      storage.account,
-      "",
-      storage.categories[0]['id']);
-}
-
-void Function() editEventDialogMethod(
-    BuildContext context, Map<String, dynamic> event) {
-  return _eventDialog(
-      context,
-      "Edit event",
-      "Edit",
-      LoadingType.EDIT_EVENT,
-      event['id'],
-      event["diff"],
-      dateFromTimestamp(event["event_time"]),
-      event['account_id'],
-      event["description"],
-      event['category_id']);
 }

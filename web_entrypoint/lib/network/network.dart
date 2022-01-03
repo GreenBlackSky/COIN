@@ -88,8 +88,8 @@ Future<void> editEvent(int id, DateTime dateTime, int diff, String description,
   await syncData();
 }
 
-Future<void> deleteEvent(int id) async {
-  var response = await requestDeleteEvent(id);
+Future<void> deleteEvent(int id, int accountID) async {
+  var response = await requestDeleteEvent(id, accountID);
   getResponseBody(response);
   await syncData();
 }

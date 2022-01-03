@@ -6,7 +6,6 @@ import 'accountslist.dart';
 import 'categorylist.dart';
 import 'widgets/burgermenu.dart';
 import 'eventslist.dart';
-import 'widgets/eventdialog.dart';
 import 'graphview.dart';
 
 class MainScreen extends StatelessWidget {
@@ -41,7 +40,7 @@ class _MainState extends State<MainWidget> {
     Center(child: GraphView()),
     Center(child: Text("pie chart")), //TODO pie chart
     Center(child: CategoryList()),
-    Center(child: EventList()),
+    Center(child: EventsList()),
     Center(child: Text("month view")), //TODO month view
     Center(child: Text("templates list")), //TODO templates list
   ];

@@ -1,72 +1,73 @@
-import 'package:coin_client/ui/common_widgets/common.dart';
-import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
-import 'widgets/eventdialog.dart';
+import 'widgets/event_dialog.dart';
 import 'common_widgets/confirmation_dialog.dart';
+import 'common_widgets/elements_list.dart';
+import '../storage.dart';
+import 'common_widgets/common.dart';
 
-class EventList extends StatefulWidget {
-  const EventList({Key key}) : super(key: key);
-
-  @override
-  State<EventList> createState() => _EventListState();
+void Function() addNewEventDialogMethod(BuildContext context) {
+  return baseEventDialog(
+      context,
+      "Add new event",
+      "Create",
+      LoadingType.CREATE_EVENT,
+      -1,
+      0,
+      DateTime.now(),
+      storage.account,
+      "",
+      storage.categories[0]['id']);
 }
 
-class _EventListState extends State<EventList> {
+void Function() editEventDialogMethod(
+    BuildContext context, Map<String, dynamic> event) {
+  return baseEventDialog(
+      context,
+      "Edit event",
+      "Edit",
+      LoadingType.EDIT_EVENT,
+      event['id'],
+      event["diff"],
+      dateFromTimestamp(event["event_time"]),
+      event['account_id'],
+      event["description"],
+      event['category_id']);
+}
+
+Function deleteEventDialogMethod(
+    BuildContext context, Map<String, dynamic> event) {
+  return confirmDialogMethod(
+    context,
+    "Are you sure you want to delete event?",
+    "Delete event",
+    () {
+      Navigator.pushNamed(context, "/loading",
+          arguments: LoadingArgs(LoadingType.DELETE_EVENT,
+              id: event["id"], id2: event['account_id']));
+    },
+  );
+}
+
+class EventsList extends ElementsList {
+  final elements = storage.events;
+
   @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      //TODO show only comming events
-      padding: const EdgeInsets.all(8),
-      itemCount: storage.events.length,
-      itemBuilder: (BuildContext context, int index) {
-        var event = storage.events[index];
-        String date = timestampToString(event['event_time']);
-        var category = storage.categories.where((element) {
-          return element['id'] == event['category_id'];
-        }).first;
-        return Container(
-          height: 50,
-          color: category['color'],
-          child: Align(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(event['diff'].toString())),
-                    Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(event['description'])),
-                    Padding(padding: EdgeInsets.all(8.0), child: Text(date)),
-                    Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Row(children: [
-                          IconButton(
-                              icon: Icon(Icons.edit),
-                              color: Colors.black,
-                              onPressed: editEventDialogMethod(context, event)),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            color: Colors.black,
-                            onPressed: confirmDialogMethod(
-                              context,
-                              "Are you sure you want to delete event?",
-                              "Delete event",
-                              () {
-                                Navigator.pushNamed(context, "/loading",
-                                    arguments: LoadingArgs(
-                                        LoadingType.DELETE_EVENT,
-                                        id: event["id"]));
-                              },
-                            ),
-                          )
-                        ])),
-                  ]),
-              alignment: Alignment.centerRight),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-    );
+  Widget buildListElement(BuildContext context, var event) {
+    String date = timestampToString(event['event_time']);
+    String diff = event['diff'].toString();
+    Widget description =
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Padding(padding: EdgeInsets.all(8.0), child: Text(date)),
+      Padding(padding: EdgeInsets.all(8.0), child: Text(diff)),
+      Padding(padding: EdgeInsets.all(8.0), child: Text(event['description'])),
+    ]);
+    Function onEdit = editEventDialogMethod(context, event);
+    Function onRemove = deleteEventDialogMethod(context, event);
+    var category = storage.categories.where((element) {
+      return element['id'] == event['category_id'];
+    }).first;
+    Color color = category['color'];
+    return buildListElementBase(description, onEdit, onRemove, color: color);
   }
 }

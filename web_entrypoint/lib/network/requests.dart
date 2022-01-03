@@ -143,10 +143,9 @@ Future<http.Response> requestEditEvent(int eventID, int accountID,
   return session.post('edit_event', jsonEncode(body));
 }
 
-Future<http.Response> requestDeleteEvent(int eventID) async {
+Future<http.Response> requestDeleteEvent(int eventID, int accountID) async {
   return session.post(
       'delete_event',
-      jsonEncode(<String, dynamic>{
-        'event_id': eventID,
-      }));
+      jsonEncode(
+          <String, dynamic>{'event_id': eventID, 'account_id': accountID}));
 }
