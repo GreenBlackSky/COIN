@@ -1,14 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-import 'common.dart';
-import 'session.dart';
-import 'storage.dart';
+import 'common_widgets/common.dart';
+import '../network/session.dart';
+import '../storage.dart';
+import 'common_widgets/text_fields.dart';
 
 //TODO switch themes
-//TODO choose widgets
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

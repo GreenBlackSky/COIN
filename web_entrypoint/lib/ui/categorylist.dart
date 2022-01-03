@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import 'common.dart';
+import '../storage.dart';
+import 'common_widgets/confirmation_dialog.dart';
+import 'common_widgets/elements_list.dart';
+import 'common_widgets/list_element.dart';
+import 'common_widgets/common.dart';
+import 'common_widgets/text_fields.dart';
 
 void Function() _categoryDialog(
-    // TODO use category from storage
     BuildContext context,
     String title,
     String buttonText,
@@ -60,4 +64,25 @@ void Function() editCategoryDialogMethod(
       category['id'],
       category['name'],
       category['color']);
+}
+
+class CategoryList extends ElementsList {
+  final elements = storage.categories;
+
+  @override
+  Widget buildListElement(BuildContext context, var category) {
+    Function onEdit = editCategoryDialogMethod(context, category);
+    Function onRemove = confirmDialogMethod(
+      context,
+      "Are you sure you want to delete event?",
+      "Delete event",
+      () {
+        Navigator.pushNamed(context, "/loading",
+            arguments:
+                LoadingArgs(LoadingType.DELETE_CATEGORY, id: category["id"]));
+      },
+    );
+    return buildListElementBase(category['name'], onEdit, onRemove,
+        color: category['color']);
+  }
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'common.dart';
+import 'common_widgets/common.dart';
 import 'accountslist.dart';
 import 'categorylist.dart';
-import 'burgermenu.dart';
+import 'widgets/burgermenu.dart';
 import 'eventslist.dart';
-import 'eventdialog.dart';
+import 'widgets/eventdialog.dart';
 import 'graphview.dart';
 
 class MainScreen extends StatelessWidget {

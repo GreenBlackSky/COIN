@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
-import 'common.dart';
+import '../ui/common_widgets/common.dart';
 
 Future<http.Response> requestRegistration(String name, String password) async {
   return session.post(

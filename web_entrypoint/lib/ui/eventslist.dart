@@ -1,9 +1,9 @@
-import 'package:coin_client/common.dart';
+import 'package:coin_client/ui/common_widgets/common.dart';
 import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
-import 'eventdialog.dart';
-import 'confirmationdialog.dart';
+import 'widgets/eventdialog.dart';
+import 'common_widgets/confirmation_dialog.dart';
 
 class EventList extends StatefulWidget {
   const EventList({Key key}) : super(key: key);

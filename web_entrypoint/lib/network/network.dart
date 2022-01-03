@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'requests.dart';
-import 'responseprocessor.dart';
+import 'response_processor.dart';
 
-import 'storage.dart';
+import '../storage.dart';
 
 Future<void> loadDataFromServerOnRegister(String name, String password) async {
   await requestRegistration(name, password).then(processAuthorizationResponse);

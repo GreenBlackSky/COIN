@@ -1,7 +1,7 @@
 import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
-import 'session.dart';
+import '../../network/session.dart';
 
 Widget buildBurgerMenu(BuildContext context) {
   return PopupMenuButton<String>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'common.dart';
+import 'common_widgets/common.dart';
+import 'common_widgets/text_fields.dart';
 
 class LogInScreen extends StatelessWidget {
   @override
