@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'widgets/event_dialog.dart';
-import 'common_widgets/confirmation_dialog.dart';
-import 'common_widgets/elements_list.dart';
-import '../storage.dart';
-import 'common_widgets/common.dart';
+import 'dialogues/event_dialog.dart';
+import 'common/confirmation_dialog.dart';
+import 'common/elements_list.dart';
+import 'common/common.dart';
+import '../../storage.dart';
 
 void Function() addNewEventDialogMethod(BuildContext context) {
   return baseEventDialog(

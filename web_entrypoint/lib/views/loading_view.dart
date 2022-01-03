@@ -1,8 +1,8 @@
-import 'package:coin_client/ui/widgets/loadinganimation.dart';
+import 'widgets/loading_animation.dart';
 
 import 'package:flutter/material.dart';
 
-import 'common_widgets/common.dart';
+import 'widgets/common/common.dart';
 import '../network/network.dart';
 
 class LoadingScreen extends StatelessWidget {

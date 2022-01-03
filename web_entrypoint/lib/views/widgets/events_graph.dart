@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import 'common_widgets/common.dart';
-import '../storage.dart';
+import 'common/common.dart';
+import '../../storage.dart';
 
 class ChartData {
   ChartData({this.x, this.y});
@@ -11,14 +11,14 @@ class ChartData {
   final int y;
 }
 
-class GraphView extends StatefulWidget {
-  const GraphView({Key key}) : super(key: key);
+class EventsGraph extends StatefulWidget {
+  const EventsGraph({Key key}) : super(key: key);
 
   @override
-  State<GraphView> createState() => _GraphViewState();
+  State<EventsGraph> createState() => _EventsGraphState();
 }
 
-class _GraphViewState extends State<GraphView> {
+class _EventsGraphState extends State<EventsGraph> {
   @override
   Widget build(BuildContext context) {
     int balance = storage.monthStartBalance;

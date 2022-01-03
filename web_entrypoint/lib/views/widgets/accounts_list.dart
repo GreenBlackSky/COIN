@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../storage.dart';
-import 'common_widgets/common.dart';
-import 'common_widgets/confirmation_dialog.dart';
-import 'widgets/accountsdialog.dart';
+import 'common/common.dart';
+import 'common/confirmation_dialog.dart';
+import 'dialogues/accounts_dialog.dart';
+import '../../storage.dart';
 
 class AccountList extends StatefulWidget {
   const AccountList({Key key}) : super(key: key);

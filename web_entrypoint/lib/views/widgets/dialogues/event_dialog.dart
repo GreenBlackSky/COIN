@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../common_widgets/common.dart';
-import '../common_widgets/datefield.dart';
-import '../common_widgets/text_fields.dart';
-import '../../storage.dart';
+import '../common/common.dart';
+import '../common/datefield.dart';
+import '../common/text_fields.dart';
+import '../../../storage.dart';
 
 class CategoryComboBox extends StatefulWidget {
   CategoryComboBox(this.selectedCategoryId);

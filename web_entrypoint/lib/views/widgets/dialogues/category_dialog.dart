@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import '../common_widgets/common.dart';
-import '../common_widgets/text_fields.dart';
+import '../common/common.dart';
+import '../common/text_fields.dart';
 
 void Function() baseCategoryDialog(
     BuildContext context,

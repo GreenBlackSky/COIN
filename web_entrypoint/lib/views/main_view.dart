@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'common_widgets/common.dart';
-import 'accountslist.dart';
-import 'categorylist.dart';
-import 'widgets/burgermenu.dart';
-import 'eventslist.dart';
-import 'graphview.dart';
+import 'widgets/common/common.dart';
+import 'widgets/accounts_list.dart';
+import 'widgets/category_list.dart';
+import 'widgets/burger_menu.dart';
+import 'widgets/events_list.dart';
+import 'widgets/events_graph.dart';
 
 class MainScreen extends StatelessWidget {
   final MainWidget _mainWdget = new MainWidget();
@@ -37,7 +37,7 @@ class _MainState extends State<MainWidget> {
   // TODO total, income and expence
   // TODO current balance
   List<Widget> cardList = [
-    Center(child: GraphView()),
+    Center(child: EventsGraph()),
     Center(child: Text("pie chart")), //TODO pie chart
     Center(child: CategoryList()),
     Center(child: EventsList()),

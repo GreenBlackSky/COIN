@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'ui/settingsscreen.dart';
-import 'ui/login.dart';
-import 'ui/signup.dart';
-import 'ui/mainscreen.dart';
-import 'ui/loadingscreen.dart';
+import 'views/widgets/settings_screen.dart';
+import 'views/login_view.dart';
+import 'views/signup_view.dart';
+import 'views/main_view.dart';
+import 'views/loading_view.dart';
 
 void main() => runApp(App());
 

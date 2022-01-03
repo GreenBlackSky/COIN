@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../storage.dart';
-import '../common_widgets/common.dart';
-import '../common_widgets/text_fields.dart';
+import '../common/common.dart';
+import '../common/text_fields.dart';
+import '../../../storage.dart';
 
 Future<String> _accountDialog(BuildContext context, String title, String hint,
     String buttonText, LoadingType action,
