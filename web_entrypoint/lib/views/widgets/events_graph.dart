@@ -11,14 +11,14 @@ class ChartData {
   final int y;
 }
 
-class EventsGraph extends StatefulWidget {
-  const EventsGraph({Key key}) : super(key: key);
+class EventGraph extends StatefulWidget {
+  const EventGraph({Key key}) : super(key: key);
 
   @override
-  State<EventsGraph> createState() => _EventsGraphState();
+  State<EventGraph> createState() => _EventsGraphState();
 }
 
-class _EventsGraphState extends State<EventsGraph> {
+class _EventsGraphState extends State<EventGraph> {
   @override
   Widget build(BuildContext context) {
     int balance = storage.monthStartBalance;

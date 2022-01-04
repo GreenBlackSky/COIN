@@ -1,3 +1,4 @@
+import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 
 import 'widgets/common/common.dart';
@@ -16,7 +17,7 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AccountList(),
+        title: Text(storage.accounts[storage.accountIndex]['name']),
       ),
       body: buildForm(_mainWdget),
       drawer: buildDrawer(
@@ -39,26 +40,26 @@ class MainWidget extends StatefulWidget {
   // TODO total, income and expence
   // TODO current balance
   final List<Widget> cardList = [
-    EventsGraph(),
+    EventGraph(),
     Text("month view"), //TODO month view
     EventsList(),
     Text("pie chart"), //TODO pie chart
     CategoryList(),
     Text("templates list"), //TODO templates list
-    Text("accounts"), //TODO accounts
+    AccountList(),
     Text("settings"), //TODO settings
     Text("logout"), //TODO logout
   ];
   final List<String> cardNames = [
-    "EventsGraph",
-    "month view",
-    'EventsList',
-    "pie chart",
-    'CategoryList',
-    "templates list",
-    "accounts",
-    "settings",
-    "logout",
+    "Graph view",
+    "mMonth view",
+    'List view',
+    "Pie chart view",
+    'Categories',
+    "Templates",
+    "Accounts",
+    "Settings",
+    "Logout",
   ];
 
   @override

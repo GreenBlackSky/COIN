@@ -35,7 +35,7 @@ void Function() editEventDialogMethod(
       event['category_id']);
 }
 
-Function deleteEventDialogMethod(
+void Function() deleteEventDialogMethod(
     BuildContext context, Map<String, dynamic> event) {
   return confirmDialogMethod(
     context,
