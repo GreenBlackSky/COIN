@@ -24,41 +24,27 @@ void processAuthorizationResponse(http.Response response) {
 
 void processAccountsResponse(http.Response response) {
   var responseBody = getResponseBody(response);
-  storage.account = responseBody['accounts'][0]['id'];
+  if (storage.accountIndex == -1) {
+    storage.accountIndex = 0;
+  }
   storage.accounts.clear();
   for (Map<String, dynamic> accountJson in responseBody['accounts']) {
-    storage.accounts[accountJson['id']] = accountJson['name'];
+    storage.accounts.add(accountJson);
   }
 }
 
 void setActiveAccountAfterCreate(Map<String, dynamic> responseBody) {
-  int accountID = responseBody['account']['id'];
-  String accountName = responseBody['account']['name'];
-  storage.accounts[accountID] = accountName;
-  storage.account = accountID;
-}
-
-void setActiveAccountAfterRename(Map<String, dynamic> responseBody) {
-  int accountID = responseBody['account']['id'];
-  storage.account = accountID;
+  storage.accountIndex = storage.accounts.length - 1;
 }
 
 void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
-  int accountID = responseBody['account']['id'];
-  if (storage.account == accountID) {
-    var accounts = List.from(storage.accounts.keys);
-    var index = accounts.indexOf(accountID);
-    if (index == 0) {
-      storage.account = accounts[index + 1];
-    } else {
-      storage.account = accounts[index - 1];
-    }
+  if (storage.accounts.length >= storage.accountIndex) {
+    storage.accountIndex = storage.accounts.length - 1;
   }
 }
 
 void processCategories(http.Response response) {
   var responseBody = getResponseBody(response);
-  // storage.category = responseBody['categories'][0]['id'];
   storage.categories.clear();
   for (Map<String, dynamic> categoryJson in responseBody['categories']) {
     categoryJson['color'] = Color(int.parse(categoryJson['color'], radix: 16));

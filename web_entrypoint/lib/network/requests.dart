@@ -63,38 +63,40 @@ Future<http.Response> requestDeleteAccount(int accountID) async {
       }));
 }
 
-Future<http.Response> requestCategories() async {
-  return session.post('get_categories',
-      jsonEncode(<String, dynamic>{'account_id': storage.account}));
+Future<http.Response> requestCategories(int accountID) async {
+  return session.post(
+      'get_categories', jsonEncode(<String, dynamic>{'account_id': accountID}));
 }
 
-Future<http.Response> requestCreateCategory(String name, Color color) async {
+Future<http.Response> requestCreateCategory(
+    String name, Color color, int accountID) async {
   return session.post(
       'create_category',
       jsonEncode(<String, dynamic>{
-        'account_id': storage.account,
+        'account_id': accountID,
         'name': name,
         'color': color.value.toRadixString(16)
       }));
 }
 
 Future<http.Response> requestEditCategory(
-    int categoryID, String name, Color color) async {
+    int categoryID, String name, Color color, int accountID) async {
   return session.post(
       'edit_category',
       jsonEncode(<String, dynamic>{
-        'account_id': storage.account,
+        'account_id': accountID,
         'category_id': categoryID,
         'name': name,
         'color': color.value.toRadixString(16)
       }));
 }
 
-Future<http.Response> requestDeleteCategory(int categoryID) async {
+Future<http.Response> requestDeleteCategory(
+    int categoryID, int accountID) async {
   return session.post(
       'delete_categorys',
       jsonEncode(<String, dynamic>{
-        'account_id': storage.account,
+        'account_id': accountID,
         'category_id': categoryID
       }));
 }

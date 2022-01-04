@@ -15,12 +15,12 @@ class AccountList extends StatefulWidget {
 class _AccountListState extends State<AccountList> {
 //TODO remove Add account button when limit is reached
   Null Function(int) changeAccountMethod(BuildContext context) {
-    return (int accountID) {
-      if (accountID == -1) {
+    return (int accountIndex) {
+      if (accountIndex == -1) {
         showCreateAccountDialog(context);
       } else {
         setState(() {
-          storage.account = accountID;
+          storage.accountIndex = accountIndex;
           Navigator.pushNamed(context, "/loading",
               arguments: LoadingArgs(LoadingType.SYNC_DATA));
         });
@@ -30,24 +30,27 @@ class _AccountListState extends State<AccountList> {
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<int>> items = [];
+    for (int i = 0; i < storage.accounts.length; i++) {
+      var account = storage.accounts[i];
+      items.add(buildAccountButton(i, account));
+    }
+    items.add(
+        DropdownMenuItem<int>(child: Text("+ Add new account"), value: -1));
     return DropdownButton<int>(
-      value: storage.account,
-      items: [
-            for (MapEntry e in storage.accounts.entries)
-              buildAccountButton(e.key, e.value)
-          ] +
-          [DropdownMenuItem<int>(child: Text("+ Add new account"), value: -1)],
+      value: storage.accountIndex,
+      items: items,
       onChanged: changeAccountMethod(context),
     );
   }
 
-  DropdownMenuItem<int> buildAccountButton(int accountID, String accountName) {
+  DropdownMenuItem<int> buildAccountButton(int index, var account) {
     var buttons = [
       IconButton(
           icon: Icon(Icons.edit),
           color: Colors.black,
           onPressed: () {
-            return showRenameAccountDialog(context, accountID);
+            return showRenameAccountDialog(context, account);
           }),
     ];
     if (storage.accounts.length != 1) {
@@ -58,14 +61,14 @@ class _AccountListState extends State<AccountList> {
             "Are you sure you want to delete account?", "Delete account", () {
           Navigator.pushNamed(context, "/loading",
               arguments:
-                  LoadingArgs(LoadingType.DELETE_ACCOUNT, id: accountID));
+                  LoadingArgs(LoadingType.DELETE_ACCOUNT, id: account['id']));
         }),
       ));
     }
     return DropdownMenuItem<int>(
-        value: accountID,
+        value: index,
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(accountName), Row(children: buttons)]));
+            children: [Text(account['name']), Row(children: buttons)]));
   }
 }

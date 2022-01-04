@@ -8,14 +8,16 @@ import '../storage.dart';
 Future<void> loadDataFromServerOnRegister(String name, String password) async {
   await requestRegistration(name, password).then(processAuthorizationResponse);
   await requestAccounts().then(processAccountsResponse);
-  await requestCategories().then(processCategories);
+  await requestCategories(storage.accounts[storage.accountIndex]['id'])
+      .then(processCategories);
   await syncData();
 }
 
 Future<void> loadDataFromServerOnLogin(String name, String password) async {
   await requestLogin(name, password).then(processAuthorizationResponse);
   await requestAccounts().then(processAccountsResponse);
-  await requestCategories().then(processCategories);
+  await requestCategories(storage.accounts[storage.accountIndex]['id'])
+      .then(processCategories);
   await syncData();
 }
 
@@ -29,46 +31,53 @@ Future<void> createAccount(String name) async {
   );
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
-  await requestCategories().then(processCategories);
+  await requestCategories(storage.accounts[storage.accountIndex]['id'])
+      .then(processCategories);
   setActiveAccountAfterCreate(responseBody);
   await syncData();
 }
 
 Future<void> renameAccount(int id, String name) async {
   var response = await requestRenameAccount(id, name);
-  var responseBody = getResponseBody(response);
+  getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
-  setActiveAccountAfterRename(responseBody);
 }
 
 Future<void> deleteAccount(int id) async {
   var response = await requestDeleteAccount(id);
   var responseBody = getResponseBody(response);
   await requestAccounts().then(processAccountsResponse);
-  await requestCategories().then(processCategories);
   setActiveAccountAfterDelete(responseBody);
+  await requestCategories(storage.accounts[storage.accountIndex]['id'])
+      .then(processCategories);
   await syncData();
 }
 
 Future<void> createCategory(String name, Color color) async {
-  await requestCreateCategory(name, color).then(processCategories);
+  await requestCreateCategory(
+          name, color, storage.accounts[storage.accountIndex]['id'])
+      .then(processCategories);
 }
 
 Future<void> editCategory(int categoryID, String name, Color color) async {
-  await requestEditCategory(categoryID, name, color)
+  await requestEditCategory(
+          categoryID, name, color, storage.accounts[storage.accountIndex]['id'])
       .then(processEditCategoryResponse);
 }
 
 Future<void> deleteCategory(int categoryID) async {
-  await requestDeleteCategory(categoryID).then(processRemoveCategoryResponse);
+  await requestDeleteCategory(
+          categoryID, storage.accounts[storage.accountIndex]['id'])
+      .then(processRemoveCategoryResponse);
   syncData();
 }
 
 Future<void> syncData() async {
-  await requestEvents(
-          storage.account, storage.currentMonthStart, storage.currentMonthEnd)
+  await requestEvents(storage.accounts[storage.accountIndex]['id'],
+          storage.currentMonthStart, storage.currentMonthEnd)
       .then(processEventsResponse);
-  await requestBalance(storage.account, storage.currentMonthStart)
+  await requestBalance(storage.accounts[storage.accountIndex]['id'],
+          storage.currentMonthStart)
       .then(processMonthStartBalanceResponse);
 }
 

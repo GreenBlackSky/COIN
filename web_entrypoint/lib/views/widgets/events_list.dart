@@ -15,7 +15,7 @@ void Function() addNewEventDialogMethod(BuildContext context) {
       -1,
       0,
       DateTime.now(),
-      storage.account,
+      storage.accountIndex,
       "",
       storage.categories[0]['id']);
 }

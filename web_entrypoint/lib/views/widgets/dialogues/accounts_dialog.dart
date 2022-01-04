@@ -42,8 +42,8 @@ Future<String> showCreateAccountDialog(BuildContext context) {
   );
 }
 
-Future<String> showRenameAccountDialog(BuildContext context, int accountID) {
+Future<String> showRenameAccountDialog(BuildContext context, var account) {
   return _accountDialog(context, "Rename account", "New account name", "Rename",
       LoadingType.EDIT_ACCOUNT,
-      id: accountID, accountName: storage.accounts[accountID]);
+      id: account['id'], accountName: account['name']);
 }
