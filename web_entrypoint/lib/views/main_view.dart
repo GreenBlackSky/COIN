@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 import 'widgets/common/common.dart';
 import 'widgets/accounts_list.dart';
@@ -7,84 +6,76 @@ import 'widgets/category_list.dart';
 import 'widgets/burger_menu.dart';
 import 'widgets/events_list.dart';
 import 'widgets/events_graph.dart';
+import 'widgets/drawer.dart';
+
+final mainKey = new GlobalKey<_MainState>();
 
 class MainScreen extends StatelessWidget {
-  final MainWidget _mainWdget = new MainWidget();
+  final MainWidget _mainWdget = new MainWidget(key: mainKey);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          leading: new Container(),
-          title: AccountList(),
-          actions: <Widget>[buildBurgerMenu(context)]),
+        title: AccountList(),
+      ),
       body: buildForm(_mainWdget),
+      drawer: buildDrawer(
+          context, _mainWdget.cardNames, this.setCurrentWidgetIndex),
       floatingActionButton: FloatingActionButton(
         onPressed: addNewEventDialogMethod(context),
         child: Icon(Icons.add),
       ),
     );
   }
+
+  void setCurrentWidgetIndex(int i) {
+    mainKey.currentState.setCurrentWidgetIndex(i);
+  }
 }
 
 class MainWidget extends StatefulWidget {
+  MainWidget({Key key}) : super(key: key);
+  // TODO choose month
+  // TODO total, income and expence
+  // TODO current balance
+  final List<Widget> cardList = [
+    EventsGraph(),
+    Text("month view"), //TODO month view
+    EventsList(),
+    Text("pie chart"), //TODO pie chart
+    CategoryList(),
+    Text("templates list"), //TODO templates list
+    Text("accounts"), //TODO accounts
+    Text("settings"), //TODO settings
+    Text("logout"), //TODO logout
+  ];
+  final List<String> cardNames = [
+    "EventsGraph",
+    "month view",
+    'EventsList',
+    "pie chart",
+    'CategoryList',
+    "templates list",
+    "accounts",
+    "settings",
+    "logout",
+  ];
+
   @override
   _MainState createState() => _MainState();
 }
 
 class _MainState extends State<MainWidget> {
-  int _currentIndex = 0;
-  // TODO choose month
-  // TODO total, income and expence
-  // TODO current balance
-  List<Widget> cardList = [
-    Center(child: EventsGraph()),
-    Center(child: Text("pie chart")), //TODO pie chart
-    Center(child: CategoryList()),
-    Center(child: EventsList()),
-    Center(child: Text("month view")), //TODO month view
-    Center(child: Text("templates list")), //TODO templates list
-  ];
+  int currentWidgetIndex = 0;
 
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
+  void setCurrentWidgetIndex(int i) {
+    setState(() {
+      this.currentWidgetIndex = i;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: CarouselSlider(
-              options: CarouselOptions(
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    this._currentIndex = index;
-                  });
-                },
-              ),
-              items: this.cardList),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: map<Widget>(cardList, (index, url) {
-            return Container(
-              width: 10.0,
-              height: 10.0,
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: this._currentIndex == index
-                    ? Colors.blueAccent
-                    : Colors.grey,
-              ),
-            );
-          }),
-        ),
-      ],
-    );
+    return Center(child: widget.cardList[currentWidgetIndex]);
   }
 }
