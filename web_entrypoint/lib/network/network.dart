@@ -81,24 +81,34 @@ Future<void> syncData() async {
       .then(processMonthStartBalanceResponse);
 }
 
-Future<void> createEvent(DateTime dateTime, int diff, String description,
-    int categoryID, int accountID) async {
+Future<void> createEvent(
+    DateTime dateTime, int diff, String description, int categoryID) async {
   var response = await requestCreateEvent(
-      accountID, dateTime, diff, description, categoryID);
+      storage.accounts[storage.accountIndex]['id'],
+      dateTime,
+      diff,
+      description,
+      categoryID);
   getResponseBody(response);
   await syncData();
 }
 
 Future<void> editEvent(int id, DateTime dateTime, int diff, String description,
-    int categoryID, int accountID) async {
+    int categoryID) async {
   var response = await requestEditEvent(
-      id, accountID, dateTime, diff, description, categoryID);
+      id,
+      storage.accounts[storage.accountIndex]['id'],
+      dateTime,
+      diff,
+      description,
+      categoryID);
   getResponseBody(response);
   await syncData();
 }
 
-Future<void> deleteEvent(int id, int accountID) async {
-  var response = await requestDeleteEvent(id, accountID);
+Future<void> deleteEvent(int id) async {
+  var response = await requestDeleteEvent(
+      id, storage.accounts[storage.accountIndex]['id']);
   getResponseBody(response);
   await syncData();
 }

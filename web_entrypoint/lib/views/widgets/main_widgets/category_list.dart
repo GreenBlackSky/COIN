@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'common/confirmation_dialog.dart';
-import 'common/elements_list.dart';
-import 'common/common.dart';
-import 'dialogues/category_dialog.dart';
-import '../../storage.dart';
+import '../common/confirmation_dialog.dart';
+import '../common/element_list.dart';
+import '../common/common.dart';
+import '../../../storage.dart';
+import 'category_dialog.dart';
 
 void Function() addNewCategoryDialogMethod(BuildContext context) {
   return baseCategoryDialog(context, "Add new category", "Create",

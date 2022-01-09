@@ -100,7 +100,6 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
             widget.args.diff,
             widget.args.description,
             widget.args.id2,
-            widget.args.id3,
           );
           break;
         case LoadingType.EDIT_EVENT:
@@ -110,11 +109,10 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
             widget.args.diff,
             widget.args.description,
             widget.args.id2,
-            widget.args.id3,
           );
           break;
         case LoadingType.DELETE_EVENT:
-          await deleteEvent(widget.args.id, widget.args.id2);
+          await deleteEvent(widget.args.id);
           break;
       }
     } catch (e) {

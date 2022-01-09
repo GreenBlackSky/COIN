@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget buildForm(StatefulWidget widget) {
+Widget buildForm(Widget widget) {
   return Center(
     child: SizedBox(
       width: 400,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'views/widgets/settings_screen.dart';
+import 'views/settings_view.dart';
 import 'views/login_view.dart';
 import 'views/signup_view.dart';
 import 'views/main_view.dart';

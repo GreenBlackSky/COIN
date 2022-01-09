@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'dialogues/event_dialog.dart';
-import 'common/confirmation_dialog.dart';
-import 'common/elements_list.dart';
-import 'common/common.dart';
-import '../../storage.dart';
+import 'event_dialog.dart';
+import '../common/confirmation_dialog.dart';
+import '../common/element_list.dart';
+import '../common/common.dart';
+import '../../../storage.dart';
 
 void Function() addNewEventDialogMethod(BuildContext context) {
   return baseEventDialog(
@@ -15,7 +15,6 @@ void Function() addNewEventDialogMethod(BuildContext context) {
       -1,
       0,
       DateTime.now(),
-      storage.accountIndex,
       "",
       storage.categories[0]['id']);
 }
@@ -30,7 +29,6 @@ void Function() editEventDialogMethod(
       event['id'],
       event["diff"],
       dateFromTimestamp(event["event_time"]),
-      event['account_id'],
       event["description"],
       event['category_id']);
 }
@@ -43,8 +41,7 @@ void Function() deleteEventDialogMethod(
     "Delete event",
     () {
       Navigator.pushNamed(context, "/loading",
-          arguments: LoadingArgs(LoadingType.DELETE_EVENT,
-              id: event["id"], id2: event['account_id']));
+          arguments: LoadingArgs(LoadingType.DELETE_EVENT, id: event["id"]));
     },
   );
 }

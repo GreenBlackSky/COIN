@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import 'common/common.dart';
-import '../../storage.dart';
+import '../common/common.dart';
+import '../../../storage.dart';
 
 class ChartData {
   ChartData({this.x, this.y});

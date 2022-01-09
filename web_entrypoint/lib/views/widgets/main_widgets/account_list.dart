@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'common/common.dart';
-import 'common/confirmation_dialog.dart';
-import 'common/elements_list.dart';
-import 'dialogues/accounts_dialog.dart';
-import '../../storage.dart';
+import '../common/common.dart';
+import '../common/confirmation_dialog.dart';
+import '../common/element_list.dart';
+import '../../../storage.dart';
+import 'account_dialog.dart';
 
-void Function() showCreateAccountDialog(BuildContext context) {
+void Function() addNewAccountDialogMethod(BuildContext context) {
   return baseAccountDialog(
     context,
     "Create new account",
@@ -16,13 +16,13 @@ void Function() showCreateAccountDialog(BuildContext context) {
   );
 }
 
-void Function() showRenameAccountDialog(BuildContext context, var account) {
+void Function() editAccountDialogMethod(BuildContext context, var account) {
   return baseAccountDialog(context, "Rename account", "New account name",
       "Rename", LoadingType.EDIT_ACCOUNT,
       id: account['id'], accountName: account['name']);
 }
 
-void Function() showRemoveAccountDialog(BuildContext context, var account) {
+void Function() removeAccountDialogMethod(BuildContext context, var account) {
   return confirmDialogMethod(
       context, "Are you sure you want to delete account?", "Delete account",
       () {
@@ -36,8 +36,8 @@ class AccountList extends ElementsList {
 
   @override
   Widget buildListElement(BuildContext context, var account) {
-    Function onEdit = showRenameAccountDialog(context, account);
-    Function onRemove = showRemoveAccountDialog(context, account);
+    Function onEdit = editAccountDialogMethod(context, account);
+    Function onRemove = removeAccountDialogMethod(context, account);
     return buildListElementBase(Text(account['name']), onEdit, onRemove);
   }
 }

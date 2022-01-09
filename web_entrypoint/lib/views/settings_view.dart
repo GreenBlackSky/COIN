@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'common/common.dart';
-import 'common/text_fields.dart';
-import '../../network/session.dart';
-import '../../storage.dart';
+import 'widgets/common/common.dart';
+import 'widgets/common/text_fields.dart';
+import '../network/session.dart';
+import '../storage.dart';
 
 //TODO switch themes
 class SettingsScreen extends StatelessWidget {

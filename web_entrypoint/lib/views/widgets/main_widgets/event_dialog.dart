@@ -48,7 +48,6 @@ void Function() baseEventDialog(
     int eventID,
     int diff,
     DateTime eventTime,
-    int accountID,
     String description,
     int categoryID) {
   return () {
@@ -75,7 +74,6 @@ void Function() baseEventDialog(
                       arguments: LoadingArgs(action,
                           id: eventID,
                           id2: categoryComboBox.selectedCategoryId,
-                          id3: accountID,
                           diff: int.parse(diffController.value.text),
                           dateTime: dateField.selectedDate,
                           description: descriptionController.value.text));
