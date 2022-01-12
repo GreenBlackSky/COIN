@@ -1,8 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../common/common.dart';
-import '../../../storage.dart';
+import 'widgets/common/common.dart';
+import 'widgets/drawer.dart';
+import 'widgets/app_bar.dart';
+import 'widgets/event_dialog.dart';
+
+import '../storage.dart';
+
+class EventGraphView extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _EventGraphViewState();
+}
+
+class _EventGraphViewState extends State<EventGraphView> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: buildAppBar(context),
+        body: buildForm(EventGraph()),
+        drawer: buildDrawer(context),
+        floatingActionButton: FloatingActionButton(
+            onPressed: addNewEventDialogMethod(context),
+            child: Icon(Icons.add),
+            tooltip: "Add new event"));
+  }
+}
 
 class ChartData {
   ChartData({this.x, this.y});
@@ -42,7 +65,7 @@ class _EventsGraphState extends State<EventGraph> {
     // TODO trackball
     // TODO link to event on trackball
     // TODO scale
-    // TODO total
+    // TODO current total
     return SfCartesianChart(
         primaryXAxis: DateTimeAxis(
             intervalType: DateTimeIntervalType.days,

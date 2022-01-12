@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../common/common.dart';
-import '../common/datefield.dart';
-import '../common/text_fields.dart';
-import '../../../storage.dart';
+import 'common/common.dart';
+import 'common/confirmation_dialog.dart';
+import 'common/datefield.dart';
+import 'common/text_fields.dart';
+import '../../storage.dart';
 
 class CategoryComboBox extends StatefulWidget {
   CategoryComboBox(this.selectedCategoryId);
@@ -84,4 +85,44 @@ void Function() baseEventDialog(
               ],
             ));
   };
+}
+
+void Function() addNewEventDialogMethod(BuildContext context) {
+  return baseEventDialog(
+      context,
+      "Add new event",
+      "Create",
+      LoadingType.CREATE_EVENT,
+      -1,
+      0,
+      DateTime.now(),
+      "",
+      storage.categories[0]['id']);
+}
+
+void Function() editEventDialogMethod(
+    BuildContext context, Map<String, dynamic> event) {
+  return baseEventDialog(
+      context,
+      "Edit event",
+      "Edit",
+      LoadingType.EDIT_EVENT,
+      event['id'],
+      event["diff"],
+      dateFromTimestamp(event["event_time"]),
+      event["description"],
+      event['category_id']);
+}
+
+void Function() deleteEventDialogMethod(
+    BuildContext context, Map<String, dynamic> event) {
+  return confirmDialogMethod(
+    context,
+    "Are you sure you want to delete event?",
+    "Delete event",
+    () {
+      Navigator.pushNamed(context, "/loading",
+          arguments: LoadingArgs(LoadingType.DELETE_EVENT, id: event["id"]));
+    },
+  );
 }

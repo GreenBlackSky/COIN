@@ -1,34 +1,30 @@
 import 'package:flutter/material.dart';
 
-import '../common/common.dart';
-import '../common/confirmation_dialog.dart';
-import '../common/element_list.dart';
-import '../../../storage.dart';
-import 'account_dialog.dart';
+import 'widgets/app_bar.dart';
+import 'widgets/common/element_list.dart';
+import 'widgets/common/common.dart';
+import 'widgets/account_dialog.dart';
+import 'widgets/drawer.dart';
 
-void Function() addNewAccountDialogMethod(BuildContext context) {
-  return baseAccountDialog(
-    context,
-    "Create new account",
-    "New account name",
-    "Create",
-    LoadingType.CREATE_ACCOUNT,
-  );
+import '../storage.dart';
+
+class AccountListView extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _AccountListViewState();
 }
 
-void Function() editAccountDialogMethod(BuildContext context, var account) {
-  return baseAccountDialog(context, "Rename account", "New account name",
-      "Rename", LoadingType.EDIT_ACCOUNT,
-      id: account['id'], accountName: account['name']);
-}
-
-void Function() removeAccountDialogMethod(BuildContext context, var account) {
-  return confirmDialogMethod(
-      context, "Are you sure you want to delete account?", "Delete account",
-      () {
-    Navigator.pushNamed(context, "/loading",
-        arguments: LoadingArgs(LoadingType.DELETE_ACCOUNT, id: account['id']));
-  });
+class _AccountListViewState extends State<AccountListView> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: buildAppBar(context),
+        body: buildForm(AccountList()),
+        drawer: buildDrawer(context),
+        floatingActionButton: FloatingActionButton(
+            onPressed: addNewAccountDialogMethod(context),
+            child: Icon(Icons.add),
+            tooltip: "Add new account"));
+  }
 }
 
 class AccountList extends ElementsList {

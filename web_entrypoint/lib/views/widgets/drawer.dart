@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 
-Widget buildDrawer(
-    BuildContext context, List<String> names, Function(int) setIndex) {
+Map<String, String> views = {
+  "Graph view": "/event_graph",
+  "List view": "/event_list",
+  "Month view": "/month_view",
+  "Pie chart": "/pie_chart_view",
+  "Categories": "/category_view",
+  "Templates": "/templates_view",
+  "Accounts": "/accounts_view",
+  "Settings": "/settings",
+  "Logout": "/event_graph",
+};
+
+Widget buildDrawer(BuildContext context) {
   List<Widget> tiles = [];
-  for (int i = 0; i < names.length; i++) {
-    String name = names[i];
+  for (MapEntry<String, String> e in views.entries) {
     Widget tile = ListTile(
-      title: Text(name),
+      title: Text(e.key),
       onTap: () {
-        setIndex(i);
-        Navigator.pop(context);
+        Navigator.pushNamed(context, e.value);
       },
     );
     tiles.add(tile);
   }
   return Drawer(
     child: ListView(
-      // Important: Remove any padding from the ListView.
       padding: EdgeInsets.zero,
       children: tiles,
     ),

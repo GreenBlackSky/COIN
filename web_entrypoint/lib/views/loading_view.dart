@@ -52,8 +52,8 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
   }
 
   Future<void> loadDataFromServer() async {
-    String endpoint = "/main";
-    String errorEndpoint = "/main";
+    String endpoint = "/event_graph";
+    String errorEndpoint = "/event_graph";
     try {
       switch (widget.args.type) {
         case LoadingType.REGISTER:
