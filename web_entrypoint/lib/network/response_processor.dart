@@ -52,6 +52,13 @@ void processCategories(http.Response response) {
   }
 }
 
+void processAddCategoryResponse(http.Response response) {
+  var responseBody = getResponseBody(response);
+  var categoryJson = responseBody['category'];
+  categoryJson['color'] = Color(int.parse(categoryJson['color'], radix: 16));
+  storage.categories.add(categoryJson);
+}
+
 void processEditCategoryResponse(http.Response response) {
   var responseBody = getResponseBody(response);
   var newVal = responseBody['category'];
@@ -64,7 +71,13 @@ void processEditCategoryResponse(http.Response response) {
   storage.categories[index] = newVal;
 }
 
-void processRemoveCategoryResponse(http.Response response) {}
+void processRemoveCategoryResponse(http.Response response) {
+  var responseBody = getResponseBody(response);
+  var category = storage.categories.where((element) {
+    return element['id'] == responseBody['category']['id'];
+  }).first;
+  storage.categories.remove(category);
+}
 
 void processMonthStartBalanceResponse(http.Response response) {
   var responseBody = getResponseBody(response);

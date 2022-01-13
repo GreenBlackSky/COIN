@@ -56,7 +56,7 @@ Future<void> deleteAccount(int id) async {
 Future<void> createCategory(String name, Color color) async {
   await requestCreateCategory(
           name, color, storage.accounts[storage.accountIndex]['id'])
-      .then(processCategories);
+      .then(processAddCategoryResponse);
 }
 
 Future<void> editCategory(int categoryID, String name, Color color) async {

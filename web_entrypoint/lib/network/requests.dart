@@ -93,7 +93,7 @@ Future<http.Response> requestEditCategory(
 Future<http.Response> requestDeleteCategory(
     int categoryID, int accountID) async {
   return session.post(
-      'delete_categorys',
+      'delete_category',
       jsonEncode(<String, dynamic>{
         'account_id': accountID,
         'category_id': categoryID
