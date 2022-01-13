@@ -1,9 +1,9 @@
-import 'widgets/loading_animation.dart';
-
 import 'package:flutter/material.dart';
 
+import 'widgets/loading_animation.dart';
 import 'widgets/common/common.dart';
-import '../network/network.dart';
+
+import 'package:coin_client/network/network.dart';
 
 class LoadingScreen extends StatelessWidget {
   @override

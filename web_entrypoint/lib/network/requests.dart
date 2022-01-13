@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'package:coin_client/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
-import '../views/widgets/common/common.dart';
+import 'package:coin_client/views/widgets/common/common.dart';
 
 Future<http.Response> requestRegistration(String name, String password) async {
   return session.post(

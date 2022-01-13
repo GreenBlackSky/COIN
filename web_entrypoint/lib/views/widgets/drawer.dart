@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:coin_client/network/session.dart';
+import 'package:coin_client/storage.dart';
+
+import 'common/confirmation_dialog.dart';
+
 Map<String, String> views = {
   "Graph view": "/event_graph",
   "List view": "/event_list",
@@ -9,7 +14,7 @@ Map<String, String> views = {
   "Templates": "/templates_view",
   "Accounts": "/accounts_view",
   "Settings": "/settings",
-  "Logout": "/event_graph",
+  // "Logout": "/event_graph",
 };
 
 Widget buildDrawer(BuildContext context) {
@@ -23,10 +28,23 @@ Widget buildDrawer(BuildContext context) {
     );
     tiles.add(tile);
   }
+  tiles.add(ListTile(
+      title: Text("Logout"),
+      onTap: confirmDialogMethod(context, "Are you sure, you want to log out?",
+          "Log out", logoutMethod(context))));
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
       children: tiles,
     ),
   );
+}
+
+void Function() logoutMethod(BuildContext context) {
+  return () {
+    session.post('logout').catchError((_) {});
+    session.clearSession();
+    storage.clear();
+    Navigator.of(context).pushNamed('/login');
+  };
 }

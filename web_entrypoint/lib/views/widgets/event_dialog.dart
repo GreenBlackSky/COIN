@@ -4,7 +4,8 @@ import 'common/common.dart';
 import 'common/confirmation_dialog.dart';
 import 'common/datefield.dart';
 import 'common/text_fields.dart';
-import '../../storage.dart';
+
+import 'package:coin_client/storage.dart';
 
 class CategoryComboBox extends StatefulWidget {
   CategoryComboBox(this.selectedCategoryId);

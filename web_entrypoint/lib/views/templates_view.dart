@@ -4,8 +4,6 @@ import 'widgets/app_bar.dart';
 import 'widgets/common/common.dart';
 import 'widgets/drawer.dart';
 
-import '../storage.dart';
-
 class TemplatesView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _TemplatesViewState();

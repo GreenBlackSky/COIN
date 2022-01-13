@@ -6,7 +6,7 @@ import 'widgets/common/common.dart';
 import 'widgets/account_dialog.dart';
 import 'widgets/drawer.dart';
 
-import '../storage.dart';
+import 'package:coin_client/storage.dart';
 
 class AccountListView extends StatefulWidget {
   @override

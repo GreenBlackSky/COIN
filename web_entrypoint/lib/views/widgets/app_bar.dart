@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../storage.dart';
+import 'package:coin_client/storage.dart';
 
 Widget buildAppBar(context) {
   return AppBar(

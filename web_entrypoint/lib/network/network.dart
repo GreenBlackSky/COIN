@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'requests.dart';
 import 'response_processor.dart';
 
-import '../storage.dart';
+import 'package:coin_client/storage.dart';
 
 Future<void> loadDataFromServerOnRegister(String name, String password) async {
   await requestRegistration(name, password).then(processAuthorizationResponse);

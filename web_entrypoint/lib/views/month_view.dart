@@ -5,8 +5,6 @@ import 'widgets/event_dialog.dart';
 import 'widgets/common/common.dart';
 import 'widgets/drawer.dart';
 
-import '../storage.dart';
-
 class MonthView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _MonthViewState();

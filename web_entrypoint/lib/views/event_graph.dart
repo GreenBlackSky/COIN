@@ -6,7 +6,7 @@ import 'widgets/drawer.dart';
 import 'widgets/app_bar.dart';
 import 'widgets/event_dialog.dart';
 
-import '../storage.dart';
+import 'package:coin_client/storage.dart';
 
 class EventGraphView extends StatefulWidget {
   @override

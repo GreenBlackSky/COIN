@@ -4,8 +4,7 @@ import 'widgets/common/common.dart';
 import 'widgets/common/text_fields.dart';
 import 'widgets/drawer.dart';
 
-import '../network/session.dart';
-import '../storage.dart';
+import 'package:coin_client/storage.dart';
 
 //TODO switch themes
 class SettingsScreen extends StatelessWidget {
