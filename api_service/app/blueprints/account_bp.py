@@ -53,4 +53,6 @@ def edit_account(account_id, name):
 @parse_request_args(request)
 def delete_account(account_id):
     """Delete existing account."""
-    return accountService.delete_account(user_id=current_user.id, account_id=account_id)
+    return accountService.delete_account(
+        user_id=current_user.id, account_id=account_id
+    )

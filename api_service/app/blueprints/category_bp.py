@@ -25,7 +25,9 @@ categoryService = EventCategoryCaller(celery_app)
 @parse_request_args(request)
 def create_category(account_id, name, color):
     """Request to create new category."""
-    return categoryService.create_category(current_user.id, account_id, name, color)
+    return categoryService.create_category(
+        current_user.id, account_id, name, color
+    )
 
 
 @bp.post("/get_categories")
@@ -54,4 +56,6 @@ def edit_category(account_id, category_id, name, color):
 @parse_request_args(request)
 def delete_category(account_id, category_id):
     """Delete existing category."""
-    return categoryService.delete_category(current_user.id, account_id, category_id)
+    return categoryService.delete_category(
+        current_user.id, account_id, category_id
+    )

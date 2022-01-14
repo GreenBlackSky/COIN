@@ -19,14 +19,18 @@ class EventTest(BaseTest):
             "diff": 10,
             "description": "TEST",
         }
-        response = self.session.post(url=self.HOST + "create_event", json=event_data)
+        response = self.session.post(
+            url=self.HOST + "create_event", json=event_data
+        )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(
             {"status": "OK"}, response.json(), "Wrong answear"
         )
         event = response.json().get("event")
         self.assertIsNotNone(event, "No event")
-        self.assertDictContainsSubset(event_data, event, "Incorrect data in event")
+        self.assertDictContainsSubset(
+            event_data, event, "Incorrect data in event"
+        )
         return event
 
     def _get_first_event(self, account_id):
@@ -163,7 +167,9 @@ class EventTest(BaseTest):
         edited_event = self._get_first_event(account["id"])
         self.assertEqual(edited_event["event_time"], edited_time, "Wrong time")
         self.assertEqual(edited_event["diff"], 20, "Wrong diff")
-        self.assertEqual(edited_event["description"], "EDITED", "Wrong description")
+        self.assertEqual(
+            edited_event["description"], "EDITED", "Wrong description"
+        )
 
     def test_balance_with_no_events(self):
         """Test if balance is 0 when there is no events."""
@@ -178,7 +184,9 @@ class EventTest(BaseTest):
         now = datetime.now()
         created_event = self._create_event(account, event_time=now.timestamp())
         self._assert_balance(
-            account["id"], (now + timedelta(days=1)).timestamp(), created_event["diff"]
+            account["id"],
+            (now + timedelta(days=1)).timestamp(),
+            created_event["diff"],
         )
 
     def test_balance_between_events(self):
@@ -188,7 +196,9 @@ class EventTest(BaseTest):
         self.register()
         account = self.get_first_account()
         now = datetime.now()
-        created_event_1 = self._create_event(account, event_time=now.timestamp())
+        created_event_1 = self._create_event(
+            account, event_time=now.timestamp()
+        )
         created_event_2 = self._create_event(
             account, event_time=(now + timedelta(days=2)).timestamp()
         )
@@ -214,7 +224,9 @@ class EventTest(BaseTest):
         self.register()
         account = self.get_first_account()
         now = datetime.now()
-        created_event_1 = self._create_event(account, event_time=now.timestamp())
+        created_event_1 = self._create_event(
+            account, event_time=now.timestamp()
+        )
         self._assert_balance(
             account["id"],
             (now + timedelta(days=2)).timestamp(),
@@ -236,7 +248,9 @@ class EventTest(BaseTest):
         now = datetime.now()
         created_event = self._create_event(account, event_time=now.timestamp())
         self._assert_balance(
-            account["id"], (now + timedelta(days=1)).timestamp(), created_event["diff"]
+            account["id"],
+            (now + timedelta(days=1)).timestamp(),
+            created_event["diff"],
         )
         eidted_total = 20
         response = self.session.post(
@@ -278,12 +292,18 @@ class EventTest(BaseTest):
         self.assertIsInstance(
             response.json()["events"], list, "Events list is not a list"
         )
-        self.assertEqual(len(response.json()["events"]), 6, "Wrong number of events")
+        self.assertEqual(
+            len(response.json()["events"]), 6, "Wrong number of events"
+        )
         events_by_id = {event["id"]: event for event in events}
-        got_events_by_id = {event["id"]: event for event in response.json()["events"]}
+        got_events_by_id = {
+            event["id"]: event for event in response.json()["events"]
+        }
         for event_id in events_by_id:
             self.assertDictEqual(
-                events_by_id[event_id], got_events_by_id[event_id], "Wrong event data"
+                events_by_id[event_id],
+                got_events_by_id[event_id],
+                "Wrong event data",
             )
 
     # def test_get_first_event():
@@ -301,7 +321,10 @@ class EventTest(BaseTest):
         ]
         response = self.session.post(
             url=self.HOST + "get_events",
-            json={"account_id": account["id"], "start_time": event_times[1] + 50},
+            json={
+                "account_id": account["id"],
+                "start_time": event_times[1] + 50,
+            },
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertEqual(response.json()["status"], "OK", "Wrong status code")
@@ -309,12 +332,18 @@ class EventTest(BaseTest):
         self.assertIsInstance(
             response.json()["events"], list, "Events list is not a list"
         )
-        self.assertEqual(len(response.json()["events"]), 4, "Wrong number of events")
+        self.assertEqual(
+            len(response.json()["events"]), 4, "Wrong number of events"
+        )
         events_by_id = {event["id"]: event for event in events[2:]}
-        got_events_by_id = {event["id"]: event for event in response.json()["events"]}
+        got_events_by_id = {
+            event["id"]: event for event in response.json()["events"]
+        }
         for event_id in events_by_id:
             self.assertDictEqual(
-                events_by_id[event_id], got_events_by_id[event_id], "Wrong event data"
+                events_by_id[event_id],
+                got_events_by_id[event_id],
+                "Wrong event data",
             )
 
     def test_filter_events_before(self):
@@ -329,7 +358,10 @@ class EventTest(BaseTest):
         ]
         response = self.session.post(
             url=self.HOST + "get_events",
-            json={"account_id": account["id"], "end_time": event_times[3] + 50},
+            json={
+                "account_id": account["id"],
+                "end_time": event_times[3] + 50,
+            },
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertEqual(response.json()["status"], "OK", "Wrong status code")
@@ -337,12 +369,18 @@ class EventTest(BaseTest):
         self.assertIsInstance(
             response.json()["events"], list, "Events list is not a list"
         )
-        self.assertEqual(len(response.json()["events"]), 4, "Wrong number of events")
+        self.assertEqual(
+            len(response.json()["events"]), 4, "Wrong number of events"
+        )
         events_by_id = {event["id"]: event for event in events[:4]}
-        got_events_by_id = {event["id"]: event for event in response.json()["events"]}
+        got_events_by_id = {
+            event["id"]: event for event in response.json()["events"]
+        }
         for event_id in events_by_id:
             self.assertDictEqual(
-                events_by_id[event_id], got_events_by_id[event_id], "Wrong event data"
+                events_by_id[event_id],
+                got_events_by_id[event_id],
+                "Wrong event data",
             )
 
     # def test_events_at_months_start():

@@ -26,7 +26,8 @@ class BaseTest(unittest.TestCase):
             result = {"status": "OK"}
 
         response = self.session.post(
-            url=self.HOST + "register", json={"name": name, "password": password}
+            url=self.HOST + "register",
+            json={"name": name, "password": password},
         )
         self.assertEqual(response.status_code, 200, "Wrong response code")
         self.assertDictContainsSubset(result, response.json(), "Wrong answear")
@@ -74,7 +75,9 @@ class BaseTest(unittest.TestCase):
         """Logout."""
         response = self.session.post(url=self.HOST + "logout")
         self.assertEqual(response.status_code, 200, "Wrong response code")
-        self.assertDictEqual(response.json(), {"status": "OK"}, "Wrong answear")
+        self.assertDictEqual(
+            response.json(), {"status": "OK"}, "Wrong answear"
+        )
         if "Authorization" in self.session.headers:
             del self.session.headers["Authorization"]
 
@@ -83,7 +86,9 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(response.status_code, 200, "Wrong response code")
         json_data = response.json()
         self.assertIn("accounts", json_data, "No accounts")
-        self.assertIsInstance(json_data["accounts"], list, "Wrong accounts type")
+        self.assertIsInstance(
+            json_data["accounts"], list, "Wrong accounts type"
+        )
         self.assertNotEqual(len(json_data["accounts"]), 0, "No accounts")
         account = response.json()["accounts"][0]
         self.assertIsInstance(account, dict, "Account is not dict")

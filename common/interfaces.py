@@ -59,7 +59,14 @@ class EventService(ABC):
     # TODO make unchanged parametres optional
     @abstractmethod
     def edit_event(
-        self, user_id, account_id, event_id, category_id, event_time, diff, description
+        self,
+        user_id,
+        account_id,
+        event_id,
+        category_id,
+        event_time,
+        diff,
+        description,
     ):
         """Request to edit event."""
         pass
@@ -72,6 +79,11 @@ class EventService(ABC):
     @abstractmethod
     def get_balance(self, user_id, account_id, timestamp):
         """Get balance on account at certain time."""
+        pass
+
+    @abstractmethod
+    def get_total_by_category(self, user_id, account_id, start_time, end_time):
+        """Get total change in each category."""
         pass
 
     @abstractmethod

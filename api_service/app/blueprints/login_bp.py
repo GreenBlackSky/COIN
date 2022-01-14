@@ -120,7 +120,9 @@ def edit_user(name, old_pass=None, new_pass=None):
     got_old_pass = old_pass is not None
     got_new_pass = new_pass is not None
     if got_new_pass != got_old_pass:
-        return {"status": "new password must be provided with an old password"}, 412
+        return {
+            "status": "new password must be provided with an old password"
+        }, 412
 
     if got_old_pass and got_new_pass:
         old_hash = md5(old_pass.encode()).hexdigest()

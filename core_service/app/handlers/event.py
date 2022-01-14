@@ -12,11 +12,14 @@ from common.schemas import EventSchema
 
 from ..model import SavePointModel, session, EventModel
 from .account import AccountHandler
+from .category import CategoryHandler
 
 event_schema = EventSchema()
 
 
-def _get_or_create_savepoint(session: Session, account_id, event_time: datetime):
+def _get_or_create_savepoint(
+    session: Session, account_id, event_time: datetime
+):
     # event in the start of the month is not accounted for
     # in the savepoint at a same time, it would be in a next savepoint
     savepoint = (
@@ -31,7 +34,9 @@ def _get_or_create_savepoint(session: Session, account_id, event_time: datetime)
         day=1, hour=0, minute=0, second=0, microsecond=0
     )
     if savepoint is None:  # earliest savepoint
-        savepoint = SavePointModel(datetime=month_start, account_id=account_id, total=0)
+        savepoint = SavePointModel(
+            datetime=month_start, account_id=account_id, total=0
+        )
         session.add(savepoint)
     elif savepoint.datetime < month_start:  # new savepoint
         query = (
@@ -48,7 +53,9 @@ def _get_or_create_savepoint(session: Session, account_id, event_time: datetime)
         session.add(savepoint)
 
 
-def _update_latter_savepoints(session: Session, account_id, event_time: datetime, diff):
+def _update_latter_savepoints(
+    session: Session, account_id, event_time: datetime, diff
+):
     savepoints = (
         session.query(SavePointModel)
         .filter(SavePointModel.account_id == account_id)
@@ -66,7 +73,9 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         self, user_id, account_id, category_id, event_time, diff, description
     ):
         """Create new event."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -85,13 +94,17 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         session.commit()
         return {"status": "OK", "event": event_schema.dump(event)}
 
-    def get_first_event(self, user_id, account_id, start_time=None, end_time=None):
+    def get_first_event(
+        self, user_id, account_id, start_time=None, end_time=None
+    ):
         """
         Get first event by given filters.
 
         If 0 filters provided, get some event on account.
         """
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -99,7 +112,9 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
             start_time = datetime.fromtimestamp(start_time)
         if end_time is not None:
             end_time = datetime.fromtimestamp(end_time)
-        query = session.query(EventModel).filter(EventModel.account_id == account_id)
+        query = session.query(EventModel).filter(
+            EventModel.account_id == account_id
+        )
         if start_time:
             query = query.filter(EventModel.event_time > start_time)
         if end_time:
@@ -118,7 +133,9 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
 
         If 0 filters provided, get every event on account.
         """
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -126,7 +143,9 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
             start_time = datetime.fromtimestamp(start_time)
         if end_time is not None:
             end_time = datetime.fromtimestamp(end_time)
-        query = session.query(EventModel).filter(EventModel.account_id == account_id)
+        query = session.query(EventModel).filter(
+            EventModel.account_id == account_id
+        )
         if start_time:
             query = query.filter(EventModel.event_time > start_time)
         if end_time:
@@ -137,10 +156,19 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         }
 
     def edit_event(
-        self, user_id, account_id, event_id, category_id, event_time, diff, description
+        self,
+        user_id,
+        account_id,
+        event_id,
+        category_id,
+        event_time,
+        diff,
+        description,
     ):
         """Edit existing event."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -162,9 +190,13 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         event.description = description
 
         if old_event_time != event_time:
-            _update_latter_savepoints(session, event.account_id, old_event_time, -diff)
+            _update_latter_savepoints(
+                session, event.account_id, old_event_time, -diff
+            )
             _get_or_create_savepoint(session, event.account_id, event_time)
-            _update_latter_savepoints(session, event.account_id, event_time, diff)
+            _update_latter_savepoints(
+                session, event.account_id, event_time, diff
+            )
         elif old_diff != diff:
             _update_latter_savepoints(
                 session, event.account_id, event_time, diff - old_diff
@@ -174,7 +206,9 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
 
     def delete_event(self, user_id, account_id, event_id):
         """Delete existing event."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -196,7 +230,9 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
 
     def get_balance(self, user_id, account_id, timestamp):
         """Get balance on given account in given point in time."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -222,11 +258,31 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         )
         return {"status": "OK", "balance": savepoint.total + diff_sum}
 
-    def get_total_by_category(
-        self, user_id, account_id, category_id, start_time, end_time
-    ):
-        # TODO get_total_by_category
-        pass
+    def get_total_by_category(self, user_id, account_id, start_time, end_time):
+        """Get total chage in category."""
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
+        if accounts_response["status"] != "OK":
+            return accounts_response
+
+        start_time = datetime.fromtimestamp(start_time)
+        end_time = datetime.fromtimestamp(end_time)
+
+        category_resp = CategoryHandler.get_categories(user_id, account_id)
+
+        totals = {}
+        for category in category_resp["categories"]:
+            totals[category["id"]] = sum(
+                event.diff
+                for event in session.query(EventModel.diff)
+                .filter(EventModel.account_id == account_id)
+                .filter(EventModel.category_id == category["id"])
+                .filter(EventModel.event_time >= start_time)
+                .filter(EventModel.event_time < end_time)
+                .all()
+            )
+        return {"status": "OK", "totals": totals}
 
     def clear_events(self):
         """Clear all events from db."""

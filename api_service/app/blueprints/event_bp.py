@@ -42,14 +42,18 @@ def get_events(
     end_time=None,
 ):
     """Get all events user has."""
-    return eventService.get_events(current_user.id, account_id, start_time, end_time)
+    return eventService.get_events(
+        current_user.id, account_id, start_time, end_time
+    )
 
 
 @bp.post("/edit_event")
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def edit_event(account_id, event_id, category_id, event_time, diff, description):
+def edit_event(
+    account_id, event_id, category_id, event_time, diff, description
+):
     """Request to edit event."""
     return eventService.edit_event(
         current_user.id,
@@ -84,8 +88,10 @@ def get_balance(account_id, timestamp):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def get_totals_by_category(self, account_id, category_id, start_time, end_time):
+def get_totals_by_category(
+    self, account_id, category_id, start_time, end_time
+):
     """Get totals on certain account by categories at certain time."""
-    return eventService.get_totals_by_category(
-        self, current_user.id, account_id, category_id, start_time, end_time
+    return eventService.get_total_by_category(
+        self, current_user.id, account_id, start_time, end_time
     )

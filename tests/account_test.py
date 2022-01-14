@@ -19,8 +19,12 @@ class AccountTest(BaseTest):
         json_data = response.json()
         self.assertDictContainsSubset(result, json_data, "Wrong response")
         if "account" in json_data:
-            self.assertIsInstance(json_data["account"], dict, "Wrong accounts type")
-            self.assertDictContainsSubset({"name": account_name}, json_data["account"])
+            self.assertIsInstance(
+                json_data["account"], dict, "Wrong accounts type"
+            )
+            self.assertDictContainsSubset(
+                {"name": account_name}, json_data["account"]
+            )
             return json_data["account"]
 
     def _rename_account(self, account_id, name, result=None, code=200):
@@ -31,7 +35,9 @@ class AccountTest(BaseTest):
             json={"account_id": account_id, "name": name},
         )
         self.assertEqual(response.status_code, code, "Wrong response code")
-        self.assertDictContainsSubset(result, response.json(), "Wrong response")
+        self.assertDictContainsSubset(
+            result, response.json(), "Wrong response"
+        )
 
     def _delete_account(self, account_id, result=None, code=200):
         if result is None:
@@ -40,16 +46,22 @@ class AccountTest(BaseTest):
             url=self.HOST + "delete_account", json={"account_id": account_id}
         )
         self.assertEqual(response.status_code, code, "Wrong response code")
-        self.assertDictContainsSubset(result, response.json(), "Wrong response")
+        self.assertDictContainsSubset(
+            result, response.json(), "Wrong response"
+        )
 
     def _assert_accounts(self, accounts: List[str]):
         response = self.session.post(url=self.HOST + "get_accounts")
         self.assertEqual(response.status_code, 200, "Wrong response code")
         json_data = response.json()
         self.assertIn("accounts", json_data, "No accounts")
-        self.assertIsInstance(json_data["accounts"], list, "Wrong accounts type")
+        self.assertIsInstance(
+            json_data["accounts"], list, "Wrong accounts type"
+        )
         self.assertEqual(
-            len(json_data["accounts"]), len(accounts), "Wrong number of accounts"
+            len(json_data["accounts"]),
+            len(accounts),
+            "Wrong number of accounts",
         )
         response_accounts = {
             account["name"]: account for account in json_data["accounts"]
@@ -65,7 +77,10 @@ class AccountTest(BaseTest):
         response = self.session.post(url=self.HOST + "get_accounts")
         self.assertEqual(response.status_code, 401, "Wrong response code")
         self.assertDictEqual(
-            {"reason": "Missing Authorization Header", "status": "unauthorized access"},
+            {
+                "reason": "Missing Authorization Header",
+                "status": "unauthorized access",
+            },
             response.json(),
             "Got unathorized data",
         )
@@ -126,7 +141,9 @@ class AccountTest(BaseTest):
         self.register()
         for i in range(99):
             self._create_account(f"account {i}")
-        self._assert_accounts([f"account {i}" for i in range(99)] + ["Main Account"])
+        self._assert_accounts(
+            [f"account {i}" for i in range(99)] + ["Main Account"]
+        )
         self._create_account("account 100", result={"status": "max accounts"})
 
     def test_create_duplicate_account(self):
@@ -134,7 +151,9 @@ class AccountTest(BaseTest):
         self.register()
         self._create_account("new account")
         self._assert_accounts(["Main Account", "new account"])
-        self._create_account("new account", result={"status": "account already exists"})
+        self._create_account(
+            "new account", result={"status": "account already exists"}
+        )
         self._assert_accounts(["Main Account", "new account"])
 
     def test_rename_account(self):
@@ -158,7 +177,9 @@ class AccountTest(BaseTest):
         self.register()
         account = self._create_account("new account")
         self._rename_account(
-            account["id"], "Main Account", result={"status": "account already exists"}
+            account["id"],
+            "Main Account",
+            result={"status": "account already exists"},
         )
         self._assert_accounts(["Main Account", "new account"])
 
@@ -180,7 +201,9 @@ class AccountTest(BaseTest):
         """Test deleting the only account."""
         self.register()
         account_id = self.get_first_account()["id"]
-        self._delete_account(account_id, {"status": "can't delete the only account"})
+        self._delete_account(
+            account_id, {"status": "can't delete the only account"}
+        )
         self._assert_accounts(["Main Account"])
 
     # def test_create_with_incorrect_args(self):

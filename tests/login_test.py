@@ -7,13 +7,17 @@ from tests.test_base import BaseTest
 class LoginTest(BaseTest):
     """Logging in and co tests."""
 
-    def _edit_user(self, name, old_pass=None, new_pass=None, result=None, code=200):
+    def _edit_user(
+        self, name, old_pass=None, new_pass=None, result=None, code=200
+    ):
         user_data = {"name": name}
         if old_pass and new_pass:
             user_data.update({"old_pass": old_pass, "new_pass": new_pass})
         if result is None:
             result = {"status": "OK"}
-        response = self.session.post(url=self.HOST + "edit_user", json=user_data)
+        response = self.session.post(
+            url=self.HOST + "edit_user", json=user_data
+        )
         self.assertEqual(response.status_code, code, "Wrong response code")
         self.assertDictContainsSubset(result, response.json(), "Wrong answear")
 
@@ -42,7 +46,9 @@ class LoginTest(BaseTest):
         self.register()
         self.logout()
         self.login(
-            password=self.wrong_password, result={"status": "wrong password"}, code=401
+            password=self.wrong_password,
+            result={"status": "wrong password"},
+            code=401,
         )
         self.check_authorization(authorized=False)
 
@@ -104,11 +110,15 @@ class LoginTest(BaseTest):
         """Test changing password."""
         self.register()
         self._edit_user(
-            self.user_name, old_pass=self.user_password, new_pass=self.user_password_2
+            self.user_name,
+            old_pass=self.user_password,
+            new_pass=self.user_password_2,
         )
         self.logout()
         self.login(
-            password=self.user_password, result={"status": "wrong password"}, code=401
+            password=self.user_password,
+            result={"status": "wrong password"},
+            code=401,
         )
         self.login(password=self.user_password_2)
 
@@ -124,7 +134,9 @@ class LoginTest(BaseTest):
         )
         self.logout()
         self.login(
-            password=self.user_password_2, result={"status": "wrong password"}, code=401
+            password=self.user_password_2,
+            result={"status": "wrong password"},
+            code=401,
         )
         self.login(password=self.user_password)
 

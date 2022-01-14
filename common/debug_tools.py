@@ -81,9 +81,13 @@ def log_request(request_proxy, user_proxy=None):
 
             def log_output(print_user, ret):
                 if isinstance(ret, dict):
-                    print_ret = {k: v for k, v in ret.items() if k != "access_token"}
+                    print_ret = {
+                        k: v for k, v in ret.items() if k != "access_token"
+                    }
                 elif isinstance(ret, tuple):
-                    print_ret = {k: v for k, v in ret[0].items() if k != "access_token"}
+                    print_ret = {
+                        k: v for k, v in ret[0].items() if k != "access_token"
+                    }
                 else:
                     print_ret = ret
                 logging.debug(f"{print_user} <<< {name} {print_ret}")

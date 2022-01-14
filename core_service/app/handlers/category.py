@@ -22,7 +22,9 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
 
     def create_category(self, user_id, account_id, name, color):
         """Create new events category."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -35,7 +37,9 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
 
     def get_categories(self, user_id, account_id):
         """Get all categories user has."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -46,12 +50,16 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
         )
         return {
             "status": "OK",
-            "categories": [category_schema.dump(category) for category in query.all()],
+            "categories": [
+                category_schema.dump(category) for category in query.all()
+            ],
         }
 
     def edit_category(self, user_id, account_id, category_id, name, color):
         """Request to edit events category."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
@@ -71,7 +79,9 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
 
     def delete_category(self, user_id, account_id, category_id):
         """Delete existing events category."""
-        accounts_response = AccountHandler.check_account_user(account_id, user_id)
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
         if accounts_response["status"] != "OK":
             return accounts_response
 
