@@ -37,13 +37,7 @@ class EventService(ABC):
 
     @abstractmethod
     def create_event(
-        self,
-        user_id,
-        account_id,
-        category_id,
-        event_time,
-        diff,
-        description
+        self, user_id, account_id, category_id, event_time, diff, description
     ):
         """Request to create new event."""
         pass
@@ -54,13 +48,7 @@ class EventService(ABC):
         pass
 
     @abstractmethod
-    def get_events(
-        self,
-        user_id,
-        account_id,
-        start_time=None,
-        end_time=None
-    ):
+    def get_events(self, user_id, account_id, start_time=None, end_time=None):
         """Get all events user has."""
         pass
 
@@ -71,14 +59,7 @@ class EventService(ABC):
     # TODO make unchanged parametres optional
     @abstractmethod
     def edit_event(
-        self,
-        user_id,
-        account_id,
-        event_id,
-        category_id,
-        event_time,
-        diff,
-        description
+        self, user_id, account_id, event_id, category_id, event_time, diff, description
     ):
         """Request to edit event."""
         pass
@@ -113,14 +94,7 @@ class CategoryService(ABC):
         pass
 
     @abstractmethod
-    def edit_category(
-        self,
-        user_id,
-        account_id,
-        category_id,
-        name,
-        color
-    ):
+    def edit_category(self, user_id, account_id, category_id, name, color):
         """Request to edit events category."""
         pass
 

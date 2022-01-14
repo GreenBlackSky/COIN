@@ -15,7 +15,7 @@ class EventCategoryCaller(CategoryService, metaclass=CallerMetaBase):
     pass
 
 
-bp = Blueprint('category_bp', __name__)
+bp = Blueprint("category_bp", __name__)
 categoryService = EventCategoryCaller(celery_app)
 
 
@@ -25,12 +25,7 @@ categoryService = EventCategoryCaller(celery_app)
 @parse_request_args(request)
 def create_category(account_id, name, color):
     """Request to create new category."""
-    return categoryService.create_category(
-        current_user.id,
-        account_id,
-        name,
-        color
-    )
+    return categoryService.create_category(current_user.id, account_id, name, color)
 
 
 @bp.post("/get_categories")
@@ -49,11 +44,7 @@ def get_categories(account_id):
 def edit_category(account_id, category_id, name, color):
     """Request to edit category."""
     return categoryService.edit_category(
-        current_user.id,
-        account_id,
-        category_id,
-        name,
-        color
+        current_user.id, account_id, category_id, name, color
     )
 
 
@@ -63,8 +54,4 @@ def edit_category(account_id, category_id, name, color):
 @parse_request_args(request)
 def delete_category(account_id, category_id):
     """Delete existing category."""
-    return categoryService.delete_category(
-        current_user.id,
-        account_id,
-        category_id
-    )
+    return categoryService.delete_category(current_user.id, account_id, category_id)

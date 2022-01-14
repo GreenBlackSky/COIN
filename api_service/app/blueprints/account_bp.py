@@ -15,7 +15,7 @@ class AccountCaller(AccountService, metaclass=CallerMetaBase):
     pass
 
 
-bp = Blueprint('account_bp', __name__)
+bp = Blueprint("account_bp", __name__)
 accountService = AccountCaller(celery_app)
 
 
@@ -43,9 +43,7 @@ def get_accounts():
 def edit_account(account_id, name):
     """Request to edit account."""
     return accountService.edit_account(
-        user_id=current_user.id,
-        account_id=account_id,
-        name=name
+        user_id=current_user.id, account_id=account_id, name=name
     )
 
 
@@ -55,7 +53,4 @@ def edit_account(account_id, name):
 @parse_request_args(request)
 def delete_account(account_id):
     """Delete existing account."""
-    return accountService.delete_account(
-        user_id=current_user.id,
-        account_id=account_id
-    )
+    return accountService.delete_account(user_id=current_user.id, account_id=account_id)

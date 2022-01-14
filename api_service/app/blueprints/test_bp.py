@@ -21,23 +21,20 @@ class EventCaller(EventService, metaclass=CallerMetaBase):
     pass
 
 
-bp = Blueprint('test_bp', __name__)
+bp = Blueprint("test_bp", __name__)
 accountService = AccountCaller(celery_app)
 eventService = EventCaller(celery_app)
 
 
-@bp.route("/test_login", methods=['POST'])
+@bp.route("/test_login", methods=["POST"])
 @jwt_required()
 @log_request(request, current_user)
 def test_login():
     """Test method for logged in user."""
-    return {
-        'status': "OK",
-        'user_id': current_user.id
-    }
+    return {"status": "OK", "user_id": current_user.id}
 
 
-@bp.route("/clear_users", methods=['POST'])
+@bp.route("/clear_users", methods=["POST"])
 @log_request(request, current_user)
 def clear():
     """Clear all users from db and clear cache."""
