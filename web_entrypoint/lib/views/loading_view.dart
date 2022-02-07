@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'widgets/loading_animation.dart';
 import 'widgets/common/common.dart';
 
-import 'package:coin_client/network/network.dart';
+import 'package:coin_client/network/common.dart';
+import 'package:coin_client/network/category_logic.dart';
+import 'package:coin_client/network/events_logic.dart';
+import 'package:coin_client/network/account_logic.dart';
+import 'package:coin_client/network/user_logic.dart';
 
 class LoadingScreen extends StatelessWidget {
   @override

@@ -11,6 +11,7 @@ class DataStorage {
   List accounts = [];
   int category = -1;
   List categories = [];
+  Map totals = {};
   List events = []; // events in current month, event_time should be timestamp
   DateTime currentMonthStart;
   DateTime currentMonthEnd;
@@ -22,6 +23,7 @@ class DataStorage {
     this.accounts.clear();
     this.category = -1;
     this.categories.clear();
+    this.totals.clear();
     DateTime now = DateTime.now().toUtc();
     this.currentMonthStart = DateTime(now.year, now.month);
     this.currentMonthEnd = (now.month < 12)

@@ -88,10 +88,8 @@ def get_balance(account_id, timestamp):
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def get_totals_by_category(
-    self, account_id, category_id, start_time, end_time
-):
+def get_totals_by_category(account_id, start_time, end_time):
     """Get totals on certain account by categories at certain time."""
     return eventService.get_total_by_category(
-        self, current_user.id, account_id, start_time, end_time
+        current_user.id, account_id, start_time, end_time
     )
