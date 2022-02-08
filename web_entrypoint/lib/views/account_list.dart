@@ -18,7 +18,7 @@ class _AccountListViewState extends State<AccountListView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context),
-        body: buildForm(AccountList()),
+        body: buildForm(AccountList(), 0.3),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
             onPressed: addNewAccountDialogMethod(context),

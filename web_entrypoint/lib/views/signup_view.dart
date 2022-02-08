@@ -9,7 +9,7 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(leading: new Container(), title: Text("COIN")),
         backgroundColor: Colors.grey[200],
-        body: buildForm(SignUpForm()));
+        body: buildForm(SignUpForm(), 0.3));
   }
 }
 

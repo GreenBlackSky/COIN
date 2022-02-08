@@ -15,7 +15,7 @@ class _MonthViewState extends State<MonthView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context),
-        body: buildForm(Text("Month view")),
+        body: buildForm(Text("Month view"), 0.9),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
             onPressed: addNewEventDialogMethod(context),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
-Widget buildForm(Widget widget) {
+Widget buildForm(Widget widget, widthFactor) {
   return Center(
-    child: SizedBox(
-      width: 400,
-      child: Card(
-        child: widget,
-      ),
-    ),
-  );
+      child: FractionallySizedBox(
+    widthFactor: widthFactor,
+    child: widget,
+  ));
 }
 
 Widget buildButton(String text, Function callback) {

@@ -19,7 +19,7 @@ class _EventListViewState extends State<EventListView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context),
-        body: buildForm(EventsList()),
+        body: buildForm(EventsList(), 0.3),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
             onPressed: addNewEventDialogMethod(context),

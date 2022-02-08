@@ -9,7 +9,7 @@ class LogInScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(leading: new Container(), title: Text("COIN")),
         backgroundColor: Colors.grey[200],
-        body: buildForm(LogInForm()));
+        body: buildForm(LogInForm(), 0.3));
   }
 }
 

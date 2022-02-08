@@ -15,7 +15,7 @@ class LoadingScreen extends StatelessWidget {
     final LoadingArgs args =
         ModalRoute.of(context).settings.arguments as LoadingArgs;
 
-    return Scaffold(body: buildForm(Loader(args: args)));
+    return Scaffold(body: buildForm(Loader(args: args), 1.0));
   }
 }
 

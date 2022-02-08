@@ -13,7 +13,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
       drawer: buildDrawer(context),
-      body: buildForm(SettingsWidget()),
+      body: buildForm(SettingsWidget(), 0.3),
     );
   }
 }

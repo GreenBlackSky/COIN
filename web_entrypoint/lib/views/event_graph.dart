@@ -19,7 +19,7 @@ class _EventGraphViewState extends State<EventGraphView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context),
-        body: buildForm(EventGraph()),
+        body: buildForm(EventGraph(), 0.9),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
             onPressed: addNewEventDialogMethod(context),

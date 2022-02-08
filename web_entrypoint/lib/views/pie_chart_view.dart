@@ -17,7 +17,7 @@ class _PieChartViewState extends State<PieChartView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context),
-      body: buildForm(PieChart()),
+      body: buildForm(PieChart(), 0.9),
       drawer: buildDrawer(context),
     );
   }

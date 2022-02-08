@@ -18,7 +18,7 @@ class _CategoryListViewState extends State<CategoryListView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context),
-        body: buildForm(CategoryList()),
+        body: buildForm(CategoryList(), 0.3),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
             onPressed: addNewCategoryDialogMethod(context),

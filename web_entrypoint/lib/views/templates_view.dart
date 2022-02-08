@@ -14,7 +14,7 @@ class _TemplatesViewState extends State<TemplatesView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context),
-        body: buildForm(Text("Templates")),
+        body: buildForm(Text("Templates"), 0.3),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
             onPressed: () {},
