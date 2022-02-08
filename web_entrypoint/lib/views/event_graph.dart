@@ -63,20 +63,38 @@ class _EventsGraphState extends State<EventGraph> {
       chartData
           .add(ChartData(x: dateFromTimestamp(dayStartTimestamp), y: balance));
     }
-    // TODO trackball
     // TODO link to event on trackball
     // TODO scale
     // TODO current total
     return SfCartesianChart(
-        primaryXAxis: DateTimeAxis(
-            intervalType: DateTimeIntervalType.days,
-            minimum: storage.currentMonthStart,
-            maximum: storage.currentMonthEnd),
-        series: <ChartSeries<ChartData, DateTime>>[
-          LineSeries<ChartData, DateTime>(
-              dataSource: chartData,
-              xValueMapper: (ChartData val, _) => val.x,
-              yValueMapper: (ChartData val, _) => val.y)
-        ]);
+      primaryXAxis: DateTimeAxis(
+          intervalType: DateTimeIntervalType.days,
+          minimum: storage.currentMonthStart,
+          maximum: storage.currentMonthEnd),
+      series: <ChartSeries<ChartData, DateTime>>[
+        LineSeries<ChartData, DateTime>(
+            dataSource: chartData,
+            xValueMapper: (ChartData val, _) => val.x,
+            yValueMapper: (ChartData val, _) => val.y,
+            selectionBehavior: SelectionBehavior(
+                enable: true,
+                selectedColor: Colors.red,
+                selectedBorderWidth: 5,
+                unselectedBorderWidth: 5),
+            width: 5)
+      ],
+      trackballBehavior: TrackballBehavior(
+          enable: true,
+          activationMode: ActivationMode.singleTap,
+          tooltipDisplayMode: TrackballDisplayMode.nearestPoint,
+          tooltipSettings: InteractiveTooltip(format: 'point.x: point.y'),
+          hideDelay: 2000),
+      onSelectionChanged: (selectionArgs) {
+        int index = selectionArgs.pointIndex;
+        // log(index.toString());
+        // log(chartData[index].x.toString());
+        // log(chartData[index].y.toString());
+      },
+    );
   }
 }

@@ -1,7 +1,7 @@
 class DataStorage {
   DataStorage() {
     DateTime now = DateTime.now();
-    this.currentMonthStart = DateTime(now.year, now.month).toUtc();
+    this.currentMonthStart = DateTime(now.year, now.month);
     this.currentMonthEnd = (now.month < 12)
         ? new DateTime(now.year, now.month + 1, 0)
         : new DateTime(now.year + 1, 1, 0);
@@ -24,7 +24,7 @@ class DataStorage {
     this.category = -1;
     this.categories.clear();
     this.totals.clear();
-    DateTime now = DateTime.now().toUtc();
+    DateTime now = DateTime.now();
     this.currentMonthStart = DateTime(now.year, now.month);
     this.currentMonthEnd = (now.month < 12)
         ? new DateTime(now.year, now.month + 1, 0)
