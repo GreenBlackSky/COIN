@@ -1,6 +1,6 @@
-import 'account_requests.dart';
-import 'account_responses.dart';
-import 'utils.dart';
+import 'requests/account_requests.dart';
+import 'responses/account_responses.dart';
+import 'responses/utils.dart';
 import 'common.dart';
 
 Future<void> syncAccounts() async {

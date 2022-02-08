@@ -1,6 +1,6 @@
-import 'events_requests.dart';
+import 'requests/events_requests.dart';
+import 'responses/utils.dart';
 import 'common.dart';
-import 'utils.dart';
 
 import 'package:coin_client/storage.dart';
 

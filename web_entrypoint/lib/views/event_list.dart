@@ -7,6 +7,7 @@ import 'widgets/common/common.dart';
 import 'widgets/drawer.dart';
 
 import 'package:coin_client/storage.dart';
+import 'package:coin_client/common.dart';
 
 class EventListView extends StatefulWidget {
   @override

@@ -1,5 +1,5 @@
-import 'user_requests.dart';
-import 'user_responses.dart';
+import 'requests/user_requests.dart';
+import 'responses/user_responses.dart';
 import 'account_logic.dart';
 import 'common.dart';
 

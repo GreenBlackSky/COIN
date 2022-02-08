@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
-import 'package:coin_client/views/widgets/common/common.dart';
+
+import 'package:coin_client/common.dart';
 
 Future<http.Response> requestCategories(int accountID) async {
   return session.post(

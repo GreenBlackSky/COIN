@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'session.dart';
-import 'package:coin_client/views/widgets/common/common.dart';
+
+import 'package:coin_client/common.dart';
 
 Future<http.Response> requestEvents(
     int accountID, DateTime startTime, DateTime endTime) async {
@@ -44,4 +45,13 @@ Future<http.Response> requestDeleteEvent(int eventID, int accountID) async {
       'delete_event',
       jsonEncode(
           <String, dynamic>{'event_id': eventID, 'account_id': accountID}));
+}
+
+Future<http.Response> requestBalance(int accountID, DateTime dateTime) async {
+  return session.post(
+      'get_balance',
+      jsonEncode(<String, dynamic>{
+        'account_id': accountID,
+        'timestamp': timestampFromDateTime(dateTime),
+      }));
 }

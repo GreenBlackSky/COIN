@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_client/network/session.dart';
+import 'package:coin_client/network/requests/session.dart';
 import 'package:coin_client/storage.dart';
 
 import 'common/confirmation_dialog.dart';

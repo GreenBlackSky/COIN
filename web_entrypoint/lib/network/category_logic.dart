@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'category_requests.dart';
-import 'category_responses.dart';
+import 'requests/category_requests.dart';
+import 'responses/category_responses.dart';
 import 'common.dart';
 
 import 'package:coin_client/storage.dart';
