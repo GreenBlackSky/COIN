@@ -66,7 +66,7 @@ void Function() baseEventDialog(
               content: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    buildIntField(diffController, "diff"),
+                    buildUnsignedIntField(diffController, "diff"),
                     dateField,
                     buildTextField(descriptionController, "description"),
                     categoryComboBox,

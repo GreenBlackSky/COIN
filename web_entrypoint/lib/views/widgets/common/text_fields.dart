@@ -23,7 +23,7 @@ Widget _buildTextFieldImpl(TextEditingController controller, String hint,
   );
 }
 
-Widget buildIntField(TextEditingController controller, String hint,
+Widget buildUnsignedIntField(TextEditingController controller, String hint,
     {bool obscure = false}) {
   return _buildTextFieldImpl(controller, hint, (value) => null, obscure,
       <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]);
