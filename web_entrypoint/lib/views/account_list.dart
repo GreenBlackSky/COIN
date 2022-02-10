@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'widgets/app_bar.dart';
+import 'widgets/topper.dart';
 import 'widgets/common/element_list.dart';
 import 'widgets/common/common.dart';
 import 'widgets/account_dialog.dart';
@@ -17,7 +17,7 @@ class _AccountListViewState extends State<AccountListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context),
+        appBar: Topper(context),
         body: buildForm(AccountList(), 0.3),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(

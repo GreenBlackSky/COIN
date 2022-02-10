@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'widgets/app_bar.dart';
+import 'widgets/topper.dart';
 import 'widgets/event_dialog.dart';
 import 'widgets/common/element_list.dart';
 import 'widgets/common/common.dart';
@@ -18,7 +18,7 @@ class _EventListViewState extends State<EventListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context),
+        appBar: Topper(context),
         body: buildForm(EventsList(), 0.3),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(

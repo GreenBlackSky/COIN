@@ -1,8 +1,8 @@
 class DataStorage {
   DataStorage() {
     DateTime now = DateTime.now();
-    this.currentMonthStart = DateTime(now.year, now.month);
-    this.currentMonthEnd = (now.month < 12)
+    this.periodStart = DateTime(now.year, now.month);
+    this.periodEnd = (now.month < 12)
         ? new DateTime(now.year, now.month + 1, 0)
         : new DateTime(now.year + 1, 1, 0);
   }
@@ -13,8 +13,8 @@ class DataStorage {
   List categories = [];
   Map totals = {};
   List events = []; // events in current month, event_time should be timestamp
-  DateTime currentMonthStart;
-  DateTime currentMonthEnd;
+  DateTime periodStart;
+  DateTime periodEnd;
   int monthStartBalance = 0;
 
   void clear() {
@@ -25,8 +25,8 @@ class DataStorage {
     this.categories.clear();
     this.totals.clear();
     DateTime now = DateTime.now();
-    this.currentMonthStart = DateTime(now.year, now.month);
-    this.currentMonthEnd = (now.month < 12)
+    this.periodStart = DateTime(now.year, now.month);
+    this.periodEnd = (now.month < 12)
         ? new DateTime(now.year, now.month + 1, 0)
         : new DateTime(now.year + 1, 1, 0);
     this.events.clear();

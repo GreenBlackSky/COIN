@@ -8,14 +8,14 @@ import 'package:coin_client/storage.dart';
 
 Future<void> syncData() async {
   await requestEvents(storage.accounts[storage.accountIndex]['id'],
-          storage.currentMonthStart, storage.currentMonthEnd)
+          storage.periodStart, storage.periodEnd)
       .then(processEventsResponse);
-  await requestBalance(storage.accounts[storage.accountIndex]['id'],
-          storage.currentMonthStart)
+  await requestBalance(
+          storage.accounts[storage.accountIndex]['id'], storage.periodStart)
       .then(processMonthStartBalanceResponse);
   await requestCategories(storage.accounts[storage.accountIndex]['id'])
       .then(processCategories);
   await requestTotalsByCategory(storage.accounts[storage.accountIndex]['id'],
-          storage.currentMonthStart, storage.currentMonthEnd)
+          storage.periodStart, storage.periodEnd)
       .then(processTotalsByCategory);
 }

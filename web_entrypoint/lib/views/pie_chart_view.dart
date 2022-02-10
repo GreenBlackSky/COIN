@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import 'widgets/app_bar.dart';
+import 'widgets/topper.dart';
 import 'widgets/common/common.dart';
 import 'widgets/drawer.dart';
 
@@ -16,7 +16,7 @@ class _PieChartViewState extends State<PieChartView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context),
+      appBar: Topper(context),
       body: buildForm(PieChart(), 0.9),
       drawer: buildDrawer(context),
     );

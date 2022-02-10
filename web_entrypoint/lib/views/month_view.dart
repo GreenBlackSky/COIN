@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import 'widgets/app_bar.dart';
+import 'widgets/topper.dart';
 import 'widgets/event_dialog.dart';
 import 'widgets/common/common.dart';
 import 'widgets/drawer.dart';
@@ -15,7 +15,7 @@ class _MonthViewState extends State<MonthView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context),
+        appBar: Topper(context),
         body: buildForm(
             SfCalendar(
               view: CalendarView.month,

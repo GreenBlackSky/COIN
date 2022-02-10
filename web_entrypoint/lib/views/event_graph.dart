@@ -3,7 +3,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'widgets/common/common.dart';
 import 'widgets/drawer.dart';
-import 'widgets/app_bar.dart';
+import 'widgets/topper.dart';
 import 'widgets/event_dialog.dart';
 
 import 'package:coin_client/storage.dart';
@@ -18,7 +18,7 @@ class _EventGraphViewState extends State<EventGraphView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context),
+        appBar: Topper(context),
         body: buildForm(EventGraph(), 0.9),
         drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
@@ -48,8 +48,8 @@ class _EventsGraphState extends State<EventGraph> {
     int balance = storage.monthStartBalance;
     List<ChartData> chartData = [];
     int eventIDX = 0;
-    for (DateTime indexDay = storage.currentMonthStart;
-        indexDay.month == storage.currentMonthStart.month;
+    for (DateTime indexDay = storage.periodStart;
+        indexDay.month == storage.periodStart.month;
         indexDay = indexDay.add(Duration(days: 1))) {
       int dayStartTimestamp = timestampFromDateTime(indexDay);
       int dayEndTimestamp =
@@ -69,8 +69,8 @@ class _EventsGraphState extends State<EventGraph> {
     return SfCartesianChart(
       primaryXAxis: DateTimeAxis(
           intervalType: DateTimeIntervalType.days,
-          minimum: storage.currentMonthStart,
-          maximum: storage.currentMonthEnd),
+          minimum: storage.periodStart,
+          maximum: storage.periodEnd),
       series: <ChartSeries<ChartData, DateTime>>[
         LineSeries<ChartData, DateTime>(
             dataSource: chartData,
