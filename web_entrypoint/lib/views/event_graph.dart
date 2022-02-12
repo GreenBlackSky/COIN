@@ -65,7 +65,6 @@ class _EventsGraphState extends State<EventGraph> {
     }
     // TODO link to event on trackball
     // TODO scale
-    // TODO current total
     return SfCartesianChart(
       primaryXAxis: DateTimeAxis(
           intervalType: DateTimeIntervalType.days,

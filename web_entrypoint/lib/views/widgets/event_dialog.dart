@@ -43,6 +43,15 @@ class _CategoryComboBox extends State<CategoryComboBox> {
   }
 }
 
+String _validateNumber(String value) {
+  try {
+    int.parse(value);
+  } catch (e) {
+    return "Value must be integer";
+  }
+  return null;
+}
+
 void Function() baseEventDialog(
     BuildContext context,
     String title,
@@ -58,28 +67,33 @@ void Function() baseEventDialog(
     var dateField = DateField(eventTime);
     var categoryComboBox = CategoryComboBox(categoryID);
     var descriptionController = TextEditingController(text: description);
-
+    var key = GlobalKey<FormState>();
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
               title: Text(title),
-              content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    buildUnsignedIntField(diffController, "diff"),
-                    dateField,
-                    buildTextField(descriptionController, "description"),
-                    categoryComboBox,
-                  ]),
+              content: Form(
+                  key: key,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        buildValidatedTextField(
+                            diffController, "diff", _validateNumber),
+                        dateField,
+                        buildTextField(descriptionController, "description"),
+                        categoryComboBox,
+                      ])),
               actions: <Widget>[
                 buildButton(buttonText, () {
-                  Navigator.pushNamed(context, "/loading",
-                      arguments: LoadingArgs(action,
-                          id: eventID,
-                          id2: categoryComboBox.selectedCategoryId,
-                          diff: int.parse(diffController.value.text),
-                          dateTime: dateField.selectedDate,
-                          description: descriptionController.value.text));
+                  if (key.currentState.validate()) {
+                    Navigator.pushNamed(context, "/loading",
+                        arguments: LoadingArgs(action,
+                            id: eventID,
+                            id2: categoryComboBox.selectedCategoryId,
+                            diff: int.parse(diffController.value.text),
+                            dateTime: dateField.selectedDate,
+                            description: descriptionController.value.text));
+                  }
                 }),
                 buildButton("Cancel", () {
                   Navigator.pop(context, 'Cancel');
