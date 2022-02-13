@@ -1,14 +1,15 @@
 """Module, that contains events manipulation methods."""
 
+from datetime import datetime
+
 from celery_abc import WorkerMetaBase
-from sqlalchemy import desc
-from sqlalchemy.orm.session import Session
 
 from common.celery_utils import celery_app
 from common.interfaces import CategoryService
 from common.schemas import CategorySchema
 
 from .account import AccountHandler
+from .event import EventHandler
 
 from ..model import session, CategoryModel
 
@@ -77,7 +78,28 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
         session.commit()
         return {"status": "OK", "category": category_schema.dump(category)}
 
-    def delete_category(self, user_id, account_id, category_id):
+    def get_total_by_category(self, user_id, account_id, start_time, end_time):
+        """Get total chage in category."""
+        accounts_response = AccountHandler.check_account_user(
+            account_id, user_id
+        )
+        if accounts_response["status"] != "OK":
+            return accounts_response
+
+        start_time = datetime.fromtimestamp(start_time)
+        end_time = datetime.fromtimestamp(end_time)
+
+        category_resp = CategoryHandler.get_categories(user_id, account_id)
+
+        totals = {
+            category["id"]: EventHandler.get_category_total(
+                account_id, category["id"], start_time, end_time
+            )
+            for category in category_resp["categories"]
+        }
+        return {"status": "OK", "totals": totals}
+
+    def delete_category(self, user_id, account_id, category_id, category_to):
         """Delete existing events category."""
         accounts_response = AccountHandler.check_account_user(
             account_id, user_id
@@ -94,6 +116,13 @@ class CategoryHandler(CategoryService, metaclass=WorkerMetaBase):
             return {"status": "wrong account for category"}
 
         session.delete(category)
+        if category_to:
+            EventHandler.move_events_between_categories(
+                account_id, category_id, category_to
+            )
+        else:
+            EventHandler.delete_events_by_category(account_id, category_id)
+
         session.commit()
         return {"status": "OK", "category": category_schema.dump(category)}
 

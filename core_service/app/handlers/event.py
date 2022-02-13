@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from celery_abc import WorkerMetaBase
-from sqlalchemy import desc
+from sqlalchemy import desc, delete
 from sqlalchemy.orm.session import Session
 
 from common.celery_utils import celery_app
@@ -12,7 +12,6 @@ from common.schemas import EventSchema
 
 from ..model import SavePointModel, session, EventModel
 from .account import AccountHandler
-from .category import CategoryHandler
 
 event_schema = EventSchema()
 
@@ -258,31 +257,40 @@ class EventHandler(EventService, metaclass=WorkerMetaBase):
         )
         return {"status": "OK", "balance": savepoint.total + diff_sum}
 
-    def get_total_by_category(self, user_id, account_id, start_time, end_time):
-        """Get total chage in category."""
-        accounts_response = AccountHandler.check_account_user(
-            account_id, user_id
+    def get_category_total(
+        self, account_id, category_id, start_time, end_time
+    ):
+        """
+        Get total income for given time in given category.
+
+        start_time and end_time are both datetime.
+        """
+        return sum(
+            event.diff
+            for event in session.query(EventModel.diff)
+            .filter(EventModel.account_id == account_id)
+            .filter(EventModel.category_id == category_id)
+            .filter(EventModel.event_time >= start_time)
+            .filter(EventModel.event_time < end_time)
+            .all()
         )
-        if accounts_response["status"] != "OK":
-            return accounts_response
 
-        start_time = datetime.fromtimestamp(start_time)
-        end_time = datetime.fromtimestamp(end_time)
+    def delete_events_by_category(self, account_id, category_id):
+        session.execute(
+            EventModel.delete()
+            .where(EventModel.account_id == account_id)
+            .where(EventModel.category_id == category_id)
+        )
 
-        category_resp = CategoryHandler.get_categories(user_id, account_id)
-
-        totals = {}
-        for category in category_resp["categories"]:
-            totals[category["id"]] = sum(
-                event.diff
-                for event in session.query(EventModel.diff)
-                .filter(EventModel.account_id == account_id)
-                .filter(EventModel.category_id == category["id"])
-                .filter(EventModel.event_time >= start_time)
-                .filter(EventModel.event_time < end_time)
-                .all()
-            )
-        return {"status": "OK", "totals": totals}
+    def move_events_between_categories(
+        self, account_id, category_from, category_to
+    ):
+        session.execute(
+            EventModel.update()
+            .values(category_id=category_to)
+            .where(EventModel.account_id == account_id)
+            .where(EventModel.category_id == category_from)
+        )
 
     def clear_events(self):
         """Clear all events from db."""

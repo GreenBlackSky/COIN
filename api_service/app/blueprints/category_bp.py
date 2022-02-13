@@ -50,12 +50,23 @@ def edit_category(account_id, category_id, name, color):
     )
 
 
+@bp.post("/get_totals_by_category")
+@jwt_required()
+@log_request(request, current_user)
+@parse_request_args(request)
+def get_totals_by_category(account_id, start_time, end_time):
+    """Get totals on certain account by categories at certain time."""
+    return categoryService.get_total_by_category(
+        current_user.id, account_id, start_time, end_time
+    )
+
+
 @bp.post("/delete_category")
 @jwt_required()
 @log_request(request, current_user)
 @parse_request_args(request)
-def delete_category(account_id, category_id):
+def delete_category(account_id, category_id, category_to):
     """Delete existing category."""
     return categoryService.delete_category(
-        current_user.id, account_id, category_id
+        current_user.id, account_id, category_id, category_to
     )

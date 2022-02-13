@@ -82,13 +82,25 @@ class EventService(ABC):
         pass
 
     @abstractmethod
-    def get_total_by_category(self, user_id, account_id, start_time, end_time):
-        """Get total change in each category."""
+    def clear_events(self):
+        """Delete existing event."""
         pass
 
     @abstractmethod
-    def clear_events(self):
-        """Delete existing event."""
+    def get_category_total(
+        self, account_id, category_id, start_time, end_time
+    ):
+        """Get total for given time in given category."""
+        pass
+
+    @abstractmethod
+    def delete_events_by_category(self, account_id, category_id):
+        pass
+
+    @abstractmethod
+    def move_events_between_categories(
+        self, account_id, category_from, category_to
+    ):
         pass
 
 
@@ -111,6 +123,11 @@ class CategoryService(ABC):
         pass
 
     @abstractmethod
-    def delete_category(self, user_id, account_id, category_id):
+    def get_total_by_category(self, user_id, account_id, start_time, end_time):
+        """Get total change in each category."""
+        pass
+
+    @abstractmethod
+    def delete_category(self, user_id, account_id, category_id, category_to):
         """Delete existing events category."""
         pass
