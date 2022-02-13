@@ -20,7 +20,7 @@ void setActiveAccountAfterCreate(Map<String, dynamic> responseBody) {
 }
 
 void setActiveAccountAfterDelete(Map<String, dynamic> responseBody) {
-  if (storage.accounts.length >= storage.accountIndex) {
+  if (storage.accounts.length <= storage.accountIndex) {
     storage.accountIndex = storage.accounts.length - 1;
   }
 }

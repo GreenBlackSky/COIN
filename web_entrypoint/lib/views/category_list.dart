@@ -31,7 +31,7 @@ class CategoryList extends ElementsList {
   final elements = storage.categories;
 
   @override
-  Widget buildListElement(BuildContext context, var category) {
+  Widget buildListElement(BuildContext context, var category, int index) {
     Function onEdit = editCategoryDialogMethod(context, category);
     Function onRemove = deleteCategoryDialogMethod(context, category);
     return buildListElementBase(Text(category['name']), onEdit, onRemove,

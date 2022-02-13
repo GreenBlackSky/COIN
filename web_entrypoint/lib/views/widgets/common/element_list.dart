@@ -7,7 +7,7 @@ class ElementsList extends StatefulWidget {
   @override
   State<ElementsList> createState() => _ElementsListState();
 
-  Widget buildListElement(BuildContext context, var element) {}
+  Widget buildListElement(BuildContext context, var element, int index) {}
 }
 
 class _ElementsListState extends State<ElementsList> {
@@ -19,7 +19,7 @@ class _ElementsListState extends State<ElementsList> {
       itemBuilder: (BuildContext context, int index) {
         return this
             .widget
-            .buildListElement(context, this.widget.elements[index]);
+            .buildListElement(context, this.widget.elements[index], index);
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
@@ -28,6 +28,18 @@ class _ElementsListState extends State<ElementsList> {
 
 Widget buildListElementBase(Widget text, Function onEdit, Function onRemove,
     {Color color = Colors.blue}) {
+  List<Widget> actions = [];
+  if (onEdit != null) {
+    actions.add(IconButton(
+        icon: Icon(Icons.edit), color: Colors.black, onPressed: onEdit));
+  }
+  if (onRemove != null) {
+    actions.add(IconButton(
+      icon: Icon(Icons.delete),
+      color: Colors.black,
+      onPressed: onRemove,
+    ));
+  }
   return Container(
     height: 50,
     color: color,
@@ -35,17 +47,7 @@ Widget buildListElementBase(Widget text, Function onEdit, Function onRemove,
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Padding(padding: EdgeInsets.all(8.0), child: text),
-      Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Row(children: [
-            IconButton(
-                icon: Icon(Icons.edit), color: Colors.black, onPressed: onEdit),
-            IconButton(
-              icon: Icon(Icons.delete),
-              color: Colors.black,
-              onPressed: onRemove,
-            ),
-          ]))
+      Padding(padding: EdgeInsets.all(8.0), child: Row(children: actions))
     ])),
     alignment: Alignment.centerRight,
   );

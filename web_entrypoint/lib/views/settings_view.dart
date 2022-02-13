@@ -6,7 +6,6 @@ import 'widgets/drawer.dart';
 
 import 'package:coin_client/storage.dart';
 
-//TODO switch themes
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

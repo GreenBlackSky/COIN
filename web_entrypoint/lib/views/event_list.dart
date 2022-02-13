@@ -32,7 +32,7 @@ class EventsList extends ElementsList {
   final elements = storage.events;
 
   @override
-  Widget buildListElement(BuildContext context, var event) {
+  Widget buildListElement(BuildContext context, var event, int index) {
     String date = timestampToString(event['event_time']);
     String diff = event['diff'].toString();
     Widget description =

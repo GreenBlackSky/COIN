@@ -21,7 +21,6 @@ class LoadingAnimation extends AnimatedWidget {
 class LoadingAnimationPainter extends CustomPainter {
   final double size;
   LoadingAnimationPainter(this.size);
-  // TODO cool animation
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()

@@ -14,7 +14,6 @@ import 'views/loading_view.dart';
 
 void main() => runApp(App());
 
-// TODO check authorization on routes
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
