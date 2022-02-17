@@ -1,10 +1,10 @@
 version: '3.8'
 
 services:
-  web_entrypoint:
-    build: ./web_entrypoint/
-    ports:
-      - 5001:4040
+  # web_entrypoint:
+  #   build: ./web_entrypoint/
+  #   ports:
+  #     - 5001:4040
   
     # cache_app:
     #   build: ./cache_app/
@@ -24,32 +24,11 @@ services:
     #     - ./redis/redis_data:/var/lib/redis
     #   env_file:
     #     - config.env
-    
-  rabbit:
-    image: rabbitmq:3.7-management
-    volumes:
-    - ./rabbitmq/etc/:/etc/rabbitmq/
-    - ./rabbitmq/data/:/var/lib/rabbitmq/
-    - ./rabbitmq/logs/:/var/log/rabbitmq/
-    ports:
-      - 5002:15672
-    env_file:
-      - config.env
-
-  # flower:
-  #   image: mher/flower:0.9.5
-  #   ports:
-  #     - 5003:5003
-  #   links:
-  #     - rabbit
-  #   env_file:
-  #     - flower_config.env
 
   api_service:
     build: ./api_service/
     volumes:
       - ./api_service/app:/app/app
-      - ./common:/app/common
     ports:
       - 5004:5000
     depends_on:
@@ -68,27 +47,4 @@ services:
       - ./api_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
       - api_db_config.env    
-
-  core_service:
-    build: ./core_service/
-    volumes:
-      - ./core_service/app:/app/app
-      - ./common:/app/common
-    ports:
-      - 5006:5000
-    depends_on:
-      - rabbit
-      - api_db
-    env_file:
-      - config.env
-      - core_db_config.env    
-  
-  core_db:
-    image: postgres
-    ports:  # for debug purpuses
-      - 5007:5432
-    volumes:
-      - ./core_db/postgres_data:/var/lib/postgresql/data/
-      - ./core_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
-    env_file:
-      - core_db_config.env    
+ 

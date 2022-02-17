@@ -20,5 +20,9 @@ engine = create_engine(connection_string)
 Base.prepare(engine, reflect=True)
 
 UserModel = Base.classes.users
+AccountModel = Base.classes.accounts
+SavePointModel = Base.classes.save_points
+EventModel = Base.classes.events
+CategoryModel = Base.classes.categories
 
 session = Session(engine)

@@ -37,20 +37,6 @@ class BaseTest(unittest.TestCase):
             )
         return response.json().get("user")
 
-    def check_authorization(self, authorized=True):
-        """Try access protected resource."""
-        if self.session is None:
-            self.session = requests.Session()
-        if authorized:
-            result = {"status": "OK"}
-            code = 200
-        else:
-            result = {"status": "unauthorized access"}
-            code = 401
-        response = self.session.post(url=self.HOST + "test_login")
-        self.assertEqual(response.status_code, code, "Wrong response code")
-        self.assertDictContainsSubset(result, response.json(), "Wrong answear")
-
     def login(self, name=None, password=None, result=None, code=200):
         """Login."""
         if name is None:

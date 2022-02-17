@@ -28,18 +28,12 @@ class LoginTest(BaseTest):
         self.user_name_2 = "name2"
         self.user_password_2 = "pass2"
 
-    def test_unautharized(self):
-        """Try unautharized access to app."""
-        self.check_authorization(authorized=False)
 
     def test_login_and_logout(self):
         """Test logging in."""
         self.register()
-        self.check_authorization()
         self.logout()
-        self.check_authorization(authorized=False)
         self.login()
-        self.check_authorization()
 
     def test_wrong_password(self):
         """Try logging in with wrong password."""
@@ -50,7 +44,6 @@ class LoginTest(BaseTest):
             result={"status": "wrong password"},
             code=401,
         )
-        self.check_authorization(authorized=False)
 
     def test_login_with_wrong_user(self):
         """Test logging in with wrong name."""
@@ -61,7 +54,6 @@ class LoginTest(BaseTest):
             code=401,
             result={"status": "no such user"},
         )
-        self.check_authorization(authorized=False)
 
     def test_duplicate_register(self):
         """Try register user two times in a row."""

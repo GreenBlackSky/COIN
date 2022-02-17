@@ -37,20 +37,15 @@ def create_app():
     CORS(app, resources={r"*": {"origins": "*"}})
 
     with app.app_context():
-        from .blueprints import login_bp
-        from .blueprints import account_bp
-        from .blueprints import event_bp
-        from .blueprints import category_bp
+        from . import login_bp
+        from . import account_bp
+        from . import event_bp
+        from . import category_bp
 
         app.register_blueprint(login_bp.bp)
         app.register_blueprint(account_bp.bp)
         app.register_blueprint(event_bp.bp)
         app.register_blueprint(category_bp.bp)
-
-        if __debug__:
-            from .blueprints import test_bp
-
-            app.register_blueprint(test_bp.bp)
 
     return app
 

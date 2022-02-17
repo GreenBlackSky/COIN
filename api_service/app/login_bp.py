@@ -7,27 +7,19 @@ to get access to existing one.
 
 from hashlib import md5
 
-from celery_abc import CallerMetaBase
 from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, jwt_required, current_user
 
-from common.celery_utils import celery_app
-from common.constants import MAIN_ACCOUNT_NAME
-from common.debug_tools import log_request, log_function
-from common.interfaces import AccountService
-from common.schemas import UserSchema
-
-from .. import jwt
-from ..request_helpers import parse_request_args
-from ..model import session, UserModel
-
-
-class AccountCaller(AccountService, metaclass=CallerMetaBase):
-    pass
+from . import jwt
+from .account_bp import create_account
+from .constants import MAIN_ACCOUNT_NAME
+from .debug_tools import log_request, log_function
+from .model import session, UserModel
+from .request_helpers import parse_request_args
+from .schemas import UserSchema
 
 
 bp = Blueprint("login_bp", __name__)
-accountService = AccountCaller(celery_app)
 
 
 @jwt.user_identity_loader
@@ -73,7 +65,7 @@ def create_user(name, password):
     user = UserModel(name=name, password_hash=password_hash)
     session.add(user)
     session.commit()
-    accountService.create_account(user_id=user.id, name=MAIN_ACCOUNT_NAME)
+    create_account(user_id=user.id, name=MAIN_ACCOUNT_NAME)
     # self.db_service.create_starting_templates(account.id)
     return {
         "access_token": create_access_token(identity=user),
