@@ -7,6 +7,7 @@ import 'responses/category_responses.dart';
 import 'package:coin_client/storage.dart';
 
 Future<void> syncData() async {
+  assert(storage.accountIndex != -1);
   await requestEvents(storage.accounts[storage.accountIndex]['id'],
           storage.periodStart, storage.periodEnd)
       .then(processEventsResponse);

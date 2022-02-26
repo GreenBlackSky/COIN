@@ -30,9 +30,8 @@ services:
     volumes:
       - ./api_service/app:/app/app
     ports:
-      - 5004:5000
+      - 5003:8000
     depends_on:
-      - rabbit
       - api_db
     env_file:
       - config.env

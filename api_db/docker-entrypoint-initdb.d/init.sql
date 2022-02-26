@@ -19,10 +19,10 @@ CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     user_id INT,
     account_id INT REFERENCES accounts,
+    category_id INT REFERENCES categories,
     event_time TIMESTAMP NOT NULL,
     diff INT NOT NULL,
-    description VARCHAR(200) NOT NULL,
-    category_id INT REFERENCES categories
+    description VARCHAR(200) NOT NULL
 );
 CREATE TABLE save_points (
     id SERIAL PRIMARY KEY,
