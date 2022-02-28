@@ -31,3 +31,7 @@ Future<http.Response> requestEditUser(
         'new_pass': newPassword
       }));
 }
+
+Future<http.Response> requestUserData() async {
+  return session.post('get_user_data');
+}

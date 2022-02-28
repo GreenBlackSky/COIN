@@ -7,8 +7,16 @@ from pydantic import BaseModel
 from sqlalchemy import desc
 from sqlalchemy.orm.session import Session
 
+from .exceptions import LogicException
+from .model import (
+    UserModel,
+    session,
+    EventModel,
+    SavePointModel,
+    EventSchema,
+    create_account_entry,
+)
 from .user import authorized_user
-from .model import UserModel, session, EventModel, SavePointModel, EventSchema
 
 
 router = APIRouter()
@@ -22,7 +30,7 @@ def _dump_event(event: EventModel):
 
 
 def _get_or_create_savepoint(
-    session: Session, account_id, event_time: dt.datetime
+    session: Session, user_id, account_id, event_time: dt.datetime
 ):
     # event in the start of the month is not accounted for
     # in the savepoint at a same time, it would be in a next savepoint
@@ -38,8 +46,12 @@ def _get_or_create_savepoint(
         day=1, hour=0, minute=0, second=0, microsecond=0
     )
     if savepoint is None:  # earliest savepoint
-        savepoint = SavePointModel(
-            datetime=month_start, account_id=account_id, total=0
+        savepoint = create_account_entry(
+            SavePointModel,
+            user_id=user_id,
+            account_id=account_id,
+            datetime=month_start,
+            total=0,
         )
         session.add(savepoint)
     elif savepoint.datetime < month_start:  # new savepoint
@@ -84,7 +96,8 @@ def create_event(
 ):
     """Request to create new event."""
     event_time = dt.datetime.fromtimestamp(event_data.event_time)
-    event = EventModel(
+    event = create_account_entry(
+        EventModel,
         user_id=current_user.id,
         account_id=event_data.account_id,
         category_id=event_data.category_id,
@@ -93,7 +106,9 @@ def create_event(
         description=event_data.description,
     )
     session.add(event)
-    _get_or_create_savepoint(session, event_data.account_id, event_time)
+    _get_or_create_savepoint(
+        session, current_user.id, event_data.account_id, event_time
+    )
     _update_latter_savepoints(
         session, event_data.account_id, event_time, event_data.diff
     )
@@ -148,13 +163,11 @@ def edit_event(
     current_user: UserModel = Depends(authorized_user),
 ):
     """Request to edit event."""
-    event = session.get(EventModel, request.event_id)
+    event = session.query(EventModel).get(
+        (current_user.id, request.account_id, request.event_id)
+    )
     if event is None:
-        return {"status": "no such event"}
-    if event.user_id != current_user.id:
-        return {"status": "accessing another users events"}
-    if event.account_id != request.account_id:
-        return {"status": "wrong account for event"}
+        raise LogicException("no such event")
 
     event_time = dt.datetime.fromtimestamp(request.event_time)
     old_event_time: dt.datetime = event.event_time
@@ -169,7 +182,9 @@ def edit_event(
         _update_latter_savepoints(
             session, event.account_id, old_event_time, -request.diff
         )
-        _get_or_create_savepoint(session, event.account_id, event_time)
+        _get_or_create_savepoint(
+            session, current_user.id, event.account_id, event_time
+        )
         _update_latter_savepoints(
             session, event.account_id, event_time, request.diff
         )
@@ -192,13 +207,11 @@ def delete_event(
     current_user: UserModel = Depends(authorized_user),
 ):
     """Delete existing event."""
-    event = session.get(EventModel, request.event_id)
+    event = session.query(EventModel).get(
+        (current_user.id, request.account_id, request.event_id)
+    )
     if event is None:
-        return {"status": "no such event"}
-    if event.user_id != current_user.id:
-        return {"status": "accessing another users events"}
-    if event.account_id != request.account_id:
-        return {"status": "wrong account for event"}
+        raise LogicException("no such event")
 
     session.delete(event)
     # TODO remove savepoint if event is a last one
@@ -260,20 +273,27 @@ def get_category_total(account_id, category_id, start_time, end_time):
     )
 
 
-def delete_events_by_category(account_id, category_id):
+def delete_events_by_category(user_id, account_id, category_id):
     """Delete all events in one category."""
-    session.execute(
-        EventModel.delete()
-        .where(EventModel.account_id == account_id)
-        .where(EventModel.category_id == category_id)
+    (
+        session.query(EventModel)
+        .filter(EventModel.user_id == user_id)
+        .filter(EventModel.account_id == account_id)
+        .filter(EventModel.category_id == category_id)
+        .delete()
     )
+    session.commit()
 
 
-def move_events_between_categories(account_id, category_from, category_to):
+def move_events_between_categories(
+    user_id, account_id, category_id, category_to
+):
     """Move all events from one category to another."""
-    session.execute(
-        EventModel.update()
-        .values(category_id=category_to)
-        .where(EventModel.account_id == account_id)
-        .where(EventModel.category_id == category_from)
+    (
+        session.query(EventModel)
+        .filter(EventModel.user_id == user_id)
+        .filter(EventModel.account_id == account_id)
+        .filter(EventModel.category_id == category_id)
+        .update({EventModel.category_id: category_to})
     )
+    session.commit()

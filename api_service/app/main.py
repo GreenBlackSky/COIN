@@ -14,6 +14,7 @@ from . import user
 from . import account
 from . import event
 from . import category
+from .exceptions import LogicException
 
 
 app = FastAPI()
@@ -35,6 +36,11 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
     )
 
 
+@app.exception_handler(LogicException)
+def logic_exception_handler(request: Request, exc: LogicException):
+    return JSONResponse({"status": str(exc)})
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -42,6 +48,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(user.router)
 app.include_router(account.router)

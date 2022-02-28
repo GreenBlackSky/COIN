@@ -17,4 +17,5 @@ Future<void> loadDataFromServerOnLogin(String name, String password) async {
 
 Future<void> editUser(String name, String password, String newPassword) async {
   await requestEditUser(name, password, newPassword);
+  await syncUser();
 }

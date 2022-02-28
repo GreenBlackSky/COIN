@@ -5,13 +5,21 @@ from unicodedata import category
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from .user import authorized_user
+
 from .event import (
     delete_events_by_category,
     get_category_total,
     move_events_between_categories,
 )
-from .model import UserModel, session, CategoryModel, CategorySchema
+from .exceptions import LogicException
+from .model import (
+    UserModel,
+    session,
+    CategoryModel,
+    CategorySchema,
+    create_account_entry,
+)
+from .user import authorized_user
 
 
 router = APIRouter()
@@ -29,7 +37,8 @@ def create_category(
     current_user: UserModel = Depends(authorized_user),
 ):
     """Request to create new category."""
-    category = CategoryModel(
+    category = create_account_entry(
+        CategoryModel,
         user_id=current_user.id,
         account_id=request.account_id,
         name=request.name,
@@ -84,13 +93,11 @@ def edit_category(
     current_user: UserModel = Depends(authorized_user),
 ):
     """Request to edit category."""
-    category = session.get(CategoryModel, request.category_id)
+    category = session.query(CategoryModel).get(
+        (current_user.id, request.account_id, request.category_id)
+    )
     if category is None:
-        return {"status": "no such category"}
-    if category.user_id != current_user.id:
-        return {"status": "accessing another users events"}
-    if category.account_id != request.account_id:
-        return {"status": "wrong account for category"}
+        raise LogicException("no such category")
 
     category.name = request.name
     category.color = request.color
@@ -140,21 +147,28 @@ def delete_category(
     current_user: UserModel = Depends(authorized_user),
 ):
     """Delete existing category."""
-    category = session.get(CategoryModel, request.category_id)
+    category = session.query(CategoryModel).get(
+        (current_user.id, request.account_id, request.category_id)
+    )
     if category is None:
-        return {"status": "no such category"}
-    if category.user_id != current_user.id:
-        return {"status": "accessing another users events"}
-    if category.account_id != request.account_id:
-        return {"status": "wrong account for category"}
+        raise LogicException("no such category")
 
     session.delete(category)
     if request.category_to:
+        if (
+            session.query(CategoryModel).get(
+                (current_user.id, request.account_id, request.category_to)
+            )
+            is None
+        ):
+            raise LogicException("No such category")
         move_events_between_categories(
             request.account_id, request.category_id, request.category_to
         )
     else:
-        delete_events_by_category(request.account_id, request.category_id)
+        delete_events_by_category(
+            current_user.id, request.account_id, request.category_id
+        )
 
     session.commit()
     return {

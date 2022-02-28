@@ -41,7 +41,7 @@ Future<http.Response> requestDeleteCategory(
       jsonEncode(<String, dynamic>{
         'account_id': accountID,
         'category_id': categoryID,
-        'category_to': ""
+        'category_to': 0
       }));
 }
 

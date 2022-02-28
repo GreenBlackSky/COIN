@@ -5,8 +5,10 @@ import datetime as dt
 
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from pydantic import BaseModel
+
+from .exceptions import LogicException
 
 
 connection_string = "postgresql://{}:{}@{}:{}/{}".format(
@@ -29,7 +31,46 @@ SavePointModel = Base.classes.save_points
 EventModel = Base.classes.events
 CategoryModel = Base.classes.categories
 
+
 session = Session(engine)
+
+
+def create_account(user_id, name) -> AccountModel:
+    if session.query(UserModel).get(user_id) is None:
+        raise LogicException("No such user")
+
+    account = (
+        session.query(AccountModel)
+        .filter(AccountModel.user_id == user_id)
+        .order_by(desc(AccountModel.id))
+        .first()
+    )
+    if account is None:
+        account_id = 1
+    else:
+        account_id = account.id + 1
+    return AccountModel(user_id=user_id, id=account_id, name=name)
+
+
+def create_account_entry(model, user_id, account_id, **data):
+    if session.query(UserModel).get(user_id) is None:
+        raise LogicException("No such user")
+
+    if session.query(AccountModel).get((user_id, account_id)) is None:
+        raise LogicException("Invalid account id for given user")
+
+    entry = (
+        session.query(model)
+        .filter(model.user_id == user_id)
+        .filter(model.account_id == account_id)
+        .order_by(desc(model.id))
+        .first()
+    )
+    if entry is None:
+        entry_id = 0
+    else:
+        entry_id = entry.id + 1
+    return model(user_id=user_id, account_id=account_id, id=entry_id, **data)
 
 
 class UserSchema(BaseModel):

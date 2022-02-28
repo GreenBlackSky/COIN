@@ -1,3 +1,4 @@
+import 'requests/user_requests.dart';
 import 'responses/user_responses.dart';
 import 'requests/events_requests.dart';
 import 'responses/events_responses.dart';
@@ -5,6 +6,10 @@ import 'requests/category_requests.dart';
 import 'responses/category_responses.dart';
 
 import 'package:coin_client/storage.dart';
+
+Future<void> syncUser() {
+  requestUserData().then(processAuthorizationResponse);
+}
 
 Future<void> syncData() async {
   assert(storage.accountIndex != -1);

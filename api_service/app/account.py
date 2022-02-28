@@ -3,9 +3,13 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+
 from .constants import MAX_ACCOUNTS, STARTING_CATEGORIES
+from .exceptions import LogicException
 from .model import (
     session,
+    create_account as create_account_impl,
+    create_account_entry,
     UserModel,
     AccountModel,
     AccountSchema,
@@ -20,15 +24,14 @@ router = APIRouter()
 
 def create_account(user_id, name):
     """Create new account."""
-    account = AccountModel(
-        user_id=user_id,
-        name=name,
-    )
+    account = create_account_impl(user_id, name)
     session.add(account)
     session.commit()
 
     categories = [
-        CategoryModel(user_id=user_id, account_id=account.id, **category)
+        create_account_entry(
+            CategoryModel, user_id=user_id, account_id=account.id, **category
+        )
         for category in STARTING_CATEGORIES
     ]
     session.add_all(categories)
@@ -50,7 +53,7 @@ def create_account_endpoint(
         AccountModel.user_id == current_user.id
     )
     if accounts.count() >= MAX_ACCOUNTS:
-        return {"status": "max accounts"}
+        raise LogicException("max accounts")
     if (
         session.query(AccountModel)
         .filter(
@@ -59,19 +62,13 @@ def create_account_endpoint(
         )
         .first()
     ):
-        return {"status": "account already exists"}
+        raise LogicException("account already exists")
     return {
         "status": "OK",
         "account": AccountSchema.from_orm(
             create_account(current_user.id, request.name)
         ).dict(),
     }
-
-
-def get_account(account_id: int) -> dict | None:
-    """Get all users accounts."""
-    if account := session.query(AccountModel).get(account_id):
-        return AccountSchema.from_orm(account).dict()
 
 
 def get_accounts(user_id: int):
@@ -94,7 +91,7 @@ def get_accounts_endpoint(current_user: UserModel = Depends(authorized_user)):
 
 
 class EditAccountRequest(BaseModel):
-    id: int
+    account_id: int
     name: str
 
 
@@ -104,24 +101,23 @@ def edit_account(
     current_user: UserModel = Depends(authorized_user),
 ):
     """Request to edit account."""
-    account = session.get(AccountModel, request.id)
+    account = session.query(AccountModel).get(
+        (current_user.id, request.account_id)
+    )
     if account is None:
-        return {"status": "no such account"}
-
-    if account.user_id != current_user.id:
-        return {"status": "accessing account of another user"}
+        raise LogicException("no such account")
 
     if (
         session.query(AccountModel)
         .filter(
             AccountModel.user_id == current_user.id,
             AccountModel.name == request.name,
-            AccountModel.id != request.id,
+            AccountModel.id != request.account_id,
         )
         .count()
         != 0
     ):
-        return {"status": "account already exists"}
+        raise LogicException("account already exists")
 
     account.name = request.name
     session.commit()
@@ -142,14 +138,13 @@ def delete_account(
         AccountModel.user_id == current_user.id,
     )
     if accounts.count() == 1:
-        return {"status": "can't delete the only account"}
+        raise LogicException("can't delete the only account")
 
-    account = session.get(AccountModel, request.account_id)
+    account = session.query(AccountModel).get(
+        (current_user.id, request.account_id)
+    )
     if account is None:
-        return {"status": "no such account"}
-
-    if account.user_id != current_user.id:
-        return {"status": "accessing account of another user"}
+        raise LogicException("no such account")
 
     session.query(SavePointModel).filter(
         SavePointModel.account_id == account.id
