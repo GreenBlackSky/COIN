@@ -10,16 +10,16 @@ from hashlib import md5
 from fastapi import APIRouter, Depends
 from fastapi_jwt_auth import AuthJWT
 from pydantic import BaseModel
-
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .constants import MAIN_ACCOUNT_NAME, STARTING_CATEGORIES
 from .exceptions import LogicException
 from .model import (
     CategoryModel,
     create_account_entry,
-    session,
+    async_session,
     UserModel,
-    UserSchema,
     create_account,
 )
 
@@ -27,10 +27,11 @@ from .model import (
 router = APIRouter()
 
 
-def authorized_user(Authorize: AuthJWT = Depends()) -> UserModel:
+async def authorized_user(Authorize: AuthJWT = Depends()) -> UserModel:
     Authorize.jwt_required()
     user_id = Authorize.get_jwt_subject()
-    return session.query(UserModel).get(user_id)
+    async with async_session() as session:
+        return await session.get(UserModel, user_id)
 
 
 class UserRequest(BaseModel):
@@ -39,56 +40,78 @@ class UserRequest(BaseModel):
 
 
 @router.post("/register")
-def register(user_data: UserRequest, Authorize: AuthJWT = Depends()):
+async def register(user_data: UserRequest, Authorize: AuthJWT = Depends()):
     """Register new user."""
     if Authorize.get_jwt_subject():
         raise LogicException("already authorized")
 
-    user = session.query(UserModel).filter_by(name=user_data.name).first()
-    if user:
-        raise LogicException("user exists")
-
-    password_hash = md5(user_data.password.encode()).hexdigest()
-    user = UserModel(name=user_data.name, password_hash=password_hash)
-    session.add(user)
-    session.commit()
-    account = create_account(user_id=user.id, name=MAIN_ACCOUNT_NAME)
-    session.add(account)
-    session.commit()
-    for starting_category in STARTING_CATEGORIES:
-        category = create_account_entry(
-            CategoryModel,
-            user_id=user.id,
-            account_id=account.id,
-            **starting_category
+    session: AsyncSession
+    async with async_session() as session:
+        query = await session.execute(
+            select(UserModel).where(UserModel.name == user_data.name)
         )
-        session.add(category)
-    session.commit()
+
+        if query.first():
+            raise LogicException("user exists")
+
+        user = UserModel(
+            name=user_data.name,
+            password_hash=md5(user_data.password.encode()).hexdigest(),
+        )
+        session.add(user)
+        await session.commit()
+
+        account = await create_account(
+            session, user_id=user.id, name=MAIN_ACCOUNT_NAME
+        )
+        session.add(account)
+        await session.commit()
+
+        for starting_category in STARTING_CATEGORIES:
+            category = await create_account_entry(
+                session,
+                CategoryModel,
+                user_id=user.id,
+                account_id=account.id,
+                **starting_category
+            )
+            session.add(category)
+        await session.commit()
+
     return {
         "access_token": Authorize.create_access_token(subject=user.id),
         "status": "OK",
-        "user": UserSchema.from_orm(user).dict(),
+        "user": user.to_dict(),
     }
 
 
 @router.post("/login")
-def login(user_data: UserRequest, Authorize: AuthJWT = Depends()):
+async def login(user_data: UserRequest, Authorize: AuthJWT = Depends()):
     """Log in user."""
-    user = session.query(UserModel).filter_by(name=user_data.name).first()
-    if user is None:
+    session: AsyncSession
+    async with async_session() as session:
+        query = (
+            await session.execute(
+                select(UserModel).where(UserModel.name == user_data.name)
+            )
+        ).first()
+
+    if not query:
         raise LogicException("no such user")
+
+    (user,) = query
     if user.password_hash != md5(user_data.password.encode()).hexdigest():
         raise LogicException("wrong password")
     return {
         "status": "OK",
-        "user": UserSchema.from_orm(user).dict(),
+        "user": user.to_dict(),
         "access_token": Authorize.create_access_token(subject=user.id),
     }
 
 
 @router.post("/get_user_data")
-def get_user_data(user: UserModel = Depends(authorized_user)):
-    return {"status": "OK", "user": UserSchema.from_orm(user).dict()}
+async def get_user_data(user: UserModel = Depends(authorized_user)):
+    return {"status": "OK", "user": user.to_dict()}
 
 
 class EditUserRequest(BaseModel):
@@ -98,38 +121,43 @@ class EditUserRequest(BaseModel):
 
 
 @router.post("/edit_user")
-def edit_user(
+async def edit_user(
     user_data: EditUserRequest,
     current_user: UserModel = Depends(authorized_user),
 ):
     """Edit user."""
-    if user_data.name != current_user.name:
-        other_user = (
-            session.query(UserModel).filter_by(name=user_data.name).first()
-        )
-        if other_user:
-            raise LogicException("user exists")
-    current_user.name = user_data.name
+    session: AsyncSession
+    async with async_session() as session:
+        if user_data.name != current_user.name:
+            query = await session.execute(
+                select(UserModel).where(UserModel.name == user_data.name)
+            )
+            if query.first():
+                raise LogicException("user exists")
 
-    got_old_pass = user_data.old_pass is not None
-    got_new_pass = user_data.new_pass is not None
-    if got_new_pass != got_old_pass:
-        raise LogicException(
-            "new password must be provided with an old password"
-        )
-    if got_old_pass and got_new_pass:
-        old_hash = md5(user_data.old_pass.encode()).hexdigest()
-        if old_hash != current_user.password_hash:
-            raise LogicException("wrong password")
-        new_hash = md5(user_data.new_pass.encode()).hexdigest()
-        current_user.password_hash = new_hash
+        current_user.name = user_data.name
 
-    session.commit()
-    return {"status": "OK", "user": UserSchema.from_orm(current_user).dict()}
+        got_old_pass = user_data.old_pass is not None
+        got_new_pass = user_data.new_pass is not None
+        if got_new_pass != got_old_pass:
+            raise LogicException(
+                "new password must be provided with an old password"
+            )
+
+        if got_old_pass and got_new_pass:
+            old_hash = md5(user_data.old_pass.encode()).hexdigest()
+            if old_hash != current_user.password_hash:
+                raise LogicException("wrong password")
+            new_hash = md5(user_data.new_pass.encode()).hexdigest()
+            current_user.password_hash = new_hash
+
+        await session.commit()
+
+    return {"status": "OK", "user": current_user.to_dict()}
 
 
 @router.post("/logout")
-def logout(Authorize: AuthJWT = Depends()):
+async def logout(Authorize: AuthJWT = Depends()):
     """Log out user."""
     Authorize.jwt_required()
 

@@ -3,134 +3,144 @@
 import os
 import datetime as dt
 
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, desc
-from pydantic import BaseModel
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, String, DateTime, BigInteger
 
 from .exceptions import LogicException
 
 
-connection_string = "postgresql://{}:{}@{}:{}/{}".format(
+connection_string = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(
     os.environ["POSTGRES_USER"],
     os.environ["POSTGRES_PASSWORD"],
     os.environ["POSTGRES_HOST"],
     os.environ["POSTGRES_PORT"],
     os.environ["POSTGRES_DB"],
 )
-
-Base = automap_base()
-engine = create_engine(connection_string)
-Base.prepare(engine, reflect=True)
-
-# fields.DateTime.SERIALIZATION_FUNCS["iso"] = lambda arg: arg.timestamp()
-# fields.DateTime.DESERIALIZATION_FUNCS["iso"] = datetime.fromtimestamp
-UserModel = Base.classes.users
-AccountModel = Base.classes.accounts
-SavePointModel = Base.classes.save_points
-EventModel = Base.classes.events
-CategoryModel = Base.classes.categories
+engine = create_async_engine(connection_string, echo=True)
+Base = declarative_base()
 
 
-session = Session(engine)
+class Serializable:
+    def to_dict(self):
+        return {
+            key: (
+                value.timestamp()
+                if isinstance(value := getattr(self, key), dt.datetime)
+                else value
+            )
+            for key in dir(self)
+            if (
+                not key.startswith("_")
+                and key not in ("to_dict", "metadata", "registry")
+            )
+        }
 
 
-def create_account(user_id, name) -> AccountModel:
-    if session.query(UserModel).get(user_id) is None:
+class UserModel(Base, Serializable):
+    """Well, it's User."""
+
+    __tablename__ = "users"
+
+    id = Column(BigInteger, primary_key=True)
+    name = Column(String(200), nullable=False)
+    password_hash = Column(String(500), nullable=False)
+
+
+class AccountModel(Base, Serializable):
+    """Users account. One user can have multiple accounts."""
+
+    __tablename__ = "accounts"
+
+    user_id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String(200), nullable=False)
+
+
+class CategoryModel(Base, Serializable):
+    """Category of transaction."""
+
+    __tablename__ = "categories"
+
+    user_id = Column(Integer, primary_key=True, nullable=False)
+    account_id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String(200), nullable=False)
+    color = Column(String(8), nullable=False)
+
+
+class EventModel(Base, Serializable):
+    """Transaction event."""
+
+    __tablename__ = "events"
+
+    user_id = Column(Integer, primary_key=True, nullable=False)
+    account_id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    category_id = Column(Integer, nullable=False)
+    event_time = Column(DateTime, nullable=False)
+    diff = Column(Integer, nullable=False)
+    description = Column(String(200), nullable=False)
+
+
+class SavePointModel(Base, Serializable):
+    """Transaction event."""
+
+    __tablename__ = "save_points"
+
+    user_id = Column(Integer, primary_key=True, nullable=False)
+    account_id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    datetime = Column(DateTime, nullable=False)
+    total = Column(Integer, nullable=False)
+
+
+async_session = sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
+
+
+async def create_account(session: AsyncSession, user_id, name) -> AccountModel:
+    if await session.get(UserModel, user_id) is None:
         raise LogicException("No such user")
 
-    account = (
-        session.query(AccountModel)
-        .filter(AccountModel.user_id == user_id)
-        .order_by(desc(AccountModel.id))
-        .first()
-    )
-    if account is None:
+    query = (
+        await session.execute(
+            select(AccountModel)
+            .where(AccountModel.user_id == user_id)
+            .order_by(desc(AccountModel.id))
+            .limit(1)
+        )
+    ).first()
+
+    if not query:
         account_id = 1
     else:
-        account_id = account.id + 1
+        account_id = query[0].id + 1
     return AccountModel(user_id=user_id, id=account_id, name=name)
 
 
-def create_account_entry(model, user_id, account_id, **data):
-    if session.query(UserModel).get(user_id) is None:
+async def create_account_entry(
+    session: AsyncSession, model, user_id, account_id, **data
+):
+    if not (await session.get(UserModel, user_id)):
         raise LogicException("No such user")
 
-    if session.query(AccountModel).get((user_id, account_id)) is None:
+    if not (await session.get(AccountModel, (user_id, account_id))):
         raise LogicException("Invalid account id for given user")
 
-    entry = (
-        session.query(model)
-        .filter(model.user_id == user_id)
-        .filter(model.account_id == account_id)
-        .order_by(desc(model.id))
-        .first()
-    )
-    if entry is None:
+    query = (
+        await session.execute(
+            select(model)
+            .where(model.user_id == user_id)
+            .where(model.account_id == account_id)
+            .order_by(desc(model.id))
+        )
+    ).first()
+    if not query:
         entry_id = 0
     else:
-        entry_id = entry.id + 1
+        entry_id = query[0].id + 1
     return model(user_id=user_id, account_id=account_id, id=entry_id, **data)
-
-
-class UserSchema(BaseModel):
-    """Well, it's User."""
-
-    id: int
-    name: str
-    password_hash: str
-
-    class Config:
-        orm_mode = True
-
-
-class AccountSchema(BaseModel):
-    """Users account. One user can have multiple accounts."""
-
-    id: int
-    user_id: int
-    name: str
-
-    class Config:
-        orm_mode = True
-
-
-class SavePointSchema(BaseModel):
-    """Transaction event."""
-
-    id: int
-    account_id: int
-    user_id: int
-    datetime: dt.datetime
-    total: float
-
-    class Config:
-        orm_mode = True
-
-
-class EventSchema(BaseModel):
-    """Transaction event."""
-
-    id: int
-    account_id: int
-    user_id: int
-    category_id: int
-    event_time: dt.datetime
-    diff: int
-    description: str
-
-    class Config:
-        orm_mode = True
-
-
-class CategorySchema(BaseModel):
-    """Category of transaction."""
-
-    id: int
-    account_id: int
-    user_id: int
-    name: str
-    color: str
-
-    class Config:
-        orm_mode = True

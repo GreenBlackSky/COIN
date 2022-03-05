@@ -1,22 +1,21 @@
 """Flask blueprint, that contains events manipulation methods."""
 
 import datetime as dt
-from unicodedata import category
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-
+from sqlalchemy import select, delete, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .event import (
-    delete_events_by_category,
     get_category_total,
-    move_events_between_categories,
 )
 from .exceptions import LogicException
 from .model import (
     UserModel,
-    session,
+    async_session,
     CategoryModel,
-    CategorySchema,
+    EventModel,
     create_account_entry,
 )
 from .user import authorized_user
@@ -32,36 +31,37 @@ class CreateCategoryRequest(BaseModel):
 
 
 @router.post("/create_category")
-def create_category(
+async def create_category(
     request: CreateCategoryRequest,
     current_user: UserModel = Depends(authorized_user),
 ):
     """Request to create new category."""
-    category = create_account_entry(
-        CategoryModel,
-        user_id=current_user.id,
-        account_id=request.account_id,
-        name=request.name,
-        color=request.color,
-    )
-    session.add(category)
-    session.commit()
+    session: AsyncSession
+    async with async_session() as session:
+        async with session.begin():
+            category = await create_account_entry(
+                session,
+                CategoryModel,
+                user_id=current_user.id,
+                account_id=request.account_id,
+                name=request.name,
+                color=request.color,
+            )
+            session.add(category)
     return {
         "status": "OK",
-        "category": CategorySchema.from_orm(category).dict(),
+        "category": category.to_dict(),
     }
 
 
-def get_categories(user_id, account_id):
+async def get_categories(session: AsyncSession, user_id, account_id):
     """Get all categories user has."""
-    query = (
-        session.query(CategoryModel)
-        .filter(CategoryModel.user_id == user_id)
-        .filter(CategoryModel.account_id == account_id)
+    query = await session.execute(
+        select(CategoryModel)
+        .where(CategoryModel.user_id == user_id)
+        .where(CategoryModel.account_id == account_id)
     )
-    return [
-        CategorySchema.from_orm(category).dict() for category in query.all()
-    ]
+    return [category.to_dict() for (category,) in query.all()]
 
 
 class GetCategoriesRequest(BaseModel):
@@ -69,15 +69,19 @@ class GetCategoriesRequest(BaseModel):
 
 
 @router.post("/get_categories")
-def get_categories_endpoint(
+async def get_categories_endpoint(
     request: GetCategoriesRequest,
     current_user: UserModel = Depends(authorized_user),
 ):
     """Get all categories user has endpoint."""
-    return {
-        "status": "OK",
-        "categories": get_categories(current_user.id, request.account_id),
-    }
+    session: AsyncSession
+    async with async_session() as session:
+        return {
+            "status": "OK",
+            "categories": await get_categories(
+                session, current_user.id, request.account_id
+            ),
+        }
 
 
 class EditCategoryRequest(BaseModel):
@@ -88,24 +92,27 @@ class EditCategoryRequest(BaseModel):
 
 
 @router.post("/edit_category")
-def edit_category(
+async def edit_category(
     request: EditCategoryRequest,
     current_user: UserModel = Depends(authorized_user),
 ):
     """Request to edit category."""
-    category = session.query(CategoryModel).get(
-        (current_user.id, request.account_id, request.category_id)
-    )
-    if category is None:
-        raise LogicException("no such category")
+    session: AsyncSession
+    async with async_session() as session:
+        async with session.begin():
+            category: CategoryModel = await session.get(
+                CategoryModel,
+                (current_user.id, request.account_id, request.category_id),
+            )
+            if category is None:
+                raise LogicException("no such category")
 
-    category.name = request.name
-    category.color = request.color
+            category.name = request.name
+            category.color = request.color
 
-    session.commit()
     return {
         "status": "OK",
-        "category": CategorySchema.from_orm(category).dict(),
+        "category": category.to_dict(),
     }
 
 
@@ -116,7 +123,7 @@ class GetTotalsRequest(BaseModel):
 
 
 @router.post("/get_totals_by_category")
-def get_totals_by_category(
+async def get_totals_by_category(
     request: GetTotalsRequest,
     current_user: UserModel = Depends(authorized_user),
 ):
@@ -124,14 +131,22 @@ def get_totals_by_category(
     start_time = dt.datetime.fromtimestamp(request.start_time)
     end_time = dt.datetime.fromtimestamp(request.end_time)
 
-    categories = get_categories(current_user.id, request.account_id)
-
-    totals = {
-        category["id"]: get_category_total(
-            request.account_id, category["id"], start_time, end_time
+    session: AsyncSession
+    async with async_session() as session:
+        categories = await get_categories(
+            session, current_user.id, request.account_id
         )
-        for category in categories
-    }
+
+        totals = {
+            category["id"]: await get_category_total(
+                session,
+                request.account_id,
+                category["id"],
+                start_time,
+                end_time,
+            )
+            for category in categories
+        }
     return {"status": "OK", "totals": totals}
 
 
@@ -142,36 +157,52 @@ class DeleteCategoryRequest(BaseModel):
 
 
 @router.post("/delete_category")
-def delete_category(
+async def delete_category(
     request: DeleteCategoryRequest,
     current_user: UserModel = Depends(authorized_user),
 ):
     """Delete existing category."""
-    category = session.query(CategoryModel).get(
-        (current_user.id, request.account_id, request.category_id)
-    )
-    if category is None:
-        raise LogicException("no such category")
+    session: AsyncSession
+    async with async_session() as session:
+        category: CategoryModel = await session.get(
+            CategoryModel,
+            (current_user.id, request.account_id, request.category_id),
+        )
+        if category is None:
+            raise LogicException("no such category")
 
-    session.delete(category)
-    if request.category_to:
-        if (
-            session.query(CategoryModel).get(
-                (current_user.id, request.account_id, request.category_to)
+        session.delete(category)
+        if request.category_to:
+            if (
+                await session.get(
+                    CategoryModel,
+                    (
+                        current_user.id,
+                        request.account_id,
+                        request.category_to,
+                    ),
+                )
+                is None
+            ):
+                raise LogicException("No such category")
+            await (
+                session.execute(
+                    update(EventModel)
+                    .where(EventModel.user_id == current_user.id)
+                    .where(EventModel.account_id == request.account_id)
+                    .where(EventModel.category_id == request.category_id)
+                    .values(category_id=request.category_to)
+                )
             )
-            is None
-        ):
-            raise LogicException("No such category")
-        move_events_between_categories(
-            request.account_id, request.category_id, request.category_to
-        )
-    else:
-        delete_events_by_category(
-            current_user.id, request.account_id, request.category_id
-        )
+        else:
+            await session.execute(
+                delete(EventModel)
+                .where(EventModel.user_id == current_user.id)
+                .where(EventModel.account_id == request.account_id)
+                .where(EventModel.category_id == request.category_id)
+            )
 
-    session.commit()
     return {
         "status": "OK",
-        "category": CategorySchema.from_orm(category).dict(),
+        "category": category.to_dict(),
     }

@@ -11,7 +11,7 @@ CREATE TABLE accounts (
 );
 CREATE TABLE categories (
     user_id INT REFERENCES users,
-    account_id INT,
+    account_id INT NOT NULL,
     id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     color VARCHAR(8) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE categories (
 );
 CREATE TABLE events (
     user_id INT REFERENCES users,
-    account_id INT,
+    account_id INT NOT NULL,
     id INT NOT NULL,
     category_id INT NOT NULL,
     event_time TIMESTAMP NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE save_points (
     account_id INT NOT NULL,
     id INT NOT NULL,
     datetime TIMESTAMP NOT NULL,
-    total FLOAT NOT NULL,
+    total INT NOT NULL,
     PRIMARY KEY(user_id, account_id, id)
 );
 -- CREATE TABLE templates (

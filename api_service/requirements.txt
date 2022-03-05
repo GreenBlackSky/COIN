@@ -1,5 +1,5 @@
 fastapi
 fastapi-jwt-auth
 uvicorn
-psycopg2-binary
+asyncpg
 sqlalchemy
