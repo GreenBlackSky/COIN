@@ -6,9 +6,9 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from .constants import MAX_ACCOUNTS, STARTING_CATEGORIES
-from .exceptions import LogicException
-from .models import (
+from .utils.constants import MAX_ACCOUNTS, STARTING_CATEGORIES
+from .utils.exceptions import LogicException
+from .utils.models import (
     create_account as create_account_impl,
     create_account_entry,
     UserModel,
@@ -17,7 +17,7 @@ from .models import (
     SavePointModel,
 )
 from .user import authorized_user
-from .database import get_session
+from .utils.database import get_session
 
 
 router = APIRouter()

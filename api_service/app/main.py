@@ -14,7 +14,7 @@ from . import user
 from . import account
 from . import event
 from . import category
-from .exceptions import LogicException
+from .utils.exceptions import LogicException
 
 
 app = FastAPI()

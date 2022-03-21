@@ -9,15 +9,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from .event import get_category_total
-from .exceptions import LogicException
-from .models import (
+from .utils.exceptions import LogicException
+from .utils.models import (
     UserModel,
     CategoryModel,
     EventModel,
     create_account_entry,
 )
 from .user import authorized_user
-from .database import get_session
+from .utils.database import get_session
 
 
 router = APIRouter()

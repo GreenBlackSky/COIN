@@ -6,8 +6,8 @@ from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from ..models import Base
-from ..database import get_session
+from ..utils.models import Base
+from ..utils.database import get_session
 from ..main import app
 
 engine = create_async_engine(

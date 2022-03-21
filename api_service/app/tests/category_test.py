@@ -7,8 +7,8 @@ from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from ..models import Base
-from ..database import get_session
+from ..utils.models import Base
+from ..utils.database import get_session
 from ..main import app
 
 engine = create_async_engine(
@@ -32,9 +32,11 @@ def anyio_backend():
 def test_create_category():
     pass
 
+
 # get_categories
 def test_get_categories():
     pass
+
 
 # edit_category
 # edit_non_existant_category
@@ -42,11 +44,13 @@ def test_get_categories():
 def test_edit_category():
     pass
 
+
 # delete_category
 # delete_non_existant_category
 # delete_only_category
 def test_delete_category():
     pass
+
 
 # get_balance
 # balance_with_no_events
