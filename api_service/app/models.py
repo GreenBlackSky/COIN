@@ -1,25 +1,15 @@
 """Data base models."""
 
-import os
 import datetime as dt
 
 from sqlalchemy import desc, select
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String, DateTime, BigInteger
 
 from .exceptions import LogicException
 
 
-connection_string = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(
-    os.environ["POSTGRES_USER"],
-    os.environ["POSTGRES_PASSWORD"],
-    os.environ["POSTGRES_HOST"],
-    os.environ["POSTGRES_PORT"],
-    os.environ["POSTGRES_DB"],
-)
-engine = create_async_engine(connection_string, echo=True)
 Base = declarative_base()
 
 
@@ -44,7 +34,12 @@ class UserModel(Base, Serializable):
 
     __tablename__ = "users"
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        primary_key=True,
+        nullable=False,
+        autoincrement=True,
+    )
     name = Column(String(200), nullable=False)
     password_hash = Column(String(500), nullable=False)
 
@@ -54,7 +49,11 @@ class AccountModel(Base, Serializable):
 
     __tablename__ = "accounts"
 
-    user_id = Column(Integer, primary_key=True, nullable=False)
+    user_id = Column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        primary_key=True,
+        nullable=False,
+    )
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(200), nullable=False)
 
@@ -64,7 +63,11 @@ class CategoryModel(Base, Serializable):
 
     __tablename__ = "categories"
 
-    user_id = Column(Integer, primary_key=True, nullable=False)
+    user_id = Column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        primary_key=True,
+        nullable=False,
+    )
     account_id = Column(Integer, primary_key=True, nullable=False)
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(200), nullable=False)
@@ -76,7 +79,11 @@ class EventModel(Base, Serializable):
 
     __tablename__ = "events"
 
-    user_id = Column(Integer, primary_key=True, nullable=False)
+    user_id = Column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        primary_key=True,
+        nullable=False,
+    )
     account_id = Column(Integer, primary_key=True, nullable=False)
     id = Column(Integer, primary_key=True, nullable=False)
     category_id = Column(Integer, nullable=False)
@@ -90,16 +97,15 @@ class SavePointModel(Base, Serializable):
 
     __tablename__ = "save_points"
 
-    user_id = Column(Integer, primary_key=True, nullable=False)
+    user_id = Column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        primary_key=True,
+        nullable=False,
+    )
     account_id = Column(Integer, primary_key=True, nullable=False)
     id = Column(Integer, primary_key=True, nullable=False)
     datetime = Column(DateTime, nullable=False)
     total = Column(Integer, nullable=False)
-
-
-async_session = sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
 
 
 async def create_account(session: AsyncSession, user_id, name) -> AccountModel:

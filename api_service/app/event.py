@@ -4,19 +4,19 @@ import datetime as dt
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from sqlalchemy import desc
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 from .exceptions import LogicException
-from .model import (
+from .models import (
     UserModel,
-    async_session,
     EventModel,
     SavePointModel,
     create_account_entry,
 )
 from .user import authorized_user
+from .database import get_session
 
 
 router = APIRouter()
@@ -95,7 +95,9 @@ class EventData(BaseModel):
 
 @router.post("/create_event")
 async def create_event(
-    event_data: EventData, current_user: UserModel = Depends(authorized_user)
+    event_data: EventData,
+    current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Request to create new event."""
     event_time = dt.datetime.fromtimestamp(event_data.event_time)
@@ -136,6 +138,7 @@ class GetEventsRequest(BaseModel):
 async def get_events(
     request: GetEventsRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Get all events user has."""
     query = (
@@ -174,6 +177,7 @@ class EditEventRequest(BaseModel):
 async def edit_event(
     request: EditEventRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Request to edit event."""
     session: AsyncSession
@@ -234,6 +238,7 @@ class DeleteEventRequest(BaseModel):
 async def delete_event(
     request: DeleteEventRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Delete existing event."""
     session: AsyncSession
@@ -268,19 +273,22 @@ class GetBalanceRequest(BaseModel):
 async def get_balance(
     request: GetBalanceRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Get balance on certain account at certain time."""
     timepoint = dt.datetime.fromtimestamp(request.timestamp)
 
     session: AsyncSession
     async with async_session() as session:
-        query = (await session.execute(
-            select(SavePointModel)
-            .where(SavePointModel.user_id == current_user.id)
-            .where(SavePointModel.account_id == request.account_id)
-            .where(SavePointModel.datetime <= timepoint)
-            .order_by(desc(SavePointModel.datetime))
-        )).first()
+        query = (
+            await session.execute(
+                select(SavePointModel)
+                .where(SavePointModel.user_id == current_user.id)
+                .where(SavePointModel.account_id == request.account_id)
+                .where(SavePointModel.datetime <= timepoint)
+                .order_by(desc(SavePointModel.datetime))
+            )
+        ).first()
 
         print("!", query)
 

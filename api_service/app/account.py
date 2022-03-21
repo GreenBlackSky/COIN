@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 from .constants import MAX_ACCOUNTS, STARTING_CATEGORIES
 from .exceptions import LogicException
-from .model import (
-    async_session,
+from .models import (
     create_account as create_account_impl,
     create_account_entry,
     UserModel,
@@ -17,6 +17,7 @@ from .model import (
     SavePointModel,
 )
 from .user import authorized_user
+from .database import get_session
 
 
 router = APIRouter()
@@ -51,6 +52,7 @@ class CreateAccountRequest(BaseModel):
 async def create_account_endpoint(
     request: CreateAccountRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Request creating new account."""
     session: AsyncSession
@@ -74,7 +76,9 @@ async def create_account_endpoint(
     }
 
 
-async def get_accounts(user_id: int):
+async def get_accounts(
+    user_id: int, async_session: sessionmaker = Depends(get_session)
+):
     """Get all users accounts."""
     session: AsyncSession
     async with async_session() as session:
@@ -87,6 +91,7 @@ async def get_accounts(user_id: int):
 @router.post("/get_accounts")
 async def get_accounts_endpoint(
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Web endpoint for getting accounts of user."""
     return {
@@ -104,6 +109,7 @@ class EditAccountRequest(BaseModel):
 async def edit_account(
     request: EditAccountRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Request to edit account."""
     session: AsyncSession
@@ -115,11 +121,11 @@ async def edit_account(
             raise LogicException("no such account")
 
         query = await session.execute(
-                select(AccountModel)
-                .where(AccountModel.user_id == current_user.id)
-                .where(AccountModel.name == request.name)
-                .where(AccountModel.id != request.account_id)
-            )
+            select(AccountModel)
+            .where(AccountModel.user_id == current_user.id)
+            .where(AccountModel.name == request.name)
+            .where(AccountModel.id != request.account_id)
+        )
         if len(query.all()) != 0:
             raise LogicException("account already exists")
 
@@ -136,6 +142,7 @@ class DeleteAccountRequest(BaseModel):
 async def delete_account(
     request: DeleteAccountRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Delete existing account."""
     session: AsyncSession

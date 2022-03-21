@@ -12,24 +12,28 @@ from fastapi_jwt_auth import AuthJWT
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 from .constants import MAIN_ACCOUNT_NAME, STARTING_CATEGORIES
 from .exceptions import LogicException
-from .model import (
+from .models import (
     CategoryModel,
-    create_account_entry,
-    async_session,
     UserModel,
+    create_account_entry,
     create_account,
 )
+from .database import get_session
 
 
 router = APIRouter()
 
 
-async def authorized_user(Authorize: AuthJWT = Depends()) -> UserModel:
-    Authorize.jwt_required()
-    user_id = Authorize.get_jwt_subject()
+async def authorized_user(
+    authorize: AuthJWT = Depends(),
+    async_session: sessionmaker = Depends(get_session),
+) -> UserModel:
+    authorize.jwt_required()
+    user_id = authorize.get_jwt_subject()
     async with async_session() as session:
         return await session.get(UserModel, user_id)
 
@@ -40,9 +44,13 @@ class UserRequest(BaseModel):
 
 
 @router.post("/register")
-async def register(user_data: UserRequest, Authorize: AuthJWT = Depends()):
+async def register(
+    user_data: UserRequest,
+    authorize: AuthJWT = Depends(),
+    async_session: sessionmaker = Depends(get_session),
+):
     """Register new user."""
-    if Authorize.get_jwt_subject():
+    if authorize.get_jwt_subject():
         raise LogicException("already authorized")
 
     session: AsyncSession
@@ -79,14 +87,18 @@ async def register(user_data: UserRequest, Authorize: AuthJWT = Depends()):
         await session.commit()
 
     return {
-        "access_token": Authorize.create_access_token(subject=user.id),
+        "access_token": authorize.create_access_token(subject=user.id),
         "status": "OK",
         "user": user.to_dict(),
     }
 
 
 @router.post("/login")
-async def login(user_data: UserRequest, Authorize: AuthJWT = Depends()):
+async def login(
+    user_data: UserRequest,
+    authorize: AuthJWT = Depends(),
+    async_session: sessionmaker = Depends(get_session),
+):
     """Log in user."""
     session: AsyncSession
     async with async_session() as session:
@@ -105,7 +117,7 @@ async def login(user_data: UserRequest, Authorize: AuthJWT = Depends()):
     return {
         "status": "OK",
         "user": user.to_dict(),
-        "access_token": Authorize.create_access_token(subject=user.id),
+        "access_token": authorize.create_access_token(subject=user.id),
     }
 
 
@@ -124,6 +136,7 @@ class EditUserRequest(BaseModel):
 async def edit_user(
     user_data: EditUserRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Edit user."""
     session: AsyncSession

@@ -6,19 +6,18 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
-from .event import (
-    get_category_total,
-)
+from .event import get_category_total
 from .exceptions import LogicException
-from .model import (
+from .models import (
     UserModel,
-    async_session,
     CategoryModel,
     EventModel,
     create_account_entry,
 )
 from .user import authorized_user
+from .database import get_session
 
 
 router = APIRouter()
@@ -34,6 +33,7 @@ class CreateCategoryRequest(BaseModel):
 async def create_category(
     request: CreateCategoryRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Request to create new category."""
     session: AsyncSession
@@ -72,6 +72,7 @@ class GetCategoriesRequest(BaseModel):
 async def get_categories_endpoint(
     request: GetCategoriesRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Get all categories user has endpoint."""
     session: AsyncSession
@@ -95,6 +96,7 @@ class EditCategoryRequest(BaseModel):
 async def edit_category(
     request: EditCategoryRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Request to edit category."""
     session: AsyncSession
@@ -126,6 +128,7 @@ class GetTotalsRequest(BaseModel):
 async def get_totals_by_category(
     request: GetTotalsRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Get totals on certain account by categories at certain time."""
     start_time = dt.datetime.fromtimestamp(request.start_time)
@@ -160,6 +163,7 @@ class DeleteCategoryRequest(BaseModel):
 async def delete_category(
     request: DeleteCategoryRequest,
     current_user: UserModel = Depends(authorized_user),
+    async_session: sessionmaker = Depends(get_session),
 ):
     """Delete existing category."""
     session: AsyncSession

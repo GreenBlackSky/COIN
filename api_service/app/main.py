@@ -8,7 +8,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
-from pydantic import BaseModel
+from pydantic import BaseSettings
 
 from . import user
 from . import account
@@ -20,8 +20,8 @@ from .exceptions import LogicException
 app = FastAPI()
 
 
-class Settings(BaseModel):
-    authjwt_secret_key: str = os.environ["JWT_SECRET_KEY"]
+class Settings(BaseSettings):
+    authjwt_secret_key: str = os.environ.get("JWT_SECRET_KEY")
 
 
 @AuthJWT.load_config
@@ -54,10 +54,3 @@ app.include_router(user.router)
 app.include_router(account.router)
 app.include_router(event.router)
 app.include_router(category.router)
-
-# JWT_SECRET_KEY=os.environ["JWT_SECRET_KEY"],
-# SECRET_KEY=os.environ["SECRET_KEY"],
-# FLASK_ENV=os.environ["FLASK_ENV"],
-# FLASK_APP=os.environ["FLASK_APP"],
-# FLASK_DEBUG=os.environ["FLASK_DEBUG"],
-# CORS_HEADERS="Content-Type",
