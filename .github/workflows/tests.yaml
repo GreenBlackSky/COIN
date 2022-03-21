@@ -18,7 +18,7 @@ jobs:
 
       - name: Install project dependencies
         run: |
-          python -m pip install -v ./api_service/requirements.txt
+          python -m pip install -r ./api_service/requirements.txt
 
       - name: Install test dependencies
         run: |
