@@ -8,3 +8,4 @@ redis_data
 postgres_data
 **.env
 rabbitmq
+test.db

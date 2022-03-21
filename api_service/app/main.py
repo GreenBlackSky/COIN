@@ -21,7 +21,7 @@ app = FastAPI()
 
 
 class Settings(BaseSettings):
-    authjwt_secret_key: str = os.environ.get("JWT_SECRET_KEY")
+    authjwt_secret_key: str = os.environ.get("JWT_SECRET_KEY", "test")
 
 
 @AuthJWT.load_config

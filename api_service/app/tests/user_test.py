@@ -24,15 +24,23 @@ def anyio_backend():
     return "asyncio"
 
 
+async def prepare_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+async def clear_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+
 # duplicate_register
 # register_while_logged_in
 # signup_with_too_long_name
 # signup_with_too_long_password
 async def test_register():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    await clear_db()
+    await prepare_db()
 
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.post(
