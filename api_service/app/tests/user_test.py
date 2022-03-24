@@ -5,7 +5,13 @@ from hashlib import md5
 from httpx import AsyncClient
 import pytest
 
-from .utils import async_session, prepare_db, compare_with_skip, get_db
+from .utils import (
+    async_session,
+    prepare_db,
+    compare_with_skip,
+    get_db,
+    current_user,
+)
 from ..main import app
 from ..utils.database import get_session
 
@@ -23,55 +29,62 @@ def anyio_backend():
 # signup_with_too_long_name
 # signup_with_too_long_password
 @pytest.mark.parametrize(
-    "db_before,request_data,result_code,db_after,response_data",
+    "db_before,request_data,result_code,response_data,db_after",
     [
         [  # create user
-            {"users": [{"id": 1, "name": "TestGuy0", "password_hash": "1"}]},
+            {},
             {"name": "TestGuy", "password": "TestPass"},
             200,
             {
+                "status": "OK",
+                "user": {
+                    "id": 1,
+                    "name": "TestGuy",
+                    "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
+                },
+            },
+            {
                 "users": [
-                    {"id": 1, "name": "TestGuy0", "password_hash": "1"},
                     {
-                        "id": 2,
+                        "id": 1,
                         "name": "TestGuy",
                         "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
                     },
                 ]
             },
-            {
-                "status": "OK",
-                "user": {
-                    "id": 2,
-                    "name": "TestGuy",
-                    "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
-                },
-            },
         ],
         [  # create duplicate user
-            {"users": [{"id": 1, "name": "TestGuy", "password_hash": "1"}]},
-            {"name": "TestGuy", "password": "TestPass"},
-            200,
             {
                 "users": [
-                    {"id": 1, "name": "TestGuy", "password_hash": "1"},
+                    {
+                        "id": 1,
+                        "name": "TestGuy",
+                        "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
+                    }
                 ]
             },
+            {"name": "TestGuy", "password": "TestPass"},
+            200,
             {"status": "user exists"},
+            {
+                "users": [
+                    {
+                        "id": 1,
+                        "name": "TestGuy",
+                        "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
+                    },
+                ]
+            },
         ],
     ],
-    ids=["create user", "create duplicate user"]
+    ids=["create user", "create duplicate user"],
 )
 async def test_register(
-    db_before, request_data, result_code, db_after, response_data
+    db_before, request_data, result_code, response_data, db_after
 ):
     await prepare_db(**db_before)
-
     async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.post(
-            "/register",
-            json=request_data,
-        )
+        response = await ac.post("/register", json=request_data)
         assert response.status_code == result_code, response.text
         data = response.json()
         assert compare_with_skip(data, response_data, {"access_token"})

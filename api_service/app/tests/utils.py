@@ -1,9 +1,14 @@
 """Some test utils."""
 
+from contextlib import contextmanager
+
+from fastapi import FastAPI
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from ..utils.models import Base, UserModel
+from ..user import authorized_user
+
 
 engine = create_async_engine(
     "sqlite+aiosqlite:///./test.db", connect_args={"check_same_thread": False}
@@ -66,3 +71,13 @@ async def get_db():
                 entity.to_dict() for entity in rows.scalars()
             ]
     return result
+
+
+@contextmanager
+def current_user(app: FastAPI, user: UserModel | None):
+    if user:
+        app.dependency_overrides[authorized_user] = lambda: user
+    try:
+        yield app
+    finally:
+        app.dependency_overrides.pop(authorized_user, None)
