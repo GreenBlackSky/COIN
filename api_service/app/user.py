@@ -102,9 +102,15 @@ async def login(
     """Log in user."""
     session: AsyncSession
     async with async_session() as session:
-        user = (await session.execute(
-                select(UserModel).where(UserModel.name == user_data.name)
-            )).scalars().first()
+        user = (
+            (
+                await session.execute(
+                    select(UserModel).where(UserModel.name == user_data.name)
+                )
+            )
+            .scalars()
+            .first()
+        )
 
     if not user:
         raise LogicException("no such user")
