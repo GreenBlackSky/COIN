@@ -102,16 +102,13 @@ async def login(
     """Log in user."""
     session: AsyncSession
     async with async_session() as session:
-        query = (
-            await session.execute(
+        user = (await session.execute(
                 select(UserModel).where(UserModel.name == user_data.name)
-            )
-        ).first()
+            )).scalars().first()
 
-    if not query:
+    if not user:
         raise LogicException("no such user")
 
-    (user,) = query
     if user.password_hash != md5(user_data.password.encode()).hexdigest():
         raise LogicException("wrong password")
     return {

@@ -120,3 +120,7 @@ async def test_login():
 # change_password_into_itself
 def test_edit_user():
     pass
+
+
+def test_get_user_data():
+    pass
