@@ -4,6 +4,8 @@ from hashlib import md5
 
 from httpx import AsyncClient
 import pytest
+from pytest_lazyfixture import lazy_fixture
+
 
 from .utils import (
     async_session,
@@ -21,6 +23,30 @@ pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture
+def create_user_request():
+    return {"name": "TestGuy", "password": "TestPass"}
+
+
+@pytest.fixture
+def user_data():
+    return {
+        "id": 1,
+        "name": "TestGuy",
+        "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
+    }
+
+
+@pytest.fixture
+def one_user_db(user_data):
+    return {"users": [user_data]}
+
+
+@pytest.fixture
+def create_user_response(user_data):
+    return {"status": "OK", "user": user_data}
+
+
+@pytest.fixture
 def anyio_backend():
     return "asyncio"
 
@@ -33,48 +59,17 @@ def anyio_backend():
     [
         [  # create user
             {},
-            {"name": "TestGuy", "password": "TestPass"},
+            lazy_fixture("create_user_request"),
             200,
-            {
-                "status": "OK",
-                "user": {
-                    "id": 1,
-                    "name": "TestGuy",
-                    "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
-                },
-            },
-            {
-                "users": [
-                    {
-                        "id": 1,
-                        "name": "TestGuy",
-                        "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
-                    },
-                ]
-            },
+            lazy_fixture("create_user_response"),
+            lazy_fixture("one_user_db"),
         ],
         [  # create duplicate user
-            {
-                "users": [
-                    {
-                        "id": 1,
-                        "name": "TestGuy",
-                        "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
-                    }
-                ]
-            },
-            {"name": "TestGuy", "password": "TestPass"},
+            lazy_fixture("one_user_db"),
+            lazy_fixture("create_user_request"),
             200,
             {"status": "user exists"},
-            {
-                "users": [
-                    {
-                        "id": 1,
-                        "name": "TestGuy",
-                        "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
-                    },
-                ]
-            },
+            lazy_fixture("one_user_db"),
         ],
     ],
     ids=["create user", "create duplicate user"],
@@ -85,10 +80,10 @@ async def test_register(
     await prepare_db(**db_before)
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.post("/register", json=request_data)
-        assert response.status_code == result_code, response.text
-        data = response.json()
-        assert compare_with_skip(data, response_data, {"access_token"})
-        assert compare_with_skip((await get_db()), db_after, {"access_token"})
+    assert response.status_code == result_code, response.text
+    data = response.json()
+    assert compare_with_skip(data, response_data, {"access_token"})
+    assert compare_with_skip((await get_db()), db_after, {"access_token"})
 
 
 # wrong_password
