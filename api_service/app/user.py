@@ -117,6 +117,7 @@ async def login(
 
     if user.password_hash != md5(user_data.password.encode()).hexdigest():
         raise LogicException("wrong password")
+
     return {
         "status": "OK",
         "user": user.to_dict(),
