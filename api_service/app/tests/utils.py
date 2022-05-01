@@ -2,10 +2,14 @@
 
 from contextlib import contextmanager
 
+from httpx import AsyncClient
 from fastapi import FastAPI
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+
+from ..main import app
+
 from ..utils.models import Base, UserModel
 from ..user import authorized_user
 
@@ -74,10 +78,22 @@ async def get_db():
 
 
 @contextmanager
-def current_user(app: FastAPI, user: UserModel | None):
+def set_current_user(app: FastAPI, user: UserModel | None):
     if user:
         app.dependency_overrides[authorized_user] = lambda: user
     try:
         yield app
     finally:
         app.dependency_overrides.pop(authorized_user, None)
+
+
+async def base_test(
+    path, db_before, request_data, result_code, response_data, db_after
+):
+    await prepare_db(**db_before)
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.post(path, json=request_data)
+    assert response.status_code == result_code, response.text
+    data = response.json()
+    assert compare_with_skip(data, response_data, {"access_token"})
+    assert compare_with_skip((await get_db()), db_after, {"access_token"})

@@ -89,7 +89,7 @@ async def register(
     return {
         "access_token": authorize.create_access_token(subject=user.id),
         "status": "OK",
-        "user": user.to_dict(),
+        "user": user.to_dict_safe(),
     }
 
 
@@ -102,7 +102,7 @@ async def login(
     """Log in user."""
     session: AsyncSession
     async with async_session() as session:
-        user = (
+        user: UserModel | None = (
             (
                 await session.execute(
                     select(UserModel).where(UserModel.name == user_data.name)
@@ -120,14 +120,14 @@ async def login(
 
     return {
         "status": "OK",
-        "user": user.to_dict(),
+        "user": user.to_dict_safe(),
         "access_token": authorize.create_access_token(subject=user.id),
     }
 
 
 @router.post("/get_user_data")
 async def get_user_data(user: UserModel = Depends(authorized_user)):
-    return {"status": "OK", "user": user.to_dict()}
+    return {"status": "OK", "user": user.to_dict_safe()}
 
 
 class EditUserRequest(BaseModel):
@@ -170,7 +170,7 @@ async def edit_user(
 
         await session.commit()
 
-    return {"status": "OK", "user": current_user.to_dict()}
+    return {"status": "OK", "user": current_user.to_dict_safe()}
 
 
 @router.post("/logout")

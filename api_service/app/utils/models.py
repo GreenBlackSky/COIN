@@ -24,7 +24,8 @@ class Serializable:
             for key in dir(self)
             if (
                 not key.startswith("_")
-                and key not in ("to_dict", "metadata", "registry")
+                and key
+                not in ("to_dict_safe", "to_dict", "metadata", "registry")
             )
         }
 
@@ -42,6 +43,11 @@ class UserModel(Base, Serializable):
     )
     name = Column(String(200), nullable=False)
     password_hash = Column(String(500), nullable=False)
+
+    def to_dict_safe(self):
+        user_data = super().to_dict()
+        del user_data["password_hash"]
+        return user_data
 
 
 class AccountModel(Base, Serializable):

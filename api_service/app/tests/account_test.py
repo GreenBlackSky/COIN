@@ -2,21 +2,11 @@
 
 import pytest
 
-from httpx import AsyncClient
-from fastapi_jwt_auth import AuthJWT
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-
-from ..utils.models import Base
+from .utils import async_session, base_test
 from ..utils.database import get_session
 from ..main import app
 
-engine = create_async_engine(
-    "sqlite+aiosqlite:///./test.db", connect_args={"check_same_thread": False}
-)
-app.dependency_overrides[get_session] = lambda: sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
+app.dependency_overrides[get_session] = lambda: async_session
 pytestmark = pytest.mark.anyio
 
 
