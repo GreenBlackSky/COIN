@@ -36,8 +36,18 @@ def full_user_data():
 
 
 @pytest.fixture
-def one_user_db(full_user_data):
-    return {"users": [full_user_data]}
+def simple_user(full_user_data):
+    return UserModel(**full_user_data)
+
+
+@pytest.fixture
+def account_data():
+    return {"id": 1, "user_id": 1, "name": "Main Account"}
+
+
+@pytest.fixture
+def one_user_db(full_user_data, account_data):
+    return {"users": [full_user_data], "accounts": [account_data]}
 
 
 @pytest.fixture
@@ -54,7 +64,7 @@ def anyio_backend():
 # signup_with_too_long_name
 # signup_with_too_long_password
 @pytest.mark.parametrize(
-    "db_before,request_data,result_code,response_data,db_after",
+    "db_before,request_data,response_code,response_data,db_after",
     [
         [  # create user
             {},
@@ -74,13 +84,13 @@ def anyio_backend():
     ids=["create user", "create duplicate user"],
 )
 async def test_register(
-    db_before, request_data, result_code, response_data, db_after
+    db_before, request_data, response_code, response_data, db_after
 ):
     await base_test(
         "/register",
         db_before,
         request_data,
-        result_code,
+        response_code,
         response_data,
         db_after,
     )
@@ -89,7 +99,7 @@ async def test_register(
 # wrong_password
 # login_with_non_existant_user
 @pytest.mark.parametrize(
-    "db_before,request_data,result_code,response_data,db_after",
+    "db_before,request_data,response_code,response_data,db_after",
     [
         [  # normal login
             lazy_fixture("one_user_db"),
@@ -102,10 +112,15 @@ async def test_register(
     ids=["normal login"],
 )
 async def test_login(
-    db_before, request_data, result_code, response_data, db_after
+    db_before, request_data, response_code, response_data, db_after
 ):
     await base_test(
-        "/login", db_before, request_data, result_code, response_data, db_after
+        "/login",
+        db_before,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
     )
 
 
@@ -141,13 +156,8 @@ def change_name_response(chamge_name_user_data):
 
 
 @pytest.fixture
-def changed_name_db(chamge_name_full_user_data):
-    return {"users": [chamge_name_full_user_data]}
-
-
-@pytest.fixture
-def simple_user(full_user_data):
-    return UserModel(**full_user_data)
+def changed_name_db(chamge_name_full_user_data, account_data):
+    return {"users": [chamge_name_full_user_data], "accounts": [account_data]}
 
 
 # change_name_into_duplicate
@@ -158,7 +168,7 @@ def simple_user(full_user_data):
 # change_name_into_itself
 # change_password_into_itself
 @pytest.mark.parametrize(
-    "db_before,user,request_data,result_code,response_data,db_after",
+    "db_before,user,request_data,response_code,response_data,db_after",
     [
         [  # change name
             lazy_fixture("one_user_db"),
@@ -172,14 +182,14 @@ def simple_user(full_user_data):
     ids=["change name"],
 )
 async def test_edit_user(
-    db_before, user, request_data, result_code, response_data, db_after
+    db_before, user, request_data, response_code, response_data, db_after
 ):
     with set_current_user(app, user):
         await base_test(
             "/edit_user",
             db_before,
             request_data,
-            result_code,
+            response_code,
             response_data,
             db_after,
         )
@@ -187,7 +197,7 @@ async def test_edit_user(
 
 # get standart data
 @pytest.mark.parametrize(
-    "db_before,user,request_data,result_code,response_data,db_after",
+    "db_before,user,request_data,response_code,response_data,db_after",
     [
         [  # simple get_data
             lazy_fixture("one_user_db"),
@@ -201,14 +211,14 @@ async def test_edit_user(
     ids=["simple get data"],
 )
 async def test_get_user_data(
-    db_before, user, request_data, result_code, response_data, db_after
+    db_before, user, request_data, response_code, response_data, db_after
 ):
     with set_current_user(app, user):
         await base_test(
             "/get_user_data",
             db_before,
             request_data,
-            result_code,
+            response_code,
             response_data,
             db_after,
         )
