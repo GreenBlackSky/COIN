@@ -23,29 +23,29 @@ async_session = sessionmaker(
 )
 
 
-def compare_with_skip(dict_1: dict, dict_2: dict, skipped: set):
-    keys_1 = set(dict_1.keys()) - skipped
-    keys_2 = set(dict_2.keys()) - skipped
-    if keys_1 != keys_2:
+def compare_with_skip(val_1, val_2, skipped: set):
+    if type(val_1) != type(val_2):
         return False
 
-    for key in keys_1:
-        val_1 = dict_1[key]
-        val_2 = dict_2[key]
-        if type(val_1) != type(val_2):
+    if isinstance(val_1, dict):
+        keys_1 = set(val_1.keys()) - skipped
+        keys_2 = set(val_2.keys()) - skipped
+        if keys_1 != keys_2:
             return False
-
-        if isinstance(val_1, dict):
-            if not compare_with_skip(val_1, val_2, skipped):
+    
+        for key in keys_1:
+            if not compare_with_skip(val_1[key], val_2[key], skipped):
                 return False
-        elif isinstance(val_1, list):
-            if not all(
-                compare_with_skip(elem_1, elem_2, skipped)
-                for elem_1, elem_2 in zip(val_1, val_2)
-            ):
-                return False
-        elif val_1 != val_2:
+    
+    elif isinstance(val_1, list | tuple):
+        if not all(
+            compare_with_skip(elem_1, elem_2, skipped)
+            for elem_1, elem_2 in zip(val_1, val_2)
+        ):
             return False
+        
+    elif val_1 != val_2:
+        return False
 
     return True
 
@@ -88,12 +88,13 @@ def set_current_user(app: FastAPI, user: UserModel | None):
 
 
 async def base_test(
-    path, db_before, request_data, result_code, response_data, db_after
+    path, db_before, user, request_data, result_code, response_data, db_after
 ):
-    await prepare_db(**db_before)
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.post(path, json=request_data)
-    assert response.status_code == result_code, response.text
-    data = response.json()
-    assert compare_with_skip(data, response_data, {"access_token"})
-    assert (await get_db()) == db_after
+    with set_current_user(app, user):
+        await prepare_db(**db_before)
+        async with AsyncClient(app=app, base_url="http://test") as ac:
+            response = await ac.post(path, json=request_data)
+        assert response.status_code == result_code, response.text
+        data = response.json()
+        assert compare_with_skip(data, response_data, {"access_token"})
+        assert (await get_db()) == db_after

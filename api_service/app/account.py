@@ -76,27 +76,20 @@ async def create_account_endpoint(
     }
 
 
-async def get_accounts(
-    user_id: int, async_session: sessionmaker = Depends(get_session)
-):
-    """Get all users accounts."""
-    session: AsyncSession
-    async with async_session() as session:
-        query = await session.execute(
-            select(AccountModel).where(AccountModel.user_id == user_id)
-        )
-    return [account.to_dict() for (account,) in query.all()]
-
-
 @router.post("/get_accounts")
 async def get_accounts_endpoint(
     current_user: UserModel = Depends(authorized_user),
     async_session: sessionmaker = Depends(get_session),
 ):
-    """Web endpoint for getting accounts of user."""
+    """Get all users accounts."""
+    session: AsyncSession
+    async with async_session() as session:
+        query = await session.execute(
+            select(AccountModel).where(AccountModel.user_id == current_user.id)
+        )
     return {
         "status": "OK",
-        "accounts": await get_accounts(current_user.id),
+        "accounts": [account.to_dict() for (account,) in query.all()],
     }
 
 

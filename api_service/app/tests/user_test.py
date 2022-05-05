@@ -3,7 +3,7 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
-from .utils import async_session, base_test, set_current_user
+from .utils import async_session, base_test
 from ..main import app
 from ..utils.models import UserModel
 from ..utils.database import get_session
@@ -64,10 +64,11 @@ def anyio_backend():
 # signup_with_too_long_name
 # signup_with_too_long_password
 @pytest.mark.parametrize(
-    "db_before,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_code,response_data,db_after",
     [
         [  # create user
             {},
+            None,
             lazy_fixture("user_request"),
             200,
             lazy_fixture("user_response"),
@@ -75,6 +76,7 @@ def anyio_backend():
         ],
         [  # create duplicate user
             lazy_fixture("one_user_db"),
+            None,
             lazy_fixture("user_request"),
             200,
             {"status": "user exists"},
@@ -84,11 +86,12 @@ def anyio_backend():
     ids=["create user", "create duplicate user"],
 )
 async def test_register(
-    db_before, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_code, response_data, db_after
 ):
     await base_test(
         "/register",
         db_before,
+        user,
         request_data,
         response_code,
         response_data,
@@ -99,10 +102,11 @@ async def test_register(
 # wrong_password
 # login_with_non_existant_user
 @pytest.mark.parametrize(
-    "db_before,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_code,response_data,db_after",
     [
         [  # normal login
             lazy_fixture("one_user_db"),
+            None,
             lazy_fixture("user_request"),
             200,
             lazy_fixture("user_response"),
@@ -112,11 +116,12 @@ async def test_register(
     ids=["normal login"],
 )
 async def test_login(
-    db_before, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_code, response_data, db_after
 ):
     await base_test(
         "/login",
         db_before,
+        user,
         request_data,
         response_code,
         response_data,
@@ -184,15 +189,15 @@ def changed_name_db(chamge_name_full_user_data, account_data):
 async def test_edit_user(
     db_before, user, request_data, response_code, response_data, db_after
 ):
-    with set_current_user(app, user):
-        await base_test(
-            "/edit_user",
-            db_before,
-            request_data,
-            response_code,
-            response_data,
-            db_after,
-        )
+    await base_test(
+        "/edit_user",
+        db_before,
+        user,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
+    )
 
 
 # get standart data
@@ -213,12 +218,12 @@ async def test_edit_user(
 async def test_get_user_data(
     db_before, user, request_data, response_code, response_data, db_after
 ):
-    with set_current_user(app, user):
-        await base_test(
-            "/get_user_data",
-            db_before,
-            request_data,
-            response_code,
-            response_data,
-            db_after,
-        )
+    await base_test(
+        "/get_user_data",
+        db_before,
+        user,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
+    )
