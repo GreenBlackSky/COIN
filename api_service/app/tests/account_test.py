@@ -58,7 +58,7 @@ def new_account_response(new_account_data):
 
 
 @pytest.fixture
-def new_accont_db(full_user_data, account_data, new_account_data):
+def new_account_db(full_user_data, account_data, new_account_data):
     return {
         "users": [full_user_data],
         "accounts": [account_data, new_account_data],
@@ -78,7 +78,7 @@ def new_accont_db(full_user_data, account_data, new_account_data):
             lazy_fixture("new_account_request"),
             200,
             lazy_fixture("new_account_response"),
-            lazy_fixture("new_accont_db"),
+            lazy_fixture("new_account_db"),
         ]
     ],
     ids=["create account"],
@@ -106,12 +106,12 @@ def get_account_response(account_data, new_account_data):
     "db_before,user,request_data,response_code,response_data,db_after",
     [
         [  # get accounts
-            lazy_fixture("new_accont_db"),
+            lazy_fixture("new_account_db"),
             lazy_fixture("simple_user"),
             {},
             200,
             lazy_fixture("get_account_response"),
-            lazy_fixture("new_accont_db"),
+            lazy_fixture("new_account_db"),
         ]
     ],
     ids=["get accounts"],
@@ -181,11 +181,36 @@ async def test_edit_account(
     )
 
 
-# remove_one_account
+@pytest.fixture
+def remove_account_request():
+    return {"account_id": 2}
+
+
 # remove_non_existant_account
 # remove_only_account
-def test_delete_account():
-    pass
-
-
-# main_account_created
+@pytest.mark.parametrize(
+    "db_before,user,request_data,response_code,response_data,db_after",
+    [
+        [  # remove one account
+            lazy_fixture("new_account_db"),
+            lazy_fixture("simple_user"),
+            lazy_fixture("remove_account_request"),
+            200,
+            lazy_fixture("new_account_response"),
+            lazy_fixture("one_user_db"),
+        ]
+    ],
+    ids=["remove one account"],
+)
+async def test_delete_account(
+    db_before, user, request_data, response_code, response_data, db_after
+):
+    await base_test(
+        "/delete_account",
+        db_before,
+        user,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
+    )

@@ -32,18 +32,18 @@ def compare_with_skip(val_1, val_2, skipped: set):
         keys_2 = set(val_2.keys()) - skipped
         if keys_1 != keys_2:
             return False
-    
+
         for key in keys_1:
             if not compare_with_skip(val_1[key], val_2[key], skipped):
                 return False
-    
+
     elif isinstance(val_1, list | tuple):
         if not all(
             compare_with_skip(elem_1, elem_2, skipped)
             for elem_1, elem_2 in zip(val_1, val_2)
         ):
             return False
-        
+
     elif val_1 != val_2:
         return False
 
@@ -69,8 +69,8 @@ async def prepare_db(**values):
 async def get_db():
     result = {}
     async with async_session() as session:
-        for table_name in db_models:
-            rows = await session.execute(select(db_models[table_name]))
+        for table_name, model in db_models.items():
+            rows = await session.execute(select(model))
             result[table_name] = [
                 entity.to_dict() for entity in rows.scalars()
             ]
