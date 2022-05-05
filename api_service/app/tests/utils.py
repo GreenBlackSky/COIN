@@ -10,14 +10,18 @@ from sqlalchemy.orm import sessionmaker
 
 from ..main import app
 
-from ..utils.models import Base, UserModel, AccountModel
+from ..utils.models import Base, UserModel, AccountModel, CategoryModel
 from ..user import authorized_user
 
 
 engine = create_async_engine(
     "sqlite+aiosqlite:///./test.db", connect_args={"check_same_thread": False}
 )
-db_models = {"users": UserModel, "accounts": AccountModel}
+db_models = {
+    "users": UserModel,
+    "accounts": AccountModel,
+    "categories": CategoryModel,
+}
 async_session = sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
 )

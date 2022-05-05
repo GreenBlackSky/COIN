@@ -38,8 +38,23 @@ def account_data():
 
 
 @pytest.fixture
-def one_user_db(full_user_data, account_data):
-    return {"users": [full_user_data], "accounts": [account_data]}
+def base_category_data():
+    return {
+        "user_id": 1,
+        "account_id": 1,
+        "id": 0,
+        "name": "base",
+        "color": "16777215",
+    }
+
+
+@pytest.fixture
+def one_user_db(full_user_data, account_data, base_category_data):
+    return {
+        "users": [full_user_data],
+        "accounts": [account_data],
+        "categories": [base_category_data],
+    }
 
 
 @pytest.fixture
@@ -53,15 +68,33 @@ def new_account_data():
 
 
 @pytest.fixture
+def new_category_data():
+    return {
+        "account_id": 2,
+        "color": "16777215",
+        "id": 0,
+        "name": "base",
+        "user_id": 1,
+    }
+
+
+@pytest.fixture
 def new_account_response(new_account_data):
     return {"status": "OK", "account": new_account_data}
 
 
 @pytest.fixture
-def new_account_db(full_user_data, account_data, new_account_data):
+def new_account_db(
+    full_user_data,
+    account_data,
+    new_account_data,
+    base_category_data,
+    new_category_data,
+):
     return {
         "users": [full_user_data],
         "accounts": [account_data, new_account_data],
+        "categories": [base_category_data, new_category_data],
     }
 
 
@@ -146,8 +179,12 @@ def rename_account_response(renamed_account):
 
 
 @pytest.fixture
-def renamed_account_db(full_user_data, renamed_account):
-    return {"users": [full_user_data], "accounts": [renamed_account]}
+def renamed_account_db(full_user_data, renamed_account, base_category_data):
+    return {
+        "users": [full_user_data],
+        "accounts": [renamed_account],
+        "categories": [base_category_data],
+    }
 
 
 # rename_non_existant_account

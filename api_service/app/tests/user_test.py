@@ -46,8 +46,23 @@ def account_data():
 
 
 @pytest.fixture
-def one_user_db(full_user_data, account_data):
-    return {"users": [full_user_data], "accounts": [account_data]}
+def base_category_data():
+    return {
+        "user_id": 1,
+        "account_id": 1,
+        "id": 0,
+        "name": "base",
+        "color": "16777215",
+    }
+
+
+@pytest.fixture
+def one_user_db(full_user_data, account_data, base_category_data):
+    return {
+        "users": [full_user_data],
+        "accounts": [account_data],
+        "categories": [base_category_data],
+    }
 
 
 @pytest.fixture
@@ -161,8 +176,14 @@ def change_name_response(chamge_name_user_data):
 
 
 @pytest.fixture
-def changed_name_db(chamge_name_full_user_data, account_data):
-    return {"users": [chamge_name_full_user_data], "accounts": [account_data]}
+def changed_name_db(
+    chamge_name_full_user_data, account_data, base_category_data
+):
+    return {
+        "users": [chamge_name_full_user_data],
+        "accounts": [account_data],
+        "categories": [base_category_data],
+    }
 
 
 # change_name_into_duplicate
