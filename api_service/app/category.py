@@ -4,7 +4,7 @@ import datetime as dt
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from sqlalchemy import select, delete, update
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -153,57 +153,50 @@ async def get_totals_by_category(
     return {"status": "OK", "totals": totals}
 
 
+async def delete_category(
+    session: AsyncSession,
+    user_id: int,
+    account_id: int,
+    category_id: int,
+) -> CategoryModel | None:
+    category: CategoryModel = await session.get(
+        CategoryModel,
+        (user_id, account_id, category_id),
+    )
+    if category is None:
+        raise LogicException("no such category")
+
+    await session.delete(category)
+
+    await session.execute(
+        delete(EventModel)
+        .where(EventModel.user_id == user_id)
+        .where(EventModel.account_id == account_id)
+        .where(EventModel.category_id == category_id)
+    )
+    return category
+
+
 class DeleteCategoryRequest(BaseModel):
     account_id: int
     category_id: int
-    category_to: int
 
 
 @router.post("/delete_category")
-async def delete_category(
+async def delete_category_endpoint(
     request: DeleteCategoryRequest,
     current_user: UserModel = Depends(authorized_user),
     async_session: sessionmaker = Depends(get_session),
 ):
     """Delete existing category."""
-    session: AsyncSession
     async with async_session() as session:
-        category: CategoryModel = await session.get(
-            CategoryModel,
-            (current_user.id, request.account_id, request.category_id),
-        )
-        if category is None:
-            raise LogicException("no such category")
-
-        session.delete(category)
-        if request.category_to:
-            if (
-                await session.get(
-                    CategoryModel,
-                    (
-                        current_user.id,
-                        request.account_id,
-                        request.category_to,
-                    ),
-                )
-                is None
-            ):
-                raise LogicException("No such category")
-            await (
-                session.execute(
-                    update(EventModel)
-                    .where(EventModel.user_id == current_user.id)
-                    .where(EventModel.account_id == request.account_id)
-                    .where(EventModel.category_id == request.category_id)
-                    .values(category_id=request.category_to)
-                )
-            )
-        else:
-            await session.execute(
-                delete(EventModel)
-                .where(EventModel.user_id == current_user.id)
-                .where(EventModel.account_id == request.account_id)
-                .where(EventModel.category_id == request.category_id)
+        async with session.begin():
+            session: AsyncSession
+            category = await delete_category(
+                session,
+                current_user.id,
+                request.account_id,
+                request.category_id,
             )
 
     return {

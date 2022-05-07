@@ -100,5 +100,8 @@ async def base_test(
             response = await ac.post(path, json=request_data)
         assert response.status_code == result_code, response.text
         data = response.json()
-        assert compare_with_skip(data, response_data, {"access_token"})
-        assert (await get_db()) == db_after
+        assert compare_with_skip(
+            data, response_data, {"access_token"}
+        ), f"{data} vs. {response_data}"
+        db = await get_db()
+        assert db == db_after, f"{db} vs. {db_after}"

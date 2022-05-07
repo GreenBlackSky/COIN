@@ -17,6 +17,7 @@ from .utils.models import (
     SavePointModel,
 )
 from .user import authorized_user
+from .category import delete_category
 from .utils.database import get_session
 
 
@@ -140,23 +141,35 @@ async def delete_account(
     """Delete existing account."""
     session: AsyncSession
     async with async_session() as session:
-        query = await session.execute(
-            select(AccountModel).where(AccountModel.user_id == current_user.id)
-        )
-        if len(query.all()) == 1:
-            raise LogicException("can't delete the only account")
-
-        account = await session.get(
-            AccountModel, (current_user.id, request.account_id)
-        )
-        if account is None:
-            raise LogicException("no such account")
-
-        await session.execute(
-            delete(SavePointModel).where(
-                SavePointModel.account_id == account.id
+        async with session.begin():
+            query = await session.execute(
+                select(AccountModel).where(
+                    AccountModel.user_id == current_user.id
+                )
             )
-        )
-        await session.delete(account)
-        await session.commit()
+            if len(query.all()) == 1:
+                raise LogicException("can't delete the only account")
+
+            account = await session.get(
+                AccountModel, (current_user.id, request.account_id)
+            )
+            if account is None:
+                raise LogicException("no such account")
+
+            await session.execute(
+                delete(SavePointModel).where(
+                    SavePointModel.account_id == account.id
+                )
+            )
+            await session.delete(account)
+            query = await session.execute(
+                select(CategoryModel)
+                .where(CategoryModel.user_id == current_user.id)
+                .where(CategoryModel.account_id == account.id)
+            )
+            for (category,) in query.all():
+                await delete_category(
+                    session, current_user.id, account.id, category.id
+                )
+
     return {"status": "OK", "account": account.to_dict()}
