@@ -1,28 +1,37 @@
 """Events stuff tests."""
 
 import pytest
+from pytest_lazyfixture import lazy_fixture
 
-from httpx import AsyncClient
-from fastapi_jwt_auth import AuthJWT
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-
-from ..utils.models import Base
-from ..utils.database import get_session
+from .utils import async_session, base_test
 from ..main import app
+from ..utils.database import get_session
 
-engine = create_async_engine(
-    "sqlite+aiosqlite:///./test.db", connect_args={"check_same_thread": False}
-)
-app.dependency_overrides[get_session] = lambda: sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
+
+app.dependency_overrides[get_session] = lambda: async_session
 pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture
-def anyio_backend():
-    return "asyncio"
+def create_event_request(base_event):
+    request = dict(base_event)
+    del request["id"]
+    return request
+
+
+@pytest.fixture
+def create_event_response(base_event):
+    return {"status": "OK", "event": base_event}
+
+
+@pytest.fixture
+def one_event_db(full_user_data, account_data, base_category_data, base_event):
+    return {
+        "users": [full_user_data],
+        "accounts": [account_data],
+        "categories": [base_category_data],
+        "events": [base_event],
+    }
 
 
 # create_event
@@ -31,8 +40,32 @@ def anyio_backend():
 # add_event_at_previous_month
 # create_event_with_duplicate_description
 # create_event_with_too_long_description
-def test_create_event():
-    pass
+@pytest.mark.parametrize(
+    "db_before,user,request_data,response_code,response_data,db_after",
+    [
+        [  # create event
+            lazy_fixture("one_user_db"),
+            lazy_fixture("simple_user"),
+            lazy_fixture("create_event_request"),
+            200,
+            lazy_fixture("create_event_response"),
+            lazy_fixture("one_event_db"),
+        ]
+    ],
+    ids=["create event"],
+)
+async def test_create_event(
+    db_before, user, request_data, response_code, response_data, db_after
+):
+    await base_test(
+        "/create_event",
+        db_before,
+        user,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
+    )
 
 
 # get_all_events

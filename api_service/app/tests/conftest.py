@@ -1,3 +1,5 @@
+import datetime as dt
+
 import pytest
 
 from ..utils.models import UserModel
@@ -55,4 +57,17 @@ def new_category_data():
         "id": 0,
         "name": "base",
         "user_id": 1,
+    }
+
+
+@pytest.fixture
+def base_event():
+    return {
+        "user_id": 1,
+        "account_id": 1,
+        "id": 0,
+        "category_id": 1,
+        "event_time": dt.datetime.timestamp(dt.datetime(1991, 1, 1)),
+        "diff": 1,
+        "description": "test"
     }

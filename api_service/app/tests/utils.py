@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 from ..main import app
 
-from ..utils.models import Base, UserModel, AccountModel, CategoryModel
+from ..utils.models import Base, UserModel, AccountModel, CategoryModel, EventModel
 from ..user import authorized_user
 
 
@@ -21,6 +21,7 @@ db_models = {
     "users": UserModel,
     "accounts": AccountModel,
     "categories": CategoryModel,
+    "events": EventModel
 }
 async_session = sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
