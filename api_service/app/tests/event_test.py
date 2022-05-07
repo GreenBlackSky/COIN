@@ -67,3 +67,13 @@ def test_delete_event():
 # events_in_two_months
 def test_get_balance():
     pass
+
+
+# get_balance
+# balance_with_no_events
+# balance_after_events
+# balance_between_events
+# balance_before_events
+# events_in_two_months
+def test_get_totals_by_category():
+    pass

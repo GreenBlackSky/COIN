@@ -231,18 +231,36 @@ async def test_edit_category(
     )
 
 
-# delete_category
+@pytest.fixture
+def delete_category_request():
+    return {"account_id": 1, "category_id": 1}
+
+
 # delete_non_existant_category
 # delete_only_category
-def test_delete_category():
-    pass
-
-
-# get_balance
-# balance_with_no_events
-# balance_after_events
-# balance_between_events
-# balance_before_events
-# events_in_two_months
-def test_get_totals_by_category():
-    pass
+@pytest.mark.parametrize(
+    "db_before,user,request_data,response_code,response_data,db_after",
+    [
+        [  # delete category
+            lazy_fixture("new_category_db"),
+            lazy_fixture("simple_user"),
+            lazy_fixture("delete_category_request"),
+            200,
+            lazy_fixture("create_category_response"),
+            lazy_fixture("one_user_db"),
+        ]
+    ],
+    ids=["delete category"],
+)
+async def test_delete_category(
+    db_before, user, request_data, response_code, response_data, db_after
+):
+    await base_test(
+        "/delete_category",
+        db_before,
+        user,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
+    )
