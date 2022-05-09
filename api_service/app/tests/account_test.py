@@ -24,7 +24,7 @@ def new_account_data():
 
 @pytest.fixture
 def new_account_response(new_account_data):
-    return {"status": "OK", "account": new_account_data}
+    return ({"status": "OK", "account": new_account_data}, 200)
 
 
 @pytest.fixture
@@ -48,13 +48,12 @@ def new_account_db(
 # create_duplicate_account
 # create_with_too_long_name
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # create account
             lazy_fixture("one_user_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("new_account_request"),
-            200,
             lazy_fixture("new_account_response"),
             lazy_fixture("new_account_db"),
         ]
@@ -62,14 +61,13 @@ def new_account_db(
     ids=["create account"],
 )
 async def test_create_account(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/create_account",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -77,17 +75,19 @@ async def test_create_account(
 
 @pytest.fixture
 def get_account_response(account_data, new_account_data):
-    return {"status": "OK", "accounts": [account_data, new_account_data]}
+    return (
+        {"status": "OK", "accounts": [account_data, new_account_data]},
+        200,
+    )
 
 
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # get accounts
             lazy_fixture("new_account_db"),
             lazy_fixture("simple_user"),
             {},
-            200,
             lazy_fixture("get_account_response"),
             lazy_fixture("new_account_db"),
         ]
@@ -95,14 +95,13 @@ def get_account_response(account_data, new_account_data):
     ids=["get accounts"],
 )
 async def test_get_accounts(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/get_accounts",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -120,7 +119,7 @@ def renamed_account():
 
 @pytest.fixture
 def rename_account_response(renamed_account):
-    return {"status": "OK", "account": renamed_account}
+    return ({"status": "OK", "account": renamed_account}, 200)
 
 
 @pytest.fixture
@@ -137,13 +136,12 @@ def renamed_account_db(full_user_data, renamed_account, base_category_data):
 # rename_account_into_duplicate
 # rename_with_too_long_name
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # rename account
             lazy_fixture("one_user_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("rename_account_request"),
-            200,
             lazy_fixture("rename_account_response"),
             lazy_fixture("renamed_account_db"),
         ]
@@ -151,14 +149,13 @@ def renamed_account_db(full_user_data, renamed_account, base_category_data):
     ids=["rename account"],
 )
 async def test_edit_account(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/edit_account",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -172,13 +169,12 @@ def remove_account_request():
 # remove_non_existant_account
 # remove_only_account
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # remove one account
             lazy_fixture("new_account_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("remove_account_request"),
-            200,
             lazy_fixture("new_account_response"),
             lazy_fixture("one_user_db"),
         ]
@@ -186,14 +182,13 @@ def remove_account_request():
     ids=["remove one account"],
 )
 async def test_delete_account(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/delete_account",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )

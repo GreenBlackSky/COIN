@@ -19,26 +19,28 @@ def user_request():
 
 @pytest.fixture
 def user_response():
-    return {
-        "status": "OK",
-        "user": {
-            "id": 1,
-            "name": "TestGuy",
+    return (
+        {
+            "status": "OK",
+            "user": {
+                "id": 1,
+                "name": "TestGuy",
+            },
         },
-    }
+        200,
+    )
 
 
 # register_while_logged_in
 # signup_with_too_long_name
 # signup_with_too_long_password
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # create user
             {},
             None,
             lazy_fixture("user_request"),
-            200,
             lazy_fixture("user_response"),
             lazy_fixture("one_user_db"),
         ],
@@ -46,22 +48,20 @@ def user_response():
             lazy_fixture("one_user_db"),
             None,
             lazy_fixture("user_request"),
-            200,
-            {"status": "user exists"},
+            ({"status": "user exists"}, 200),
             lazy_fixture("one_user_db"),
         ],
     ],
     ids=["create user", "create duplicate user"],
 )
 async def test_register(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/register",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -70,28 +70,24 @@ async def test_register(
 # wrong_password
 # login_with_non_existant_user
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # normal login
             lazy_fixture("one_user_db"),
             None,
             lazy_fixture("user_request"),
-            200,
             lazy_fixture("user_response"),
             lazy_fixture("one_user_db"),
         ]
     ],
     ids=["normal login"],
 )
-async def test_login(
-    db_before, user, request_data, response_code, response_data, db_after
-):
+async def test_login(db_before, user, request_data, response_data, db_after):
     await base_test(
         "/login",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -125,7 +121,7 @@ def change_name_request():
 
 @pytest.fixture
 def change_name_response(chamge_name_user_data):
-    return {"status": "OK", "user": chamge_name_user_data}
+    return ({"status": "OK", "user": chamge_name_user_data}, 200)
 
 
 @pytest.fixture
@@ -148,13 +144,12 @@ def changed_name_db(
 # change_name_into_itself
 # change_password_into_itself
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # change name
             lazy_fixture("one_user_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("change_name_request"),
-            200,
             lazy_fixture("change_name_response"),
             lazy_fixture("changed_name_db"),
         ]
@@ -162,14 +157,13 @@ def changed_name_db(
     ids=["change name"],
 )
 async def test_edit_user(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/edit_user",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -177,13 +171,12 @@ async def test_edit_user(
 
 # get standart data
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # simple get_data
             lazy_fixture("one_user_db"),
             lazy_fixture("simple_user"),
             {},
-            200,
             lazy_fixture("user_response"),
             lazy_fixture("one_user_db"),
         ]
@@ -191,14 +184,13 @@ async def test_edit_user(
     ids=["simple get data"],
 )
 async def test_get_user_data(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/get_user_data",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )

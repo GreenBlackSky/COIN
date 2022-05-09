@@ -21,7 +21,7 @@ def create_event_request(base_event):
 
 @pytest.fixture
 def create_event_response(base_event):
-    return {"status": "OK", "event": base_event}
+    return ({"status": "OK", "event": base_event}, 200)
 
 
 @pytest.fixture
@@ -41,13 +41,12 @@ def one_event_db(full_user_data, account_data, base_category_data, base_event):
 # create_event_with_duplicate_description
 # create_event_with_too_long_description
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # create event
             lazy_fixture("one_user_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("create_event_request"),
-            200,
             lazy_fixture("create_event_response"),
             lazy_fixture("one_event_db"),
         ]
@@ -55,14 +54,13 @@ def one_event_db(full_user_data, account_data, base_category_data, base_event):
     ids=["create event"],
 )
 async def test_create_event(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/create_event",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -79,23 +77,25 @@ def get_all_events_request():
 
 @pytest.fixture
 def get_all_events_response(base_event):
-    return {
-        "status": "OK",
-        "events": [base_event],
-    }
+    return (
+        {
+            "status": "OK",
+            "events": [base_event],
+        },
+        200,
+    )
 
 
 # filter_events_after
 # filter_events_before
 # events_with_year_between
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # get all events
             lazy_fixture("one_event_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("get_all_events_request"),
-            200,
             lazy_fixture("get_all_events_response"),
             lazy_fixture("one_event_db"),
         ]
@@ -103,14 +103,13 @@ def get_all_events_response(base_event):
     ids=["get all events"],
 )
 async def test_get_events(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/get_events",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -139,7 +138,7 @@ def edit_event_request(edited_event_data):
 
 @pytest.fixture
 def edit_event_response(edited_event_data):
-    return {"status": "OK", "event": edited_event_data}
+    return ({"status": "OK", "event": edited_event_data}, 200)
 
 
 @pytest.fixture
@@ -162,13 +161,12 @@ def edited_event_data_db(
 # edit event_with_duplicate_description
 # edit event_with_too_long_description
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # edit event data
             lazy_fixture("one_event_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("edit_event_request"),
-            200,
             lazy_fixture("edit_event_response"),
             lazy_fixture("edited_event_data_db"),
         ]
@@ -176,14 +174,13 @@ def edited_event_data_db(
     ids=["edit event data"],
 )
 async def test_edit_event(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/edit_event",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )

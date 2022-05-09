@@ -102,9 +102,8 @@ def set_current_user(app: FastAPI, user: UserModel | None):
         app.dependency_overrides.pop(authorized_user, None)
 
 
-async def base_test(
-    path, db_before, user, request_data, result_code, response_data, db_after
-):
+async def base_test(path, db_before, user, request_data, response, db_after):
+    response_data, result_code = response
     with set_current_user(app, user):
         await prepare_db(**db_before)
         async with AsyncClient(app=app, base_url="http://test") as ac:

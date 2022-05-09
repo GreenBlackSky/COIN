@@ -29,7 +29,7 @@ def create_category_request():
 
 @pytest.fixture
 def create_category_response(new_category_data):
-    return {"status": "OK", "category": new_category_data}
+    return ({"status": "OK", "category": new_category_data}, 200)
 
 
 @pytest.fixture
@@ -49,13 +49,12 @@ def new_category_db(
 # create_too_many_categories
 # create category on non-existant account
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # create category
             lazy_fixture("one_user_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("create_category_request"),
-            200,
             lazy_fixture("create_category_response"),
             lazy_fixture("new_category_db"),
         ]
@@ -63,14 +62,13 @@ def new_category_db(
     ids=["create category"],
 )
 async def test_create_category(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/create_category",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -83,22 +81,24 @@ def get_categories_request():
 
 @pytest.fixture
 def get_categories_response(base_category_data, new_category_data):
-    return {
-        "status": "OK",
-        "categories": [base_category_data, new_category_data],
-    }
+    return (
+        {
+            "status": "OK",
+            "categories": [base_category_data, new_category_data],
+        },
+        200,
+    )
 
 
 # get categories with wrong account
 # with non existant account
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # get categories
             lazy_fixture("new_category_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("get_categories_request"),
-            200,
             lazy_fixture("get_categories_response"),
             lazy_fixture("new_category_db"),
         ]
@@ -106,14 +106,13 @@ def get_categories_response(base_category_data, new_category_data):
     ids=["get categories"],
 )
 async def test_get_categories(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/get_categories",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -140,10 +139,13 @@ def edit_category_request(edited_category_data):
 
 @pytest.fixture
 def edit_category_response(edited_category_data):
-    return {
-        "status": "OK",
-        "category": edited_category_data,
-    }
+    return (
+        {
+            "status": "OK",
+            "category": edited_category_data,
+        },
+        200,
+    )
 
 
 @pytest.fixture
@@ -161,13 +163,12 @@ def edited_category_db(
 # edit_non_existant_category
 # edit_into_duplicate_name
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # edit category
             lazy_fixture("new_category_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("edit_category_request"),
-            200,
             lazy_fixture("edit_category_response"),
             lazy_fixture("edited_category_db"),
         ]
@@ -175,14 +176,13 @@ def edited_category_db(
     ids=["edit category"],
 )
 async def test_edit_category(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/edit_category",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
@@ -196,13 +196,12 @@ def delete_category_request():
 # delete_non_existant_category
 # delete_only_category
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_code,response_data,db_after",
+    "db_before,user,request_data,response_data,db_after",
     [
         [  # delete category
             lazy_fixture("new_category_db"),
             lazy_fixture("simple_user"),
             lazy_fixture("delete_category_request"),
-            200,
             lazy_fixture("create_category_response"),
             lazy_fixture("one_user_db"),
         ]
@@ -210,14 +209,13 @@ def delete_category_request():
     ids=["delete category"],
 )
 async def test_delete_category(
-    db_before, user, request_data, response_code, response_data, db_after
+    db_before, user, request_data, response_data, db_after
 ):
     await base_test(
         "/delete_category",
         db_before,
         user,
         request_data,
-        response_code,
         response_data,
         db_after,
     )
