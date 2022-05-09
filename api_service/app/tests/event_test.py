@@ -68,16 +68,55 @@ async def test_create_event(
     )
 
 
-# get_all_events
+@pytest.fixture
+def get_all_events_request():
+    return {
+        "account_id": 1,
+        "start_time": None,
+        "end_time": None,
+    }
+
+
+@pytest.fixture
+def get_all_events_response(base_event):
+    return {
+        "status": "OK",
+        "events": [base_event],
+    }
+
+
 # filter_events_after
 # filter_events_before
 # events_with_year_between
-def test_get_events():
-    pass
+@pytest.mark.parametrize(
+    "db_before,user,request_data,response_code,response_data,db_after",
+    [
+        [  # get all events
+            lazy_fixture("one_event_db"),
+            lazy_fixture("simple_user"),
+            lazy_fixture("get_all_events_request"),
+            200,
+            lazy_fixture("get_all_events_response"),
+            lazy_fixture("one_event_db"),
+        ]
+    ],
+    ids=["get all events"],
+)
+async def test_get_events(
+    db_before, user, request_data, response_code, response_data, db_after
+):
+    await base_test(
+        "/get_events",
+        db_before,
+        user,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
+    )
 
 
 # edit_event
-# balance_changes_on_edit
 # edit_non_existent_event
 # edit_event_with_duplicate_description
 # edit_event_with_too_long_description
@@ -86,13 +125,14 @@ def test_edit_event():
 
 
 # delete_event
-# balance_changes_on_delete
 # delete_non_existant_event
 def test_delete_event():
     pass
 
 
 # get_balance
+# balance_changes_on_edit_event
+# balance_changes_on_delete_event
 # balance_with_no_events
 # balance_after_events
 # balance_between_events
@@ -103,6 +143,8 @@ def test_get_balance():
 
 
 # get_balance
+# balance_changes_on_edit_event
+# balance_changes_on_delete_event
 # balance_with_no_events
 # balance_after_events
 # balance_between_events

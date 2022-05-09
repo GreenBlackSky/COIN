@@ -46,6 +46,7 @@ def one_user_db(full_user_data, account_data, base_category_data):
         "users": [full_user_data],
         "accounts": [account_data],
         "categories": [base_category_data],
+        "events": [],
     }
 
 
@@ -69,5 +70,5 @@ def base_event():
         "category_id": 1,
         "event_time": dt.datetime.timestamp(dt.datetime(1991, 1, 1)),
         "diff": 1,
-        "description": "test"
+        "description": "test",
     }

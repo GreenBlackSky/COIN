@@ -1,6 +1,7 @@
 """Some test utils."""
 
 from contextlib import contextmanager
+import datetime as dt
 
 from httpx import AsyncClient
 from fastapi import FastAPI
@@ -10,7 +11,13 @@ from sqlalchemy.orm import sessionmaker
 
 from ..main import app
 
-from ..utils.models import Base, UserModel, AccountModel, CategoryModel, EventModel
+from ..utils.models import (
+    Base,
+    UserModel,
+    AccountModel,
+    CategoryModel,
+    EventModel,
+)
 from ..user import authorized_user
 
 
@@ -21,7 +28,7 @@ db_models = {
     "users": UserModel,
     "accounts": AccountModel,
     "categories": CategoryModel,
-    "events": EventModel
+    "events": EventModel,
 }
 async_session = sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
@@ -61,11 +68,14 @@ async def prepare_db(**values):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    to_add = [
-        db_models[table_name](**object_data)
-        for table_name, objects in values.items()
-        for object_data in objects
-    ]
+    to_add = []
+    for table_name, objects in values.items():
+        for object_data in objects:
+            obj = db_models[table_name](**object_data)
+            if "event_time" in object_data:
+                obj.event_time = dt.datetime.fromtimestamp(obj.event_time)
+            to_add.append(obj)
+
     async with async_session() as session:
         async with session.begin():
             session.add_all(to_add)

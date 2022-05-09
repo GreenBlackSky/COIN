@@ -40,6 +40,7 @@ def new_category_db(
         "users": [full_user_data],
         "accounts": [account_data],
         "categories": [base_category_data, new_category_data],
+        "events": [],
     }
 
 
@@ -153,6 +154,7 @@ def edited_category_db(
         "users": [full_user_data],
         "accounts": [account_data],
         "categories": [base_category_data, edited_category_data],
+        "events": [],
     }
 
 

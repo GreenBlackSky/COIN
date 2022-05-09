@@ -39,6 +39,7 @@ def new_account_db(
         "users": [full_user_data],
         "accounts": [account_data, new_account_data],
         "categories": [base_category_data, new_category_data],
+        "events": [],
     }
 
 
@@ -128,6 +129,7 @@ def renamed_account_db(full_user_data, renamed_account, base_category_data):
         "users": [full_user_data],
         "accounts": [renamed_account],
         "categories": [base_category_data],
+        "events": [],
     }
 
 

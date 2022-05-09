@@ -136,6 +136,7 @@ def changed_name_db(
         "users": [chamge_name_full_user_data],
         "accounts": [account_data],
         "categories": [base_category_data],
+        "events": [],
     }
 
 
