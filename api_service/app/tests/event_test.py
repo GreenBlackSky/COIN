@@ -116,12 +116,77 @@ async def test_get_events(
     )
 
 
-# edit_event
-# edit_non_existent_event
-# edit_event_with_duplicate_description
-# edit_event_with_too_long_description
-def test_edit_event():
-    pass
+@pytest.fixture
+def edited_event_data(base_event):
+    return {
+        "user_id": base_event["user_id"],
+        "account_id": base_event["account_id"],
+        "id": base_event["id"],
+        "category_id": base_event["category_id"],
+        "event_time": base_event["event_time"],
+        "diff": 10,
+        "description": "Edited",
+    }
+
+
+@pytest.fixture
+def edit_event_request(edited_event_data):
+    request = dict(edited_event_data)
+    del request["user_id"]
+    request["event_id"] = request.pop("id")
+    return request
+
+
+@pytest.fixture
+def edit_event_response(edited_event_data):
+    return {"status": "OK", "event": edited_event_data}
+
+
+@pytest.fixture
+def edited_event_data_db(
+    full_user_data, account_data, base_category_data, edited_event_data
+):
+    return {
+        "users": [full_user_data],
+        "accounts": [account_data],
+        "categories": [base_category_data],
+        "events": [edited_event_data],
+    }
+
+
+# edit event data
+# move event slightly
+# move event into far future
+# move event into distant past
+# edit non_existent_event
+# edit event_with_duplicate_description
+# edit event_with_too_long_description
+@pytest.mark.parametrize(
+    "db_before,user,request_data,response_code,response_data,db_after",
+    [
+        [  # edit event data
+            lazy_fixture("one_event_db"),
+            lazy_fixture("simple_user"),
+            lazy_fixture("edit_event_request"),
+            200,
+            lazy_fixture("edit_event_response"),
+            lazy_fixture("edited_event_data_db"),
+        ]
+    ],
+    ids=["edit event data"],
+)
+async def test_edit_event(
+    db_before, user, request_data, response_code, response_data, db_after
+):
+    await base_test(
+        "/edit_event",
+        db_before,
+        user,
+        request_data,
+        response_code,
+        response_data,
+        db_after,
+    )
 
 
 # delete_event
