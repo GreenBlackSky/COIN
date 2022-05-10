@@ -10,7 +10,6 @@ def anyio_backend():
     return "asyncio"
 
 
-@pytest.fixture
 def full_user_data():
     return {
         "id": 1,
@@ -19,17 +18,14 @@ def full_user_data():
     }
 
 
-@pytest.fixture
-def simple_user(full_user_data):
-    return UserModel(**full_user_data)
+def simple_user():
+    return UserModel(**full_user_data())
 
 
-@pytest.fixture
 def account_data():
     return {"id": 1, "user_id": 1, "name": "Main Account"}
 
 
-@pytest.fixture
 def base_category_data():
     return {
         "user_id": 1,
@@ -40,18 +36,20 @@ def base_category_data():
     }
 
 
-@pytest.fixture
-def one_user_db(full_user_data, account_data, base_category_data):
+def one_user_db():
     return {
-        "users": [full_user_data],
-        "accounts": [account_data],
-        "categories": [base_category_data],
+        "users": [full_user_data()],
+        "accounts": [account_data()],
+        "categories": [base_category_data()],
         "events": [],
     }
 
 
-@pytest.fixture
-def new_category_data():
+def new_account_data():
+    return {"id": 2, "user_id": 1, "name": "TestAccount"}
+
+
+def new_account_category_data():
     return {
         "account_id": 2,
         "color": "16777215",
@@ -61,7 +59,16 @@ def new_category_data():
     }
 
 
-@pytest.fixture
+def new_category_data():
+    return {
+        "user_id": 1,
+        "account_id": 1,
+        "id": 1,
+        "name": "New category",
+        "color": "12345678",
+    }
+
+
 def base_event():
     return {
         "user_id": 1,

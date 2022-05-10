@@ -1,9 +1,15 @@
-"""Logging in and co tests."""
+# """Logging in and co tests."""
 
 import pytest
-from pytest_lazyfixture import lazy_fixture
 
-from .utils import async_session, base_test
+from .utils import async_session, base_test, TestCase
+from .conftest import (
+    one_user_db,
+    simple_user,
+    account_data,
+    base_category_data,
+)
+
 from ..main import app
 from ..utils.database import get_session
 
@@ -12,12 +18,10 @@ app.dependency_overrides[get_session] = lambda: async_session
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture
 def user_request():
     return {"name": "TestGuy", "password": "TestPass"}
 
 
-@pytest.fixture
 def user_response():
     return (
         {
@@ -35,82 +39,48 @@ def user_response():
 # signup_with_too_long_name
 # signup_with_too_long_password
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # create user
+        TestCase(  # create user
             {},
             None,
-            lazy_fixture("user_request"),
-            lazy_fixture("user_response"),
-            lazy_fixture("one_user_db"),
-        ],
-        [  # create duplicate user
-            lazy_fixture("one_user_db"),
+            user_request(),
+            user_response(),
+            one_user_db(),
+        ),
+        TestCase(  # create duplicate user
+            one_user_db(),
             None,
-            lazy_fixture("user_request"),
+            user_request(),
             ({"status": "user exists"}, 200),
-            lazy_fixture("one_user_db"),
-        ],
+            one_user_db(),
+        ),
     ],
     ids=["create user", "create duplicate user"],
 )
-async def test_register(
-    db_before, user, request_data, response_data, db_after
-):
-    await base_test(
-        "/register",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_register(case: TestCase):
+    await base_test("/register", case)
 
 
 # wrong_password
 # login_with_non_existant_user
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # normal login
-            lazy_fixture("one_user_db"),
+        TestCase(  # normal login
+            one_user_db(),
             None,
-            lazy_fixture("user_request"),
-            lazy_fixture("user_response"),
-            lazy_fixture("one_user_db"),
-        ]
+            user_request(),
+            user_response(),
+            one_user_db(),
+        )
     ],
     ids=["normal login"],
 )
-async def test_login(db_before, user, request_data, response_data, db_after):
-    await base_test(
-        "/login",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_login(case: TestCase):
+    await base_test("/login", case)
 
 
-@pytest.fixture
-def chamge_name_user_data():
-    return {
-        "id": 1,
-        "name": "ChangedUser",
-    }
-
-
-@pytest.fixture
-def chamge_name_full_user_data():
-    return {
-        "id": 1,
-        "name": "TestGuy",
-        "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
-    }
-
-
-@pytest.fixture
 def change_name_request():
     return {
         "name": "ChangedUser",
@@ -119,19 +89,30 @@ def change_name_request():
     }
 
 
-@pytest.fixture
-def change_name_response(chamge_name_user_data):
-    return ({"status": "OK", "user": chamge_name_user_data}, 200)
+def change_name_response():
+    return (
+        {
+            "status": "OK",
+            "user": {
+                "id": 1,
+                "name": "ChangedUser",
+            },
+        },
+        200,
+    )
 
 
-@pytest.fixture
-def changed_name_db(
-    chamge_name_full_user_data, account_data, base_category_data
-):
+def changed_name_db():
     return {
-        "users": [chamge_name_full_user_data],
-        "accounts": [account_data],
-        "categories": [base_category_data],
+        "users": [
+            {
+                "id": 1,
+                "name": "TestGuy",
+                "password_hash": "dcf7fb88d38b9cbc0719c4d47af0b9ca",
+            }
+        ],
+        "accounts": [account_data()],
+        "categories": [base_category_data()],
         "events": [],
     }
 
@@ -144,53 +125,34 @@ def changed_name_db(
 # change_name_into_itself
 # change_password_into_itself
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # change name
-            lazy_fixture("one_user_db"),
-            lazy_fixture("simple_user"),
-            lazy_fixture("change_name_request"),
-            lazy_fixture("change_name_response"),
-            lazy_fixture("changed_name_db"),
-        ]
+        TestCase(  # change name
+            one_user_db(),
+            simple_user(),
+            change_name_request(),
+            change_name_response(),
+            changed_name_db(),
+        ),
     ],
     ids=["change name"],
 )
-async def test_edit_user(
-    db_before, user, request_data, response_data, db_after
-):
-    await base_test(
-        "/edit_user",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_edit_user(case: TestCase):
+    await base_test("/edit_user", case)
 
 
-# get standart data
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # simple get_data
-            lazy_fixture("one_user_db"),
-            lazy_fixture("simple_user"),
+        TestCase(  # simple get_data
+            one_user_db(),
+            simple_user(),
             {},
-            lazy_fixture("user_response"),
-            lazy_fixture("one_user_db"),
-        ]
+            user_response(),
+            one_user_db(),
+        ),
     ],
     ids=["simple get data"],
 )
-async def test_get_user_data(
-    db_before, user, request_data, response_data, db_after
-):
-    await base_test(
-        "/get_user_data",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_get_user_data(case: TestCase):
+    await base_test("/get_user_data", case)

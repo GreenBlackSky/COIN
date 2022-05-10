@@ -1,9 +1,18 @@
 """Accounts stuff tests."""
 
 import pytest
-from pytest_lazyfixture import lazy_fixture
 
-from .utils import async_session, base_test
+from .utils import async_session, base_test, TestCase
+from .conftest import (
+    full_user_data,
+    account_data,
+    new_account_data,
+    base_category_data,
+    new_account_category_data,
+    one_user_db,
+    simple_user,
+)
+
 from ..main import app
 from ..utils.database import get_session
 
@@ -12,33 +21,19 @@ app.dependency_overrides[get_session] = lambda: async_session
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture
 def new_account_request():
     return {"name": "TestAccount"}
 
 
-@pytest.fixture
-def new_account_data():
-    return {"id": 2, "user_id": 1, "name": "TestAccount"}
+def new_account_response():
+    return ({"status": "OK", "account": new_account_data()}, 200)
 
 
-@pytest.fixture
-def new_account_response(new_account_data):
-    return ({"status": "OK", "account": new_account_data}, 200)
-
-
-@pytest.fixture
-def new_account_db(
-    full_user_data,
-    account_data,
-    new_account_data,
-    base_category_data,
-    new_category_data,
-):
+def new_account_db():
     return {
-        "users": [full_user_data],
-        "accounts": [account_data, new_account_data],
-        "categories": [base_category_data, new_category_data],
+        "users": [full_user_data()],
+        "accounts": [account_data(), new_account_data()],
+        "categories": [base_category_data(), new_account_category_data()],
         "events": [],
     }
 
@@ -48,86 +43,63 @@ def new_account_db(
 # create_duplicate_account
 # create_with_too_long_name
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # create account
-            lazy_fixture("one_user_db"),
-            lazy_fixture("simple_user"),
-            lazy_fixture("new_account_request"),
-            lazy_fixture("new_account_response"),
-            lazy_fixture("new_account_db"),
-        ]
+        TestCase(  # create account
+            one_user_db(),
+            simple_user(),
+            new_account_request(),
+            new_account_response(),
+            new_account_db(),
+        )
     ],
     ids=["create account"],
 )
-async def test_create_account(
-    db_before, user, request_data, response_data, db_after
-):
-    await base_test(
-        "/create_account",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_create_account(case: TestCase):
+    await base_test("/create_account", case)
 
 
-@pytest.fixture
-def get_account_response(account_data, new_account_data):
+def get_account_response():
     return (
-        {"status": "OK", "accounts": [account_data, new_account_data]},
+        {"status": "OK", "accounts": [account_data(), new_account_data()]},
         200,
     )
 
 
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # get accounts
-            lazy_fixture("new_account_db"),
-            lazy_fixture("simple_user"),
+        TestCase(  # get accounts
+            new_account_db(),
+            simple_user(),
             {},
-            lazy_fixture("get_account_response"),
-            lazy_fixture("new_account_db"),
-        ]
+            get_account_response(),
+            new_account_db(),
+        )
     ],
     ids=["get accounts"],
 )
-async def test_get_accounts(
-    db_before, user, request_data, response_data, db_after
-):
-    await base_test(
-        "/get_accounts",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_get_accounts(case: TestCase):
+    await base_test("/get_accounts", case)
 
 
-@pytest.fixture
 def rename_account_request():
     return {"account_id": 1, "name": "Renamed Account"}
 
 
-@pytest.fixture
 def renamed_account():
     return {"id": 1, "user_id": 1, "name": "Renamed Account"}
 
 
-@pytest.fixture
-def rename_account_response(renamed_account):
-    return ({"status": "OK", "account": renamed_account}, 200)
+def rename_account_response():
+    return ({"status": "OK", "account": renamed_account()}, 200)
 
 
-@pytest.fixture
-def renamed_account_db(full_user_data, renamed_account, base_category_data):
+def renamed_account_db():
     return {
-        "users": [full_user_data],
-        "accounts": [renamed_account],
-        "categories": [base_category_data],
+        "users": [full_user_data()],
+        "accounts": [renamed_account()],
+        "categories": [base_category_data()],
         "events": [],
     }
 
@@ -136,32 +108,22 @@ def renamed_account_db(full_user_data, renamed_account, base_category_data):
 # rename_account_into_duplicate
 # rename_with_too_long_name
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # rename account
-            lazy_fixture("one_user_db"),
-            lazy_fixture("simple_user"),
-            lazy_fixture("rename_account_request"),
-            lazy_fixture("rename_account_response"),
-            lazy_fixture("renamed_account_db"),
-        ]
+        TestCase(  # rename account
+            one_user_db(),
+            simple_user(),
+            rename_account_request(),
+            rename_account_response(),
+            renamed_account_db(),
+        )
     ],
     ids=["rename account"],
 )
-async def test_edit_account(
-    db_before, user, request_data, response_data, db_after
-):
-    await base_test(
-        "/edit_account",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_edit_account(case: TestCase):
+    await base_test("/edit_account", case)
 
 
-@pytest.fixture
 def remove_account_request():
     return {"account_id": 2}
 
@@ -169,26 +131,17 @@ def remove_account_request():
 # remove_non_existant_account
 # remove_only_account
 @pytest.mark.parametrize(
-    "db_before,user,request_data,response_data,db_after",
+    "case",
     [
-        [  # remove one account
-            lazy_fixture("new_account_db"),
-            lazy_fixture("simple_user"),
-            lazy_fixture("remove_account_request"),
-            lazy_fixture("new_account_response"),
-            lazy_fixture("one_user_db"),
-        ]
+        TestCase(  # remove one account
+            new_account_db(),
+            simple_user(),
+            remove_account_request(),
+            new_account_response(),
+            one_user_db(),
+        )
     ],
     ids=["remove one account"],
 )
-async def test_delete_account(
-    db_before, user, request_data, response_data, db_after
-):
-    await base_test(
-        "/delete_account",
-        db_before,
-        user,
-        request_data,
-        response_data,
-        db_after,
-    )
+async def test_delete_account(case: TestCase):
+    await base_test("/delete_account", case)

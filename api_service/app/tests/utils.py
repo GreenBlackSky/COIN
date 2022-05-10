@@ -1,6 +1,7 @@
 """Some test utils."""
 
 from contextlib import contextmanager
+from dataclasses import dataclass
 import datetime as dt
 
 from httpx import AsyncClient
@@ -33,6 +34,15 @@ db_models = {
 async_session = sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
 )
+
+
+@dataclass
+class TestCase:
+    db_before: dict[str, list]
+    user: UserModel | None
+    request_data: dict
+    response_data: tuple[dict, int]
+    db_after: dict[str, list]
 
 
 def compare_with_skip(val_1, val_2, skipped: set):
@@ -102,16 +112,16 @@ def set_current_user(app: FastAPI, user: UserModel | None):
         app.dependency_overrides.pop(authorized_user, None)
 
 
-async def base_test(path, db_before, user, request_data, response, db_after):
-    response_data, result_code = response
-    with set_current_user(app, user):
-        await prepare_db(**db_before)
+async def base_test(path, case: TestCase):
+    response_data, result_code = case.response_data
+    with set_current_user(app, case.user):
+        await prepare_db(**case.db_before)
         async with AsyncClient(app=app, base_url="http://test") as ac:
-            response = await ac.post(path, json=request_data)
+            response = await ac.post(path, json=case.request_data)
         assert response.status_code == result_code, response.text
         data = response.json()
         assert compare_with_skip(
             data, response_data, {"access_token"}
         ), f"{data} vs. {response_data}"
         db = await get_db()
-        assert db == db_after, f"{db} vs. {db_after}"
+        assert db == case.db_after, f"{db} vs. {case.db_after}"
