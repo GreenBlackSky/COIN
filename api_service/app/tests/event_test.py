@@ -1,5 +1,7 @@
 """Events stuff tests."""
 
+import datetime as dt
+
 import pytest
 
 from .utils import async_session, base_test, TestCase
@@ -157,13 +159,46 @@ async def test_edit_event(case: TestCase):
     await base_test("/edit_event", case)
 
 
-# delete_event
+def delete_event_request():
+    return {
+        "account_id": 1,
+        "event_id": 0,
+    }
+
+
+def delete_only_event_response():
+    return ({"status": "OK", "event": base_event()}, 200)
+
+
 # delete_non_existant_event
-def test_delete_event():
-    pass
+@pytest.mark.parametrize(
+    "case",
+    [
+        TestCase(  # delete only event
+            one_event_db(),
+            simple_user(),
+            delete_event_request(),
+            delete_only_event_response(),
+            one_user_db(),
+        )
+    ],
+    ids=["edit event data"],
+)
+async def test_delete_event(case: TestCase):
+    await base_test("/delete_event", case)
 
 
-# get_balance
+def get_empty_balance_request():
+    return {
+        "account_id": 1,
+        "timestamp": dt.datetime.timestamp(dt.datetime(1991, 1, 1)),
+    }
+
+
+def get_empty_balance_response():
+    return ({"status": "OK", "balance": 0}, 200)
+
+
 # balance_changes_on_edit_event
 # balance_changes_on_delete_event
 # balance_with_no_events
@@ -171,8 +206,21 @@ def test_delete_event():
 # balance_between_events
 # balance_before_events
 # events_in_two_months
-def test_get_balance():
-    pass
+@pytest.mark.parametrize(
+    "case",
+    [
+        TestCase(  # get empty balance
+            one_user_db(),
+            simple_user(),
+            get_empty_balance_request(),
+            get_empty_balance_response(),
+            one_user_db(),
+        )
+    ],
+    ids=["get empty balance"],
+)
+async def test_get_balance(case: TestCase):
+    await base_test("/get_balance", case)
 
 
 # get_balance
