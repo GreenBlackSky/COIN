@@ -1,4 +1,7 @@
 """Accounts stuff tests."""
+
+import datetime as dt
+
 import pytest
 
 from .utils import async_session, base_test, TestCase
@@ -165,3 +168,39 @@ def delete_category_request():
 )
 async def test_delete_category(case: TestCase):
     await base_test("/delete_category", case)
+
+
+def get_totals_by_category_request():
+    return {
+        "account_id": 1,
+        "start_time": dt.datetime.timestamp(dt.datetime(1991, 1, 1)),
+        "end_time": dt.datetime.timestamp(dt.datetime(1991, 1, 2)),
+    }
+
+
+def get_totals_by_category_response():
+    return ({"status": "OK", "totals": {'0': 0, '1': 0}}, 200)
+
+
+# balance_changes_on_edit_event
+# balance_changes_on_delete_event
+# balance_with_no_events
+# balance_after_events
+# balance_between_events
+# balance_before_events
+# events_in_two_months
+@pytest.mark.parametrize(
+    "case",
+    [
+        TestCase(  # get totals by category
+            new_category_db(),
+            simple_user(),
+            get_totals_by_category_request(),
+            get_totals_by_category_response(),
+            new_category_db(),
+        )
+    ],
+    ids=["get totals by category"],
+)
+async def test_get_totals_by_category(case: TestCase):
+    await base_test("/get_totals_by_category", case)

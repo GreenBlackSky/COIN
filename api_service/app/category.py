@@ -158,7 +158,7 @@ async def delete_category(
     user_id: int,
     account_id: int,
     category_id: int,
-) -> CategoryModel | None:
+) -> CategoryModel:
     category: CategoryModel = await session.get(
         CategoryModel,
         (user_id, account_id, category_id),
@@ -189,9 +189,9 @@ async def delete_category_endpoint(
     async_session: sessionmaker = Depends(get_session),
 ):
     """Delete existing category."""
+    session: AsyncSession
     async with async_session() as session:
         async with session.begin():
-            session: AsyncSession
             category = await delete_category(
                 session,
                 current_user.id,

@@ -221,15 +221,3 @@ def get_empty_balance_response():
 )
 async def test_get_balance(case: TestCase):
     await base_test("/get_balance", case)
-
-
-# get_balance
-# balance_changes_on_edit_event
-# balance_changes_on_delete_event
-# balance_with_no_events
-# balance_after_events
-# balance_between_events
-# balance_before_events
-# events_in_two_months
-def test_get_totals_by_category():
-    pass

@@ -3,3 +3,4 @@ fastapi-jwt-auth
 uvicorn
 asyncpg
 sqlalchemy
+alembic
