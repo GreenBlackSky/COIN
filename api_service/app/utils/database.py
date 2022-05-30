@@ -7,7 +7,7 @@ connection_string = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(
     os.environ.get("POSTGRES_USER"),
     os.environ.get("POSTGRES_PASSWORD"),
     os.environ.get("POSTGRES_HOST"),
-    os.environ.get("POSTGRES_PORT", 1000),
+    os.environ.get("POSTGRES_PORT"),
     os.environ.get("POSTGRES_DB"),
 )
 engine = create_async_engine(connection_string, echo=True)

@@ -43,7 +43,6 @@ services:
       - 5005:5432
     volumes:
       - ./api_db/postgres_data:/var/lib/postgresql/data/
-      - ./api_db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
     env_file:
       - api_db_config.env    
  

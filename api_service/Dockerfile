@@ -6,7 +6,7 @@ WORKDIR /app
 
 RUN apt-get update && \
     apt-get -y dist-upgrade && \
-    apt-get -y install bash netcat
+    apt-get -y install bash 
 
 COPY requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
